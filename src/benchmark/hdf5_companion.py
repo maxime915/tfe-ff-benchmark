@@ -104,3 +104,12 @@ if __name__ == "__main__":
         print_info(file)
         print(f'{min(results):8.5f}s - {file}')
         
+"""python -m src.benchmark.hdf5_companion files/z-series/profile.hdf5 files/test-channel-image/profile.hdf5                
+benchmark.hdf5_companion: best of 3 (1000 iteration)
+--- files/z-series/profile.hdf5 --- 
+shape = (167, 439, 5), chunk = None, compression = None
+ 0.29461s - files/z-series/profile.hdf5
+--- files/test-channel-image/profile.hdf5 --- 
+shape = (512, 512, 31), chunk = None, compression = None
+ 0.30177s - files/test-channel-image/profile.hdf5
+"""

@@ -95,3 +95,13 @@ if __name__ == "__main__":
         print_info(file)
         print(f'{min(results):8.5f}s')
 
+"""python -m src.benchmark.ome_tiff files/z-series/z-series.ome.tif files/test-channel-image/test_channel_image.ome.tiff --gc
+benchmark.hdf5_companion: best of 3 (1000 iteration) - tile = [32, 32]
+option(s): garbage collection enabled
+--- files/z-series/z-series.ome.tif --- 
+shape = 5 * (167, 439), chunk = (1, 439), chunked = (167, 1)
+ 0.37172s
+--- files/test-channel-image/test_channel_image.ome.tiff --- 
+shape = 31 * (512, 512), chunk = (1, 512), chunked = (512, 1)
+ 0.75231s
+"""

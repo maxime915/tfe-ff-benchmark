@@ -82,3 +82,35 @@ if __name__ == "__main__":
         print_info(file)
         print(f'{min(results):8.5f}s')
 
+"""python -m src.benchmark.tile_zarr files/test-channel-image/test_channel_image.zarr files/z-series/z-series.zarr
+benchmark.hdf5_companion: best of 3 (1000 iteration), tile = [32, 32]
+Name               : /0
+Type               : zarr.core.Array
+Data type          : uint16
+Shape              : (31, 512, 512)
+Chunk shape        : (8, 128, 256)
+Order              : C
+Read-only          : True
+Compressor         : None
+Store type         : zarr.storage.DirectoryStore
+No. bytes          : 16252928 (15.5M)
+No. bytes stored   : 16777462 (16.0M)
+Storage ratio      : 1.0
+Chunks initialized : 32/32
+
+ 0.29240s
+Name               : /0
+Type               : zarr.core.Array
+Data type          : int8
+Shape              : (5, 167, 439)
+Chunk shape        : (3, 167, 439)
+Order              : C
+Read-only          : True
+Compressor         : None
+Store type         : zarr.storage.DirectoryStore
+No. bytes          : 366565 (358.0K)
+No. bytes stored   : 440123 (429.8K)
+Storage ratio      : 0.8
+Chunks initialized : 2/2
+
+ 0.23037s"""

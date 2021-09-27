@@ -117,3 +117,25 @@ if __name__ == "__main__":
             )})
         print_info(file)
         print(f'{min(results):8.5f}s')
+
+"""st_channel_image_C0_Z0_T0.tif               
+benchmark.hdf5_companion: best of 3 (1000 iteration) tile = [32, 32]
+--- files/z-series/conversion/z-series_C0_Z0_T0.tif --- 
+TiffPages: invalid page offset 9239
+shape = 1 * (167, 439), chunk = (167, 256), chunked = (1, 2)
+ 0.39828s
+--- files/test-channel-image/conversion/test_channel_image_C0_Z0_T0.tif --- 
+TiffPages: invalid page offset 609098
+shape = 1 * (512, 512), chunk = (256, 256), chunked = (2, 2)
+ 3.29588s
+"""
+
+"""python -m src.benchmark.pyramidal_tiff files/z-series/conversion/z-series_C0_Z0_T0_pyr.tif files/test-channel-image/conversion/test_channel_image_C0_Z0_T0_pyr.tif
+benchmark.hdf5_companion: best of 3 (1000 iteration) tile = [32, 32]
+--- files/z-series/conversion/z-series_C0_Z0_T0_pyr.tif --- 
+shape = 2 * (167, 439), chunk = (256, 256), chunked = (1, 2)
+ 0.49474s
+--- files/test-channel-image/conversion/test_channel_image_C0_Z0_T0_pyr.tif --- 
+shape = 2 * (512, 512), chunk = (256, 256), chunked = (2, 2)
+ 3.22712s
+"""

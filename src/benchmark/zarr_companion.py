@@ -66,3 +66,36 @@ if __name__ == "__main__":
         print_info(file)
         print(f'{min(results):8.5f}s - {file}')
         
+"""python -m src.benchmark.zarr_companion files/z-series/profile.zarr files/test-channel-image/profile.zarr 
+benchmark.hdf5_companion: best of 3 (1000 iteration)
+Name               : /0
+Type               : zarr.core.Array
+Data type          : uint8
+Shape              : (167, 439, 5)
+Chunk shape        : (84, 439, 5)
+Order              : C
+Read-only          : True
+Compressor         : None
+Store type         : zarr.storage.DirectoryStore
+No. bytes          : 366565 (358.0K)
+No. bytes stored   : 369004 (360.4K)
+Storage ratio      : 1.0
+Chunks initialized : 2/2
+
+ 0.22428s - files/z-series/profile.zarr
+Name               : /0
+Type               : zarr.core.Array
+Data type          : uint16
+Shape              : (512, 512, 31)
+Chunk shape        : (128, 128, 16)
+Order              : C
+Read-only          : True
+Compressor         : None
+Store type         : zarr.storage.DirectoryStore
+No. bytes          : 16252928 (15.5M)
+No. bytes stored   : 16777463 (16.0M)
+Storage ratio      : 1.0
+Chunks initialized : 32/32
+
+ 0.35309s - files/test-channel-image/profile.zarr
+"""
