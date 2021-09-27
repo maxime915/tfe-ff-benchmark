@@ -16,8 +16,7 @@ def print_info(file: str) -> None:
     page = tif.pages[0]
 
     print(f'--- {file} --- ')
-    print(f'shape = {len(tif.pages)} * {page.shape}'
-        +f' chunk = {page.chunks}, chunked = {page.chunked}')
+    print(f'shape = {len(tif.pages)} * {page.shape}, chunk = {page.chunks}, chunked = {page.chunked}')
 
     tif.close()
 

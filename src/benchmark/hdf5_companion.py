@@ -12,6 +12,17 @@ import h5py
 # NOTE neither GC nor Context-Managers have an effect on small files
 
 
+def print_info(file: str) -> None:
+    ''
+    group = h5py.File(file, mode='r')
+    data = group['data']
+
+    print(f'--- {file} --- ')
+    print(f'shape = {data.shape}, chunk = {data.chunks}, compression = {data.compression}')
+
+    group.close()
+
+
 def benchmark_hdf5_companion(file: str, context_manager: bool) -> typing.Callable[[], None]:
     '''returns a callable that open an HDF5 file to read a random band and close
     the file'''
@@ -90,5 +101,6 @@ if __name__ == "__main__":
                 file=file,
                 context_manager=args.cm
             )})
+        print_info(file)
         print(f'{min(results):8.5f}s - {file}')
         

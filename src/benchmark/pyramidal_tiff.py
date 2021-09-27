@@ -18,8 +18,7 @@ def print_info(file: str) -> None:
 
     print(f'--- {file} --- ')
     # FIXME len(tif.pages) trigger a warning 'TiffPages: invalid page offset'
-    print(f'shape = {len(tif.pages)} * {page.shape}'
-        +f' chunk = {page.chunks}, chunked = {page.chunked}')
+    print(f'shape = {len(tif.pages)} * {page.shape}, chunk = {page.chunks}, chunked = {page.chunked}')
 
     tif.close()
     

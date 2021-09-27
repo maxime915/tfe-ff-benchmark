@@ -63,6 +63,6 @@ if __name__ == "__main__":
             number=args.number, globals={'c': benchmark_zarr_companion(
                 file=file,
             )})
-        
+        print_info(file)
         print(f'{min(results):8.5f}s - {file}')
         
