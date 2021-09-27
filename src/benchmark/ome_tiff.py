@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--number', type=int, default=1_000, help='see timeit')
     parser.add_argument('--repeat', type=int, default=3, help='see timeit')
-    parser.add_argument('--tile', nargs='*', default='32', help='tile size')
+    parser.add_argument('--tile', nargs='*', default=['32'], help='tile size')
     
     args, files = parser.parse_known_args()
 
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     if len(files) <= 0:
         sys.exit("not enough file to benchmark")
 
-    print(f"benchmark.hdf5_companion: best of {args.repeat} ({args.number} iteration)")
+    print(f"benchmark.hdf5_companion: best of {args.repeat} ({args.number} iteration) - tile = {args.tile}")
     
     options = []
     if args.gc:
