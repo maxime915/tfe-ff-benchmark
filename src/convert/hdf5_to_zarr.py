@@ -1,4 +1,4 @@
-"hdf5_to_zarr: utility to convert HDF5 ND arrays to Zarr ND arrays following a similar structure"
+"hdf5_to_zarr: copy a HDF5 group to a Zarr group using the same structure"
 
 import os
 from typing import Union
@@ -27,11 +27,12 @@ class CopyVisitor:
         self.zarr_file.create_dataset(name, data=value, **self.kwargs)
 
 
-def hdf5_to_zarr(hdf5_path: str, **kwargs) -> zarr.Group:
+def hdf5_to_zarr(hdf5_path: str, **kwargs) -> str:
     """hdf5_to_zarr converts an HDF5 ND-array to a zarr one.
     kwargs will be passed to zarr.Group.create_dataset, it can
     therefore set compression, chunks, store, etc."""
 
+    # auto-tiling by default
     if 'chunks' not in kwargs:
         kwargs['chunks'] = True
 
@@ -40,4 +41,14 @@ def hdf5_to_zarr(hdf5_path: str, **kwargs) -> zarr.Group:
         zarr_file = zarr.open(filename, mode='w')
         visitor = CopyVisitor(zarr_file=zarr_file, **kwargs).visit
         file.visititems(visitor)
-        return zarr_file
+        return filename
+
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) == 1:
+        sys.exit('at least one argument required')
+
+    for __file in sys.argv[1:]:
+        __zarr_file = hdf5_to_zarr(__file)
+        print(f'{__file} converted to {__zarr_file}')
