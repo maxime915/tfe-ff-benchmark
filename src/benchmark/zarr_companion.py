@@ -50,7 +50,7 @@ if __name__ == "__main__":
     if len(files) <= 0:
         sys.exit("not enough file to benchmark")
 
-    print(f"benchmark.hdf5_companion: best of {args.repeat} ({args.number} iteration)")
+    print(f"benchmark.benchmark_zarr_companion: best of {args.repeat} ({args.number} iteration)")
     
     options = []
     if args.gc:
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         print(f'{min(results):8.5f}s - {file}')
         
 """python -m src.benchmark.zarr_companion files/z-series/profile.zarr files/test-channel-image/profile.zarr 
-benchmark.hdf5_companion: best of 3 (1000 iteration)
+benchmark.benchmark_zarr_companion: best of 3 (1000 iteration)
 Name               : /0
 Type               : zarr.core.Array
 Data type          : uint8

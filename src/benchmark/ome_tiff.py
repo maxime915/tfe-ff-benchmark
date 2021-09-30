@@ -78,7 +78,7 @@ if __name__ == "__main__":
     if len(files) <= 0:
         sys.exit("not enough file to benchmark")
 
-    print(f"benchmark.hdf5_companion: best of {args.repeat} ({args.number} iteration) - tile = {args.tile}")
+    print(f"benchmark.benchmark_ome_tiff: best of {args.repeat} ({args.number} iteration) - tile = {args.tile}")
     
     options = []
     if args.gc:
@@ -96,7 +96,7 @@ if __name__ == "__main__":
         print(f'{min(results):8.5f}s')
 
 """python -m src.benchmark.ome_tiff files/z-series/z-series.ome.tif files/test-channel-image/test_channel_image.ome.tiff --gc
-benchmark.hdf5_companion: best of 3 (1000 iteration) - tile = [32, 32]
+benchmark.benchmark_ome_tiff: best of 3 (1000 iteration) - tile = [32, 32]
 option(s): garbage collection enabled
 --- files/z-series/z-series.ome.tif --- 
 shape = 5 * (167, 439), chunk = (1, 439), chunked = (167, 1)

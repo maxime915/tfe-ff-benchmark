@@ -65,7 +65,7 @@ if __name__ == "__main__":
     if len(files) <= 0:
         sys.exit("not enough file to benchmark")
 
-    print(f"benchmark.hdf5_companion: best of {args.repeat} ({args.number} iteration), tile = {args.tile}")
+    print(f"benchmark.benchmark_tile_zarr: best of {args.repeat} ({args.number} iteration), tile = {args.tile}")
     
     options = []
     if args.gc:
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         print(f'{min(results):8.5f}s')
 
 """python -m src.benchmark.tile_zarr files/test-channel-image/test_channel_image.zarr files/z-series/z-series.zarr
-benchmark.hdf5_companion: best of 3 (1000 iteration), tile = [32, 32]
+benchmark.benchmark_tile_zarr: best of 3 (1000 iteration), tile = [32, 32]
 Name               : /0
 Type               : zarr.core.Array
 Data type          : uint16
