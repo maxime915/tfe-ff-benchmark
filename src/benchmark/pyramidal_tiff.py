@@ -4,38 +4,39 @@ import argparse
 import os
 import random
 import sys
-import timeit
 import typing
 
 import tifffile
 
-def print_info(file: str) -> None:
-    'print info for the first page of the tif file'
-
-    tif = tifffile.TiffFile(file)
-    page = tif.pages[0]
+from .benchmark_abc import BenchmarkABC, Verbosity
 
 
-    print(f'--- {file} --- ')
-    # FIXME len(tif.pages) trigger a warning 'TiffPages: invalid page offset'
-    print(f'shape = {len(tif.pages)} * {page.shape}, chunk = {page.chunks}, chunked = {page.chunked}')
+_VALID_SUFFIX_S = ('_C0_Z0_T0.tif', '_C0_Z0_T0_pyr.tif')
 
-    tif.close()
-    
 
-def benchmark_pyramidal_tiff(base_name: str, ext: str, tile: typing.Tuple[int]) -> typing.Callable[[], None]:
-    '''returns a callable that open an HDF5 file to read a random tile and close
-    the file
-    
-    file = base_name + str(z) + ext with increasing z values'''
+class PyramidalTiffBenchmark(BenchmarkABC, re_str=r'.*_pyr\.tif(f)?'):
 
-    # this would be in a database access with the filename, not accounted for
-    max_z = len(os.listdir(os.path.dirname(base_name))) // 2
-    
-    def bench():
-        'open an HDF5 file to read a random tile then close the file'
+    def __init__(self, file: str, tile: typing.Tuple[int, int], *args, **kwargs) -> None:
+        super().__init__(file, *args, **kwargs)
 
-        file = base_name + str(random.randrange(max_z)) + ext
+        base_name = None
+        for suffix in _VALID_SUFFIX_S:
+            if file[-len(suffix):] == suffix:
+                base_name = file[:-len(suffix)] + '_C0_Z'
+                break
+
+        if base_name is None:
+            raise ValueError(
+                f'INVALID file: {file} should end in any({_VALID_SUFFIX_S})')
+
+        self.file = file
+        self.base_name = base_name
+        self.ext = suffix[6:]
+        self.max_z = len(os.listdir(os.path.dirname(base_name))) // 2
+        self.tile = tile
+
+    def task(self) -> None:
+        file = self.base_name + str(random.randrange(self.max_z)) + self.ext
 
         # Z pages of YX planes
         tif = tifffile.TiffFile(file)
@@ -43,31 +44,45 @@ def benchmark_pyramidal_tiff(base_name: str, ext: str, tile: typing.Tuple[int]) 
         # get a random Z plane
         plane = tif.pages[0]
 
-        y = random.randrange(plane.shape[0] - tile[0])
-        x = random.randrange(plane.shape[1] - tile[1])
+        y = random.randrange(plane.shape[0] - self.tile[0])
+        x = random.randrange(plane.shape[1] - self.tile[1])
 
-        data = plane.asarray()[y:y+tile[0], x:x+tile[1]] # load it
-        data.sum() # do something with it
+        data = plane.asarray()[y:y+self.tile[0], x:x+self.tile[1]]  # load it
+        data.sum()  # do something with it
 
         tif.close()
 
+    def info(self, verbosity: Verbosity) -> str:
 
-    return bench
+        tif = tifffile.TiffFile(self.file)
+        page = tif.pages[0]
+
+        info = f'Pyramidal Tiff: {self.file}, tile: {self.tile}'
+
+        if verbosity == verbosity.VERBOSE:
+            # FIXME ?
+            # len(tif.pages) trigger Warning 'TiffPages: invalid page offset' non _pyr files
+            info += (f'\n\tshape = {len(tif.pages)} * {page.shape}, '
+                     f'chunks = {page.chunks}, chunked = {page.chunked}')
+
+        tif.close()
+        return info
+
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--no-gc', dest='gc', action='store_false', help=
-        "disable the garbage collector during measurements (default)")
-    parser.add_argument('--gc', dest='gc', action='store_true', help=
-        "enable the garbage collector during measurements")
+    parser.add_argument('--no-gc', dest='gc', action='store_false',
+                        help="disable the garbage collector during measurements (default)")
+    parser.add_argument('--gc', dest='gc', action='store_true',
+                        help="enable the garbage collector during measurements")
     parser.set_defaults(gc=False)
 
     parser.add_argument('--number', type=int, default=1_000, help='see timeit')
     parser.add_argument('--repeat', type=int, default=3, help='see timeit')
     parser.add_argument('--tile', nargs='*', default=['32'], help='tile size')
-    
+
     args, files = parser.parse_known_args()
 
     if len(args.tile) not in [1, 2]:
@@ -82,60 +97,33 @@ if __name__ == "__main__":
     if len(args.tile) == 1:
         args.tile.append(args.tile[0])
 
-    setup = 'import gc\ngc.enable()' if args.gc else 'pass'
-
     if len(files) <= 0:
         sys.exit("not enough file to benchmark")
 
-    print(f"benchmark.benchmark_pyramidal_tiff: best of {args.repeat} ({args.number} iteration) tile = {args.tile}")
-    
-    options = []
-    if args.gc:
-        options.append('garbage collection enabled')
-    if options:
-        print('option(s): ' + ', '.join(options))
-        
     for file in files:
-        # file is expected to end in C0_Z0_T0.tif or C0_Z0_T0_pyr.tif
-        suffix_list = ['_C0_Z0_T0.tif', '_C0_Z0_T0_pyr.tif']
+        PyramidalTiffBenchmark(file, args.tile).bench(
+            Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
 
-        base_name = None
-        for suffix in suffix_list:
-            if file[-len(suffix):] == suffix:
-                base_name = file[:-len(suffix)] + '_C0_Z'
-                break
-        
-        if base_name is None:
-            print(f'INVALID file: {file} should end in any({suffix_list})')
-            continue
-
-        results = timeit.repeat(stmt='c()', setup=setup, repeat=args.repeat,
-            number=args.number, globals={'c': benchmark_pyramidal_tiff(
-                base_name=base_name,
-                ext=suffix[6:],
-                tile=args.tile,
-            )})
-        print_info(file)
-        print(f'{min(results):8.5f}s')
-
-"""st_channel_image_C0_Z0_T0.tif               
-benchmark.benchmark_pyramidal_tiff: best of 3 (1000 iteration) tile = [32, 32]
---- files/z-series/conversion/z-series_C0_Z0_T0.tif --- 
-TiffPages: invalid page offset 9239
-shape = 1 * (167, 439), chunk = (167, 256), chunked = (1, 2)
- 0.39828s
---- files/test-channel-image/conversion/test_channel_image_C0_Z0_T0.tif --- 
-TiffPages: invalid page offset 609098
-shape = 1 * (512, 512), chunk = (256, 256), chunked = (2, 2)
- 3.29588s
 """
+PyramidalTiffBenchmark (duration averaged on 1000 iterations, repeated 3 times.)
+results: [4.224e-04, 4.057e-04, 4.099e-04]: 4.057e-04 s to 4.224e-04 s, 4.127e-04 s ± 8.702e-06 s
+TiffPages: invalid page offset 9239
+Pyramidal Tiff: files/z-series/conversion/z-series_C0_Z0_T0.tif, tile: [32, 32]
+        shape = 1 * (167, 439), chunks = (167, 256), chunked = (1, 2)
 
-"""python -m src.benchmark.pyramidal_tiff files/z-series/conversion/z-series_C0_Z0_T0_pyr.tif files/test-channel-image/conversion/test_channel_image_C0_Z0_T0_pyr.tif
-benchmark.benchmark_pyramidal_tiff: best of 3 (1000 iteration) tile = [32, 32]
---- files/z-series/conversion/z-series_C0_Z0_T0_pyr.tif --- 
-shape = 2 * (167, 439), chunk = (256, 256), chunked = (1, 2)
- 0.49474s
---- files/test-channel-image/conversion/test_channel_image_C0_Z0_T0_pyr.tif --- 
-shape = 2 * (512, 512), chunk = (256, 256), chunked = (2, 2)
- 3.22712s
+PyramidalTiffBenchmark (duration averaged on 1000 iterations, repeated 3 times.)
+results: [4.643e-03, 3.509e-03, 3.118e-03]: 3.118e-03 s to 4.643e-03 s, 3.757e-03 s ± 7.924e-04 s
+TiffPages: invalid page offset 609098
+Pyramidal Tiff: files/test-channel-image/conversion/test_channel_image_C0_Z0_T0.tif, tile: [32, 32]
+        shape = 1 * (512, 512), chunks = (256, 256), chunked = (2, 2)
+
+PyramidalTiffBenchmark (duration averaged on 1000 iterations, repeated 3 times.)
+results: [5.133e-04, 4.968e-04, 4.952e-04]: 4.952e-04 s to 5.133e-04 s, 5.018e-04 s ± 1.003e-05 s
+Pyramidal Tiff: files/z-series/conversion/z-series_C0_Z0_T0_pyr.tif, tile: [32, 32]
+        shape = 2 * (167, 439), chunks = (256, 256), chunked = (1, 2)
+
+PyramidalTiffBenchmark (duration averaged on 1000 iterations, repeated 3 times.)
+results: [3.276e-03, 3.431e-03, 3.416e-03]: 3.276e-03 s to 3.431e-03 s, 3.374e-03 s ± 8.559e-05 s
+Pyramidal Tiff: files/test-channel-image/conversion/test_channel_image_C0_Z0_T0_pyr.tif, tile: [32, 32]
+        shape = 2 * (512, 512), chunks = (256, 256), chunked = (2, 2)
 """

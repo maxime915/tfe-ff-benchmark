@@ -3,66 +3,68 @@
 import argparse
 import random
 import sys
-import timeit
 import typing
 
 import tifffile
 
-
-def print_info(file: str) -> None:
-    'print info for the first page of the tif file'
-    
-    tif = tifffile.TiffFile(file)
-    page = tif.pages[0]
-
-    print(f'--- {file} --- ')
-    print(f'shape = {len(tif.pages)} * {page.shape}, chunk = {page.chunks}, chunked = {page.chunked}')
-
-    tif.close()
+from .benchmark_abc import BenchmarkABC, Verbosity
 
 
-def benchmark_ome_tiff(file: str, tile: typing.Tuple[int]) -> typing.Callable[[], None]:
-    '''returns a callable that open an OME-TIFF file to read a random tile and close
-    the file'''
+class OMETiffBenchmark(BenchmarkABC, re_str=r'.*\.ome\.tif(f)?'):
 
-    def bench():
-        'open an OME-TIFF file to read a random tile then close the file'
+    def __init__(self, file: str, tile: typing.Tuple[int, int], **kwargs) -> None:
+        super().__init__(file)
 
+        self.file = file
+        self.tile = tile
+
+    def task(self) -> None:
         # Z pages of YX planes
-        tif = tifffile.TiffFile(file)
+        tif = tifffile.TiffFile(self.file)
 
         # get a random Z plane
         plane = random.choice(tif.pages)
 
-        y = random.randint(0, plane.shape[0] - tile[0] - 1)
-        x = random.randint(0, plane.shape[1] - tile[1] - 1)
+        y = random.randrange(plane.shape[0] - self.tile[0])
+        x = random.randrange(plane.shape[1] - self.tile[1])
 
-        band = plane.asarray()[y:y+tile[0], x:x+tile[1]] # load it
-        band.sum() # do something with it
+        band = plane.asarray()[y:y+self.tile[0], x:x+self.tile[1]]  # load it
+        band.sum()  # do something with it
 
         tif.close()
 
+    def info(self, verbosity: Verbosity) -> str:
+        tif = tifffile.TiffFile(self.file)
+        page = tif.pages[0]
 
-    return bench
+        info = f'OME-Tiff: {self.file}, tile: {self.tile}'
+
+        if verbosity == verbosity.VERBOSE:
+            info += (f'\n\tshape = {len(tif.pages)} * {page.shape}, '
+                     f'chunks = {page.chunks}, chunked = {page.chunked}')
+
+        tif.close()
+        return info
+
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--no-gc', dest='gc', action='store_false', help=
-        "disable the garbage collector during measurements (default)")
-    parser.add_argument('--gc', dest='gc', action='store_true', help=
-        "enable the garbage collector during measurements")
+    parser.add_argument('--no-gc', dest='gc', action='store_false',
+                        help="disable the garbage collector during measurements (default)")
+    parser.add_argument('--gc', dest='gc', action='store_true',
+                        help="enable the garbage collector during measurements")
     parser.set_defaults(gc=False)
 
     parser.add_argument('--number', type=int, default=1_000, help='see timeit')
     parser.add_argument('--repeat', type=int, default=3, help='see timeit')
-    parser.add_argument('--tile', nargs='*', default=['32'], help='tile size')
-    
+    parser.add_argument('--tile', nargs='+', default=['32'], help='tile size')
+
     args, files = parser.parse_known_args()
 
     if len(args.tile) not in [1, 2]:
-        sys.exit(f'expected 0, 1 or 2 value for tile, found {len(args.tile)}')
+        sys.exit(f'expected 1 or 2 value for tile, found {len(args.tile)}')
     for i, tile in enumerate(args.tile):
         try:
             args.tile[i] = int(tile)
@@ -73,35 +75,20 @@ if __name__ == "__main__":
     if len(args.tile) == 1:
         args.tile.append(args.tile[0])
 
-    setup = 'import gc\ngc.enable()' if args.gc else 'pass'
-
     if len(files) <= 0:
         sys.exit("not enough file to benchmark")
 
-    print(f"benchmark.benchmark_ome_tiff: best of {args.repeat} ({args.number} iteration) - tile = {args.tile}")
-    
-    options = []
-    if args.gc:
-        options.append('garbage collection enabled')
-    if options:
-        print('option(s): ' + ', '.join(options))
-        
     for file in files:
-        results = timeit.repeat(stmt='c()', setup=setup, repeat=args.repeat,
-            number=args.number, globals={'c': benchmark_ome_tiff(
-                file=file,
-                tile=args.tile
-            )})
-        print_info(file)
-        print(f'{min(results):8.5f}s')
+        OMETiffBenchmark(file, tile=args.tile).bench(
+            Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
 
-"""python -m src.benchmark.ome_tiff files/z-series/z-series.ome.tif files/test-channel-image/test_channel_image.ome.tiff --gc
-benchmark.benchmark_ome_tiff: best of 3 (1000 iteration) - tile = [32, 32]
-option(s): garbage collection enabled
---- files/z-series/z-series.ome.tif --- 
-shape = 5 * (167, 439), chunk = (1, 439), chunked = (167, 1)
- 0.37172s
---- files/test-channel-image/test_channel_image.ome.tiff --- 
-shape = 31 * (512, 512), chunk = (1, 512), chunked = (512, 1)
- 0.75231s
+"""
+OMETiffBenchmark (duration averaged on 1000 iterations, repeated 3 times.)
+results: [3.954e-04, 3.760e-04, 3.802e-04]: 3.760e-04 s to 3.954e-04 s, 3.839e-04 s ± 1.018e-05 s
+OME-Tiff: files/z-series/z-series.ome.tif, tile: [128, 128]
+        shape = 5 * (167, 439), chunk = (1, 439), chunked = (167, 1)
+OMETiffBenchmark (duration averaged on 1000 iterations, repeated 3 times.)
+results: [7.706e-04, 7.631e-04, 7.707e-04]: 7.631e-04 s to 7.707e-04 s, 7.681e-04 s ± 4.388e-06 s
+OME-Tiff: files/test-channel-image/test_channel_image.ome.tiff, tile: [128, 128]
+        shape = 31 * (512, 512), chunk = (1, 512), chunked = (512, 1)
 """
