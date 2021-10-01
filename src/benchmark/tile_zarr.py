@@ -1,13 +1,13 @@
 "tile zarr: read an OME-Tiff file converted to Zarr"
 
-import argparse
 import random
-import sys
 import typing
 
 import zarr
 
 from .benchmark_abc import BenchmarkABC, Verbosity
+from .utils import parse_args_with_tile
+
 
 class TileZarrBenchmark(BenchmarkABC, re_str=r'.*\.zarr'):
     "2D Tile access to a Zarr image"
@@ -15,9 +15,9 @@ class TileZarrBenchmark(BenchmarkABC, re_str=r'.*\.zarr'):
     def __init__(self, path: str, tile: typing.Tuple[int, ...], *args, **kwargs) -> None:
         super().__init__(path, *args, **kwargs)
 
-        self.file = file
+        self.file = path
         self.tile = tile
-    
+
     def task(self) -> None:
         data = zarr.open(self.file, mode='r')[0]
 
@@ -25,9 +25,9 @@ class TileZarrBenchmark(BenchmarkABC, re_str=r'.*\.zarr'):
         y = random.randrange(data.shape[1] - self.tile[0])
         x = random.randrange(data.shape[2] - self.tile[1])
 
-        band = data[z, y:y+self.tile[0], x:x+self.tile[1]] # load it
-        band.sum() # do something with it
-    
+        band = data[z, y:y+self.tile[0], x:x+self.tile[1]]  # load it
+        band.sum()  # do something with it
+
     def info(self, verbosity: Verbosity) -> str:
         data = zarr.open(self.file, mode='r')['0']
 
@@ -36,7 +36,7 @@ class TileZarrBenchmark(BenchmarkABC, re_str=r'.*\.zarr'):
         if verbosity == Verbosity.VERBOSE:
             zarr_info = str(data.info)[:-1].split('\n')
             zarr_info = [item.split(':') for item in zarr_info]
-            zarr_info = {l.strip() : r.strip() for (l, r) in zarr_info}
+            zarr_info = {l.strip(): r.strip() for (l, r) in zarr_info}
 
             info += (f'\n\tshape = {data.shape}, chunks = {data.chunks}, '
                      f'compressor = {data.compressor}, filters = {data.filters}')
@@ -46,51 +46,26 @@ class TileZarrBenchmark(BenchmarkABC, re_str=r'.*\.zarr'):
         return info
 
 
-if __name__ == "__main__":
+def _main():
+    args = parse_args_with_tile(ndim=2)
 
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--no-gc', dest='gc', action='store_false', help=
-        "disable the garbage collector during measurements (default)")
-    parser.add_argument('--gc', dest='gc', action='store_true', help=
-        "enable the garbage collector during measurements")
-    parser.set_defaults(gc=False)
-
-    parser.add_argument('--number', type=int, default=1_000, help='see timeit')
-    parser.add_argument('--repeat', type=int, default=3, help='see timeit')
-    parser.add_argument('--tile', nargs='+', default=['32'], help='tile size')
-    
-    args, files = parser.parse_known_args()
-
-    if len(args.tile) not in [1, 2]:
-        sys.exit(f'expected 1 or 2 value for tile, found {len(args.tile)}')
-    for i, tile in enumerate(args.tile):
-        try:
-            args.tile[i] = int(tile)
-            if args.tile[i] <= 0:
-                raise ValueError()
-        except ValueError:
-            sys.exit(f'invalid value {tile} for a tile')
-    if len(args.tile) == 1:
-        args.tile.append(args.tile[0])
-
-    if len(files) <= 0:
-        sys.exit("not enough file to benchmark")
-        
-    for file in files:
+    for file in args.files:
         TileZarrBenchmark(file, tile=args.tile).bench(
             Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
 
 
+if __name__ == "__main__":
+    _main()
+
 """
 TileZarrBenchmark (duration averaged on 1000 iterations, repeated 3 times.)
-results: [3.018e-04, 2.939e-04, 2.928e-04]: 2.928e-04 s to 3.018e-04 s, 2.962e-04 s ± 4.907e-06 s
+results: [3.200e-04, 3.162e-04, 3.264e-04]: 3.162e-04 s to 3.264e-04 s, 3.209e-04 s ± 5.169e-06 s
 Zarr file: files/test-channel-image/test_channel_image.zarr, tile: [32, 32]
         shape = (31, 512, 512), chunks = (8, 128, 256), compressor = None, filters = None
         order = C, size (mem) = 16252928 (15.5M), size (disk) 16777462 (16.0M)
 
 TileZarrBenchmark (duration averaged on 1000 iterations, repeated 3 times.)
-results: [2.417e-04, 2.395e-04, 2.376e-04]: 2.376e-04 s to 2.417e-04 s, 2.396e-04 s ± 2.063e-06 s
+results: [2.603e-04, 2.463e-04, 2.502e-04]: 2.463e-04 s to 2.603e-04 s, 2.523e-04 s ± 7.192e-06 s
 Zarr file: files/z-series/z-series.zarr, tile: [32, 32]
         shape = (5, 167, 439), chunks = (3, 167, 439), compressor = None, filters = None
         order = C, size (mem) = 366565 (358.0K), size (disk) 440123 (429.8K)

@@ -94,6 +94,6 @@ class BenchmarkABC(abc.ABC):
         info = self.info(verbosity)
         if info:
             print(info)
-        
+
         # final newline for clarity
         print('')

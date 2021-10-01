@@ -1,15 +1,15 @@
 "hdf5 companion: benchmark HDF5 companion file for band access"
 
-import argparse
 import random
-import sys
 
 import h5py
 
+from .utils import parse_args
 from .benchmark_abc import BenchmarkABC, Verbosity
 
 
 class HDF5CompanionBenchmark(BenchmarkABC, re_str=r'.*profile\.hdf5'):
+    "Benchmark for a profile HDF5 file: load spectral band"
 
     def __init__(self, file: str, *args, **kwargs) -> None:
         super().__init__(file, *args, **kwargs)
@@ -45,27 +45,16 @@ class HDF5CompanionBenchmark(BenchmarkABC, re_str=r'.*profile\.hdf5'):
         return info
 
 
-if __name__ == "__main__":
+def _main():
+    args = parse_args()
 
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--no-gc', dest='gc', action='store_false',
-                        help="disable the garbage collector during measurements (default)")
-    parser.add_argument('--gc', dest='gc', action='store_true',
-                        help="enable the garbage collector during measurements")
-    parser.set_defaults(gc=False)
-
-    parser.add_argument('--number', type=int, default=1_000, help='see timeit')
-    parser.add_argument('--repeat', type=int, default=3, help='see timeit')
-
-    args, files = parser.parse_known_args()
-
-    if len(files) <= 0:
-        sys.exit("not enough file to benchmark")
-
-    for file in files:
+    for file in args.files:
         HDF5CompanionBenchmark(file).bench(
             Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
+
+
+if __name__ == "__main__":
+    _main()
 
 """
 HDF5CompanionBenchmark (duration averaged on 10000 iterations, repeated 3 times.)

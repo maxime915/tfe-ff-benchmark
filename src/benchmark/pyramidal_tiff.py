@@ -1,20 +1,19 @@
 "pyramidal tiff: benchmark the internal pyramidal tiff representation"
 
-import argparse
 import os
 import random
-import sys
 import typing
 
 import tifffile
 
 from .benchmark_abc import BenchmarkABC, Verbosity
-
+from .utils import parse_args_with_tile
 
 _VALID_SUFFIX_S = ('_C0_Z0_T0.tif', '_C0_Z0_T0_pyr.tif')
 
 
 class PyramidalTiffBenchmark(BenchmarkABC, re_str=r'.*_pyr\.tif(f)?'):
+    '2D Benchmark opening random tile in the image'
 
     def __init__(self, file: str, tile: typing.Tuple[int, int], *args, **kwargs) -> None:
         super().__init__(file, *args, **kwargs)
@@ -69,40 +68,16 @@ class PyramidalTiffBenchmark(BenchmarkABC, re_str=r'.*_pyr\.tif(f)?'):
         return info
 
 
-if __name__ == "__main__":
+def _main():
+    args = parse_args_with_tile(ndim=2)
 
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--no-gc', dest='gc', action='store_false',
-                        help="disable the garbage collector during measurements (default)")
-    parser.add_argument('--gc', dest='gc', action='store_true',
-                        help="enable the garbage collector during measurements")
-    parser.set_defaults(gc=False)
-
-    parser.add_argument('--number', type=int, default=1_000, help='see timeit')
-    parser.add_argument('--repeat', type=int, default=3, help='see timeit')
-    parser.add_argument('--tile', nargs='*', default=['32'], help='tile size')
-
-    args, files = parser.parse_known_args()
-
-    if len(args.tile) not in [1, 2]:
-        sys.exit(f'expected 0, 1 or 2 value for tile, found {len(args.tile)}')
-    for i, tile in enumerate(args.tile):
-        try:
-            args.tile[i] = int(tile)
-            if args.tile[i] <= 0:
-                raise ValueError()
-        except ValueError:
-            sys.exit(f'invalid value {tile} for a tile')
-    if len(args.tile) == 1:
-        args.tile.append(args.tile[0])
-
-    if len(files) <= 0:
-        sys.exit("not enough file to benchmark")
-
-    for file in files:
+    for file in args.files:
         PyramidalTiffBenchmark(file, args.tile).bench(
             Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
+
+
+if __name__ == "__main__":
+    _main()
 
 """
 PyramidalTiffBenchmark (duration averaged on 1000 iterations, repeated 3 times.)

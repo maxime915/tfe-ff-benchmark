@@ -1,11 +1,10 @@
 "hdf5 companion: benchmark Zarr companion file for band access"
 
-import argparse
 import random
-import sys
 
 import zarr
 
+from .utils import parse_args
 from .benchmark_abc import BenchmarkABC, Verbosity
 
 
@@ -16,7 +15,7 @@ class ZarrCompanionBenchmark(BenchmarkABC, re_str=r'.*profile\.zarr'):
         super().__init__(path, *args, **kwargs)
 
         self.file = path
-    
+
     def task(self) -> None:
         z = zarr.open(self.file, mode='r')
 
@@ -26,8 +25,8 @@ class ZarrCompanionBenchmark(BenchmarkABC, re_str=r'.*profile\.zarr'):
         y = random.randrange(profile.shape[0])
         x = random.randrange(profile.shape[1])
 
-        band = profile[y, x, :] # load it
-        sum(band) # do something with it
+        band = profile[y, x, :]  # load it
+        sum(band)  # do something with it
 
     def info(self, verbosity: Verbosity) -> str:
         data = zarr.open(self.file, mode='r')['0']
@@ -37,7 +36,7 @@ class ZarrCompanionBenchmark(BenchmarkABC, re_str=r'.*profile\.zarr'):
         if verbosity == Verbosity.VERBOSE:
             zarr_info = str(data.info)[:-1].split('\n')
             zarr_info = [item.split(':') for item in zarr_info]
-            zarr_info = {l.strip() : r.strip() for (l, r) in zarr_info}
+            zarr_info = {l.strip(): r.strip() for (l, r) in zarr_info}
 
             info += (f'\n\tshape = {data.shape}, chunks = {data.chunks}, '
                      f'compressor = {data.compressor}, filters = {data.filters}')
@@ -46,28 +45,19 @@ class ZarrCompanionBenchmark(BenchmarkABC, re_str=r'.*profile\.zarr'):
 
         return info
 
-if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
+def _main():
 
-    parser.add_argument('--no-gc', dest='gc', action='store_false', help=
-        "disable the garbage collector during measurements (default)")
-    parser.add_argument('--gc', dest='gc', action='store_true', help=
-        "enable the garbage collector during measurements")
-    parser.set_defaults(gc=False)
+    args = parse_args()
 
-    parser.add_argument('--number', type=int, default=1_000, help='see timeit')
-    parser.add_argument('--repeat', type=int, default=3, help='see timeit')
-    
-    args, files = parser.parse_known_args()
-
-    if len(files) <= 0:
-        sys.exit("not enough file to benchmark")
-        
-    for file in files:
+    for file in args.files:
         ZarrCompanionBenchmark(file).bench(
             Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
-        
+
+
+if __name__ == "__main__":
+    _main()
+
 """
 ZarrCompanionBenchmark (duration averaged on 1000 iterations, repeated 3 times.)
 results: [2.404e-04, 2.301e-04, 2.302e-04]: 2.301e-04 s to 2.404e-04 s, 2.336e-04 s ± 5.912e-06 s
