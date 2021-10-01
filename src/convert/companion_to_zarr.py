@@ -1,7 +1,6 @@
 'companion to zarr : convert an HDF5 companion to Zarr'
 
 import argparse
-import sys
 
 import h5py
 import zarr
@@ -9,9 +8,9 @@ import zarr
 
 def convert(h_file: str, z_file: str, **kwargs) -> None:
     h5 = h5py.File(h_file, mode='r')
-    z: zarr.Group = zarr.open(z_file, mode='w')
+    z = zarr.open_group(z_file, mode='w')
 
-    z.create_dataset('0', data=h5['data'], **kwargs)
+    zarr.copy(h5['data'], z, name='0', **kwargs)
 
 
 if __name__ == "__main__":
