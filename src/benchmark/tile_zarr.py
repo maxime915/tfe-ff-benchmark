@@ -12,10 +12,8 @@ from .utils import parse_args_with_tile
 class TileZarrBenchmark(BenchmarkABC, re_str=r'.*\.zarr'):
     "2D Tile access to a Zarr image"
 
-    def __init__(self, path: str, tile: typing.Tuple[int, ...], *args, **kwargs) -> None:
-        super().__init__(path, *args, **kwargs)
-
-        self.file = path
+    def __init__(self, file: str, tile: typing.Tuple[int, ...]) -> None:
+        self.file = file
         self.tile = tile
 
     def task(self) -> None:

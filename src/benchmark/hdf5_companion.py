@@ -11,9 +11,7 @@ from .benchmark_abc import BenchmarkABC, Verbosity
 class HDF5CompanionBenchmark(BenchmarkABC, re_str=r'.*profile\.hdf5'):
     "Benchmark for a profile HDF5 file: load spectral band"
 
-    def __init__(self, file: str, *args, **kwargs) -> None:
-        super().__init__(file, *args, **kwargs)
-
+    def __init__(self, file: str) -> None:
         self.file = file
 
     def task(self) -> None:

@@ -15,9 +15,7 @@ _VALID_SUFFIX_S = ('_C0_Z0_T0.tif', '_C0_Z0_T0_pyr.tif')
 class PyramidalTiffBenchmark(BenchmarkABC, re_str=r'.*_pyr\.tif(f)?'):
     '2D Benchmark opening random tile in the image'
 
-    def __init__(self, file: str, tile: typing.Tuple[int, int], *args, **kwargs) -> None:
-        super().__init__(file, *args, **kwargs)
-
+    def __init__(self, file: str, tile: typing.Tuple[int, int]) -> None:
         base_name = None
         for suffix in _VALID_SUFFIX_S:
             if file[-len(suffix):] == suffix:

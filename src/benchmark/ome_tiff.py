@@ -12,9 +12,7 @@ from .benchmark_abc import BenchmarkABC, Verbosity
 class OMETiffBenchmark(BenchmarkABC, re_str=r'.*\.ome\.tif(f)?'):
     "2D tile benchmark on OME-Tiff file"
 
-    def __init__(self, file: str, tile: typing.Tuple[int, int], **kwargs) -> None:
-        super().__init__(file)
-
+    def __init__(self, file: str, tile: typing.Tuple[int, int]) -> None:
         self.file = file
         self.tile = tile
 

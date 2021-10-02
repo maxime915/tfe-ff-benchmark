@@ -52,10 +52,6 @@ class BenchmarkABC(abc.ABC):
         return collections.OrderedDict(sorted(cls._mapper.items(), key=key_len, reverse=True))
 
     @abc.abstractmethod
-    def __init__(self, path: str, *args, **kwargs) -> None:
-        super().__init__()
-
-    @abc.abstractmethod
     def info(self, verbosity: Verbosity) -> str:
         "give information on the benchmark and the file data (chunk, size, ...)"
 
