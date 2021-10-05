@@ -67,6 +67,11 @@ class BenchmarkABC(abc.ABC):
         if enable_gc:
             setup = 'import gc\ngc.enable()'
 
+        if verbosity != Verbosity.QUIET:
+            print((f'{self.__class__.__name__} (duration averaged on {number} '
+                   f'iteration{"s" if number > 0 else ""}, repeated {repeat} '
+                   f'time{"s" if repeat > 0 else ""}.)'))
+
         timer = timeit.Timer(self.task, setup=setup)
 
         results = numpy.array(timer.repeat(repeat, number))
@@ -76,16 +81,14 @@ class BenchmarkABC(abc.ABC):
             print(results.min())
             return
 
-        print((f'{self.__class__.__name__} (duration averaged on {number} '
-               f'iteration{"s" if number > 0 else ""}, repeated {repeat} '
-               f'time{"s" if repeat > 0 else ""}.)'))
-
         if verbosity == Verbosity.DEFAULT:
             print(f'{results.min():5.3e} s')
         elif verbosity == Verbosity.VERBOSE:
-            res = "[" + ", ".join([f'{v:5.3e}' for v in results]) + "]"
-            print((f'results: {res}: {results.min():5.3e} s to {results.max():5.3e} s, '
-                   f'{results.mean():5.3e} s ± {results.std(ddof=1):5.3e} s'))
+            # whole data
+            print(f'\t[{", ".join([f"{v:5.3e}" for v in results])}]')
+            print(f'\t{results.min() = :5.3e} s | {results.max() = :5.3e} s')
+            print(
+                f'\tmean = {results.mean():5.3e} s ± std = {results.std(ddof=1):5.3e} s')
 
         info = self.info(verbosity)
         if info:
