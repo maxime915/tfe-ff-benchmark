@@ -29,10 +29,8 @@ python-argparse-is-there-a-way-to-specify-a-range-in-nargs"""
     return _ArgRange
 
 
-def basic_parser() -> argparse.ArgumentParser:
-    "return an ArgumentParser suitable for gc, number, repeat and files"
-
-    parser = argparse.ArgumentParser()
+def add_basic_args(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
+    "add argument for benchmark to parser object"
 
     gc_group = parser.add_mutually_exclusive_group()
 
@@ -51,15 +49,25 @@ def basic_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def tiled_parser(ndim: int = 2, default: typing.Iterable[int] = (32,)) -> argparse.ArgumentParser:
-    "return a basic parser augmented with tile support"
-    parser = basic_parser()
+def basic_parser() -> argparse.ArgumentParser:
+    "return an ArgumentParser suitable for gc, number, repeat and files"
+    return add_basic_args(argparse.ArgumentParser())
 
+
+def add_tile_args(parser: argparse.ArgumentParser, ndim: int = 2, default: typing.Iterable[int] = (32,)) -> argparse.ArgumentParser:
+    "add arguments to support tile"
+
+    parser = add_basic_args(parser)
     parser.add_argument('--tile', nargs='+', default=list(default),
                         action=_arg_range(1, ndim), type=_gt0_int,
                         help=f'tile size, at least 1, max {ndim}')
 
     return parser
+
+def tiled_parser(ndim: int = 2, default: typing.Iterable[int] = (32,)) -> argparse.ArgumentParser:
+    "return a basic parser augmented with tile support"
+    
+    return add_tile_args(argparse.ArgumentParser(), ndim, default)
 
 
 def parse_args() -> argparse.Namespace:
