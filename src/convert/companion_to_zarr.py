@@ -2,18 +2,40 @@
 
 import argparse
 import sys
-import time
+import timeit
+import typing
 
 import h5py
+import numpy
 import zarr
 
 
-def convert(hdf5_path: str, zarr_path: str, **kwargs) -> None:
-    hdf5_file = h5py.File(hdf5_path, mode='r')
-    zarr_file = zarr.open_group(zarr_path, mode='w')
+def converter(hdf5_path: str, zarr_path: str, **kwargs) -> typing.Callable[[], None]:
+    "returns a function that does the convertion"
 
-    zarr.copy(hdf5_file['data'], zarr_file, name='0', **kwargs)
-    hdf5_file.close()
+    def converter_fun() -> None:
+        hdf5_file = h5py.File(hdf5_path, mode='r')
+        zarr_file = zarr.open_group(zarr_path, mode='w')
+
+        zarr.copy(hdf5_file['data'], zarr_file, name='0', **kwargs)
+        hdf5_file.close()
+
+        # (partial) OME-Zarr attributes
+        zarr_file.attrs['multiscales'] = {
+            'version': '0.3',
+            'name': zarr_path,
+            'datasets': [{'path': '0'}],
+            'axes': ['t', 'c', 'z', 'y', 'x'],
+            'type': 'conversion from HDF5 profile',
+            'metadata': {'original': hdf5_path},
+        }
+
+    return converter_fun
+
+
+def convert(hdf5_path: str, zarr_path: str, **kwargs) -> None:
+    "convert an HDF5 profile file to a zarr equivalent"
+    converter(hdf5_path, zarr_path, **kwargs)()
 
 
 if __name__ == "__main__":
@@ -25,12 +47,13 @@ if __name__ == "__main__":
 
     # chunk
     chunk_group = parser.add_mutually_exclusive_group()
-    chunk_group.add_argument('--auto-chunk', action='store_true',
+    chunk_group.add_argument('--auto-chunk', dest='auto-chunk', action='store_true',
                              help='automatic chunking for array storage (default option)')
     chunk_group.add_argument('--no-chunk', dest='auto-chunk', action='store_false',
                              help='disable chunking for array storage')
     chunk_group.add_argument('--chunks', type=int, nargs='+', default=[],
                              help='Chunk shape : list of positive integers (-1 means equal to array shape)')
+    parser.set_defaults(auto_chunk=True)
 
     # C / Fortran array order
     parser.add_argument('--order', default='C', choices=['C', 'F'],
@@ -70,7 +93,6 @@ if __name__ == "__main__":
                     raise ValueError(f'"{c}" is not a valid chunk size')
             except ValueError as e:
                 sys.exit(f"unable to parse chunk option: {args.chunk}")
-                
 
     # compressor : None, default or some evaluated object
     if args.compressor == 'none':
@@ -84,11 +106,15 @@ if __name__ == "__main__":
         except Exception as e:
             print(f'unable to evaluate compressor\n\n{e}')
 
-
-    start = time.perf_counter_ns()
-    convert(args.hdf5, args.zarr, chunks=chunks, compressor=args.compressor,
-                                     cache_metadata=args.cache_metadata, order=args.order)
-    end = time.perf_counter_ns()
-
     if args.benchmark:
-        print(f'time: {(end - start) / 1e9} s')
+        results = timeit.Timer(converter(args.hdf5, args.zarr, chunks=chunks, compressor=args.compressor,
+                               cache_metadata=args.cache_metadata, order=args.order)).repeat(3, number=10)
+        results = numpy.array(results) / 10
+        res = "[" + ", ".join([f'{v:5.3e}' for v in results]) + "]"
+        print((f'results: {res}: {results.min():5.3e} s to {results.max():5.3e} s, '
+               f'{results.mean():5.3e} s ± {results.std(ddof=1):5.3e} s'))
+    else:
+        convert(args.hdf5, args.zarr, chunks=chunks, compressor=args.compressor,
+                cache_metadata=args.cache_metadata, order=args.order)
+
+    print(zarr.open_group(args.zarr, mode='r')['0'].info)
