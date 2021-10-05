@@ -11,7 +11,7 @@ from .benchmark_abc import BenchmarkABC, Verbosity
 class ZarrCompanionBenchmark(BenchmarkABC, re_str=r'.*profile\.zarr'):
     "benchmark for profile converted to zarr"
 
-    def __init__(self, path: str, *args, **kwargs) -> None:
+    def __init__(self, path: str) -> None:
         self.file = path
 
     def task(self) -> None:
