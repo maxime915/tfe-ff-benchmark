@@ -7,7 +7,7 @@ import typing
 
 import h5py
 
-from .benchmark_abc import BenchmarkABC
+from .benchmark_abc import BenchmarkABC, Verbosity
 from .utils import basic_parser
 
 
@@ -38,11 +38,11 @@ class Tile3DHDF5Benchmark(BenchmarkABC):
         data.sum()
         file.close()
 
-    def info(self, _) -> str:
+    def info(self, _: Verbosity) -> str:
         file = h5py.File(self.path, mode='r')
         data = file['data']
 
-        info = f'HDF5 Companion: {self.file}'
+        info = f'HDF5 Companion: {self.path}'
         info += (f'\n\tshape = {data.shape}, chunks = {data.chunks}, '
                  f'compression = {data.compression}')
 
@@ -54,7 +54,7 @@ def run_benchmark(files: typing.List[str], number: int, repeat: int,
                   tile: typing.Union[int, typing.Iterable[int]] = (32,), enable_gc: bool = False) -> None:
 
     for file in files:
-        Tile3DHDF5Benchmark(file, tile).bench(
+        Tile3DHDF5Benchmark(file, tile).bench(Verbosity.VERBOSE,
             number=number, repeat=repeat, enable_gc=enable_gc)
 
 
@@ -80,9 +80,6 @@ def _main():
             sys.exit(f'invalid tile size (0) in {tile}')
 
     run_benchmark(args.files, args.number, args.repeat, tile, args.gc)
-    for file in args.files:
-        Tile3DHDF5Benchmark(file, tile).bench(
-            number=args.number, repeat=args.repeat)
 
 
 if __name__ == '__main__':

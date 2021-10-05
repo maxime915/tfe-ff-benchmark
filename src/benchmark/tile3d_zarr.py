@@ -7,7 +7,7 @@ import typing
 
 import zarr
 
-from .benchmark_abc import BenchmarkABC
+from .benchmark_abc import BenchmarkABC, Verbosity
 from .utils import basic_parser
 
 
@@ -36,8 +36,8 @@ class Tile3DZarrBenchmark(BenchmarkABC):
         # simulate action
         data.sum()
 
-    def info(self, _) -> str:
-        data = zarr.open(self.path, mode='r')['0']
+    def info(self, _: Verbosity) -> str:
+        data = zarr.open_group(self.path, mode='r')['0']
 
         info = f'Zarr file: {self.path}'
 
@@ -57,7 +57,7 @@ def run_benchmark(files: typing.List[str], number: int, repeat: int,
                   tile: typing.Union[int, typing.Iterable[int]] = (32,), enable_gc: bool = False) -> None:
 
     for file in files:
-        Tile3DZarrBenchmark(file, tile).bench(
+        Tile3DZarrBenchmark(file, tile).bench(Verbosity.VERBOSE,
             number=number, repeat=repeat, enable_gc=enable_gc)
 
 
@@ -83,9 +83,6 @@ def _main():
             sys.exit(f'invalid tile size (0) in {tile}')
 
     run_benchmark(args.files, args.number, args.repeat, tile, args.gc)
-    for file in args.files:
-        Tile3DZarrBenchmark(file, tile).bench(
-            number=args.number, repeat=args.repeat)
 
 
 if __name__ == '__main__':
