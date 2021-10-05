@@ -1,16 +1,19 @@
 'companion to zarr : convert an HDF5 companion to Zarr'
 
 import argparse
+import sys
+import time
 
 import h5py
 import zarr
 
 
-def convert(h_file: str, z_file: str, **kwargs) -> None:
-    h5 = h5py.File(h_file, mode='r')
-    z = zarr.open_group(z_file, mode='w')
+def convert(hdf5_path: str, zarr_path: str, **kwargs) -> None:
+    hdf5_file = h5py.File(hdf5_path, mode='r')
+    zarr_file = zarr.open_group(zarr_path, mode='w')
 
-    zarr.copy(h5['data'], z, name='0', **kwargs)
+    zarr.copy(hdf5_file['data'], zarr_file, name='0', **kwargs)
+    hdf5_file.close()
 
 
 if __name__ == "__main__":
@@ -21,8 +24,13 @@ if __name__ == "__main__":
                         help='output path, defaults to random unique suffix')
 
     # chunk
-    parser.add_argument('--chunks', type=int, nargs='*', default=[],
-                        help='Chunk shape : list of positive integers (if not provided, will be guessed.)')
+    chunk_group = parser.add_mutually_exclusive_group()
+    chunk_group.add_argument('--auto-chunk', action='store_true',
+                             help='automatic chunking for array storage (default option)')
+    chunk_group.add_argument('--no-chunk', dest='auto-chunk', action='store_false',
+                             help='disable chunking for array storage')
+    chunk_group.add_argument('--chunks', type=int, nargs='+', default=[],
+                             help='Chunk shape : list of positive integers (-1 means equal to array shape)')
 
     # C / Fortran array order
     parser.add_argument('--order', default='C', choices=['C', 'F'],
@@ -40,6 +48,9 @@ if __name__ == "__main__":
                         + ' "default", "none" or some python code to construct'
                         + ' the compressor object')
 
+    parser.add_argument('--benchmark', action='store_true',
+                        help="time conversion")
+
     args = parser.parse_args()
 
     if args.zarr is None:
@@ -47,12 +58,19 @@ if __name__ == "__main__":
         import uuid
         args.zarr = args.hdf5[:-5] + str(uuid.uuid4()) + '.zarr'
 
-    # chunks: max 5D, all positive int
-    args.chunks = tuple(int(c) for c in args.chunks if int(c) > 0)
-    if len(args.chunks) > 5:
-        raise ValueError('too many values for chunks')
-    if len(args.chunks) == 0:
-        args.chunks = True
+    chunks = args.auto_chunk
+    if args.chunks:
+        chunks = args.chunks
+        for i, c in enumerate(chunks):
+            try:
+                chunks[i] = int(c)
+                if chunks[i] == -1:
+                    pass  # will be set to shape[i]
+                elif chunks[i] < 1:
+                    raise ValueError(f'"{c}" is not a valid chunk size')
+            except ValueError as e:
+                sys.exit(f"unable to parse chunk option: {args.chunk}")
+                
 
     # compressor : None, default or some evaluated object
     if args.compressor == 'none':
@@ -61,13 +79,16 @@ if __name__ == "__main__":
         # Zlib, GZip, BZ2, LZMA?, Blosc, Zstd, lz4, ZFPY, and a lot of others...
         import numcodecs
         import codecs
-        args.compressor = eval(args.compressor)
-    
-    # remove warning : copy these argument and don't pass them to .create_dataset
-    h_file = args.hdf5
-    z_file = args.zarr
+        try:
+            args.compressor = eval(args.compressor)
+        except Exception as e:
+            print(f'unable to evaluate compressor\n\n{e}')
 
-    del args.hdf5
-    del args.zarr
-    
-    convert(h_file, z_file, **args.__dict__)
+
+    start = time.perf_counter_ns()
+    convert(args.hdf5, args.zarr, chunks=chunks, compressor=args.compressor,
+                                     cache_metadata=args.cache_metadata, order=args.order)
+    end = time.perf_counter_ns()
+
+    if args.benchmark:
+        print(f'time: {(end - start) / 1e9} s')
