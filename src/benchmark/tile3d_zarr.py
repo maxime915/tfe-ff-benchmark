@@ -1,6 +1,5 @@
 "tile3d_zarr: benchmark zarr file by loading a 3D tile"
 
-import os
 import random
 import sys
 import typing
