@@ -4,6 +4,9 @@ python -m src.start_benchmark file [file ...]
 
 file is an HDF5 file to be converted to zarr, then multiple benchmark will be
 run against both version
+
+HDF5 profiles are encoded in X,Y,Z axis order using C order by default
+Zarr only convert to X,Y,Z axis order but there is a Fortran order option
 """
 
 import itertools
