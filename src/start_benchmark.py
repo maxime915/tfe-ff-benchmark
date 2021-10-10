@@ -24,9 +24,8 @@ def _run(hdf5_path: str):
 
     tile_options = ([[2**i, 2**i, 1] for i in range(0, 12)]
                     + [[2**i, 2**i, -1] for i in range(5, 12)])
-    chunk_options = ([True, None]
-                     + [[2**i, 2**i, 1] for i in range(5, 12)]
-                     + [[2**i, 2**i, -1] for i in range(5, 10)])
+    chunk_options = ([[2**i, 2**i, 1] for i in range(7, 12)]
+                     + [[2**i, 2**i, -1] for i in range(7, 10)])
     order_options = ['C', 'F']
     compressor_options = ['default', None]
 
