@@ -38,7 +38,7 @@ class Tile3DZarrBenchmark(BenchmarkABC):
     def info(self, _: Verbosity) -> str:
         data = zarr.open_group(self.path, mode='r')['0']
 
-        info = f'Zarr file: {self.path}'
+        info = f'Zarr file: {self.path}, using tile = {self.tile}'
 
         zarr_info = str(data.info)[:-1].split('\n')
         zarr_info = [item.split(':') for item in zarr_info]

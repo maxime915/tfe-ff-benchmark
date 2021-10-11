@@ -41,7 +41,7 @@ class Tile3DHDF5Benchmark(BenchmarkABC):
         file = h5py.File(self.path, mode='r')
         data = file['data']
 
-        info = f'HDF5 Companion: {self.path}'
+        info = f'HDF5 Companion: {self.path}, using tile = {self.tile}'
         info += (f'\n\tshape = {data.shape}, chunks = {data.chunks}, '
                  f'compression = {data.compression}')
 
