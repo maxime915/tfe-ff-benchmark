@@ -30,15 +30,15 @@ def _run(hdf5_path: str):
         raise ValueError(f'not a HDF5 file :{hdf5_path}')
     zarr_path = hdf5_path[:-5] + '.zarr'
 
-    # (32, 32, 1) to (2048, 2048, 1)
-    # (1, 1, all) to (2048, 2048, all)
-    tile_options = ([[2**i, 2**i, 1] for i in range(5, 12)]
-                    + [[2**i, 2**i, -1] for i in range(0, 12)])
-    
-    # NOTE using a chunk value too low (32, 32, 1) can cause some memory issues
-    # (128, 128, 1) to (2048, 2048, 1)
+    # (128, 128, 1) to (1024, 1024, 1)
     # (128, 128, all) to (512, 512, all)
-    chunk_options = ([[2**i, 2**i, 1] for i in range(7, 12)]
+    tile_options = ([[2**i, 2**i, 1] for i in range(7, 11)]
+                    + [[2**i, 2**i, -1] for i in range(7, 10)])
+
+    # NOTE using a chunk value too low (32, 32, 1) can cause some memory issues
+    # (128, 128, 1) to (1024, 1024, 1)
+    # (128, 128, all) to (512, 512, all)
+    chunk_options = ([[2**i, 2**i, 1] for i in range(7, 11)]
                      + [[2**i, 2**i, -1] for i in range(7, 10)])
 
     order_options = ['C', 'F']
