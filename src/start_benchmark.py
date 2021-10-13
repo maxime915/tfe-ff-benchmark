@@ -19,11 +19,12 @@ from .benchmark.tile3d_zarr import run_benchmark as zarr_benchmark
 from .benchmark.tile3d_hdf5 import run_benchmark as hdf5_benchmark
 from .convert.companion_to_zarr import converter
 
-_CONVERSION_NUMBER = 5
-_CONVERSION_REPEAT = 2
+_CONVERSION_NUMBER = 2
+_CONVERSION_REPEAT = 3
 
-_ACCESS_NUMBER = 1000
+_ACCESS_NUMBER = 200
 _ACCESS_REPEAT = 5
+
 
 def _run(hdf5_path: str):
     if hdf5_path[-5:] != '.hdf5':
@@ -47,28 +48,32 @@ def _run(hdf5_path: str):
 
     options = itertools.product(
         chunk_options, order_options, compressor_options)
-    
+
     for tile in tile_options:
         # benchmark HDF5 access
         hdf5_benchmark([hdf5_path], _ACCESS_NUMBER, _ACCESS_REPEAT, tile=tile)
         sys.stdout.flush()
-    
+
     for chunk, order, compressor in options:
-        print(f'converting {hdf5_path} to {zarr_path} ({chunk=}, {order=}, {compressor=})')
+        print(
+            f'converting {hdf5_path} to {zarr_path} ({chunk=}, {order=}, {compressor=})')
 
         # make zarr conversion
         conversion = converter(hdf5_path, zarr_path, chunks=chunk,
-                                compressor=compressor, cache_metadata=True, order=order)
-        results = numpy.array(timeit.Timer(conversion).repeat(_CONVERSION_REPEAT, number=_CONVERSION_NUMBER)) / _CONVERSION_NUMBER
-        print(f'\t[{", ".join([f"{v:5.3e}" for v in results])}]') # whole data
+                               compressor=compressor, cache_metadata=True, order=order)
+        results = numpy.array(timeit.Timer(conversion).
+                              repeat(_CONVERSION_REPEAT, number=_CONVERSION_NUMBER)) / _CONVERSION_NUMBER
+        print(f'\t[{", ".join([f"{v:5.3e}" for v in results])}]')  # whole data
         print(f'\t{results.min() = :5.3e} s | {results.max() = :5.3e} s')
-        print(f'\tmean = {results.mean():5.3e} s ± std = {results.std(ddof=1):5.3e} s')
-        print('') # add newline
+        print(
+            f'\tmean = {results.mean():5.3e} s ± std = {results.std(ddof=1):5.3e} s')
+        print('')  # add newline
         sys.stdout.flush()
 
         for tile in tile_options:
             # benchmark zarr access
-            zarr_benchmark([zarr_path], _ACCESS_NUMBER, _ACCESS_REPEAT, tile=tile)
+            zarr_benchmark([zarr_path], _ACCESS_NUMBER,
+                           _ACCESS_REPEAT, tile=tile)
             sys.stdout.flush()
 
 
