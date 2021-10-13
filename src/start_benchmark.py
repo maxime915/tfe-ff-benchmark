@@ -51,6 +51,7 @@ def _run(hdf5_path: str):
     for tile in tile_options:
         # benchmark HDF5 access
         hdf5_benchmark([hdf5_path], _ACCESS_NUMBER, _ACCESS_REPEAT, tile=tile)
+        sys.stdout.flush()
     
     for chunk, order, compressor in options:
         print(f'converting {hdf5_path} to {zarr_path} ({chunk=}, {order=}, {compressor=})')
@@ -63,10 +64,12 @@ def _run(hdf5_path: str):
         print(f'\t{results.min() = :5.3e} s | {results.max() = :5.3e} s')
         print(f'\tmean = {results.mean():5.3e} s ± std = {results.std(ddof=1):5.3e} s')
         print('') # add newline
+        sys.stdout.flush()
 
         for tile in tile_options:
             # benchmark zarr access
             zarr_benchmark([zarr_path], _ACCESS_NUMBER, _ACCESS_REPEAT, tile=tile)
+            sys.stdout.flush()
 
 
 if __name__ == "__main__":
