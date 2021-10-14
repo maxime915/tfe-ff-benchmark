@@ -10,8 +10,10 @@ Zarr only convert to X,Y,Z axis order but there is a Fortran order option
 """
 
 import itertools
+import shutil
 import sys
 import timeit
+import uuid
 
 import numpy
 
@@ -29,7 +31,7 @@ _ACCESS_REPEAT = 5
 def _run(hdf5_path: str):
     if hdf5_path[-5:] != '.hdf5':
         raise ValueError(f'not a HDF5 file :{hdf5_path}')
-    zarr_path = hdf5_path[:-5] + '.zarr'
+    zarr_path = f'{hdf5_path[:-5]}_{uuid.uuid4()}.zarr'
 
     # (128, 128, 1) to (1024, 1024, 1)
     # (128, 128, all) to (512, 512, all)
@@ -75,6 +77,8 @@ def _run(hdf5_path: str):
             zarr_benchmark([zarr_path], _ACCESS_NUMBER,
                            _ACCESS_REPEAT, tile=tile)
             sys.stdout.flush()
+        
+    shutil.rmtree(zarr_path)
 
 
 if __name__ == "__main__":
