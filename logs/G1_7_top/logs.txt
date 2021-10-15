@@ -1,0 +1,1758 @@
+nohup: ignoring input
+Tile3DHDF5Benchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.093e-01, 5.140e-02, 4.844e-02, 4.973e-02, 5.156e-02]
+	results.min() = 4.844e-02 s | results.max() = 1.093e-01 s
+	mean = 6.209e-02 s ± std = 2.643e-02 s
+HDF5 Companion: files/G1_7_top/profile.hdf5, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = None, compression = None
+
+Tile3DHDF5Benchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.008e-01, 9.621e-02, 9.613e-02, 9.616e-02, 9.596e-02]
+	results.min() = 9.596e-02 s | results.max() = 1.008e-01 s
+	mean = 9.705e-02 s ± std = 2.090e-03 s
+HDF5 Companion: files/G1_7_top/profile.hdf5, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = None, compression = None
+
+Tile3DHDF5Benchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.980e-01, 2.028e-01, 2.027e-01, 2.035e-01, 2.028e-01]
+	results.min() = 1.980e-01 s | results.max() = 2.035e-01 s
+	mean = 2.019e-01 s ± std = 2.218e-03 s
+HDF5 Companion: files/G1_7_top/profile.hdf5, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = None, compression = None
+
+Tile3DHDF5Benchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.051e-01, 4.050e-01, 4.066e-01, 3.896e-01, 3.821e-01]
+	results.min() = 3.821e-01 s | results.max() = 4.066e-01 s
+	mean = 3.977e-01 s ± std = 1.117e-02 s
+HDF5 Companion: files/G1_7_top/profile.hdf5, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = None, compression = None
+
+Tile3DHDF5Benchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.860e-02, 4.856e-02, 4.857e-02, 4.862e-02, 4.856e-02]
+	results.min() = 4.856e-02 s | results.max() = 4.862e-02 s
+	mean = 4.858e-02 s ± std = 2.698e-05 s
+HDF5 Companion: files/G1_7_top/profile.hdf5, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = None, compression = None
+
+Tile3DHDF5Benchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[9.628e-02, 9.629e-02, 9.620e-02, 9.618e-02, 9.530e-02]
+	results.min() = 9.530e-02 s | results.max() = 9.629e-02 s
+	mean = 9.605e-02 s ± std = 4.219e-04 s
+HDF5 Companion: files/G1_7_top/profile.hdf5, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = None, compression = None
+
+Tile3DHDF5Benchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.904e-01, 1.904e-01, 1.905e-01, 1.904e-01, 1.900e-01]
+	results.min() = 1.900e-01 s | results.max() = 1.905e-01 s
+	mean = 1.903e-01 s ± std = 2.158e-04 s
+HDF5 Companion: files/G1_7_top/profile.hdf5, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = None, compression = None
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[128, 128, 1], order='C', compressor='default')
+	[1.819e+02, 1.817e+02, 1.782e+02]
+	results.min() = 1.782e+02 s | results.max() = 1.819e+02 s
+	mean = 1.806e+02 s ± std = 2.071e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.200e-01, 4.952e-01, 4.987e-01, 5.008e-01, 4.997e-01]
+	results.min() = 4.952e-01 s | results.max() = 5.200e-01 s
+	mean = 5.029e-01 s ± std = 9.778e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3185174360 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[8.771e-01, 8.784e-01, 8.790e-01, 8.877e-01, 8.863e-01]
+	results.min() = 8.771e-01 s | results.max() = 8.877e-01 s
+	mean = 8.817e-01 s ± std = 4.914e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3185174360 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.646e+00, 1.650e+00, 1.654e+00, 1.661e+00, 1.653e+00]
+	results.min() = 1.646e+00 s | results.max() = 1.661e+00 s
+	mean = 1.653e+00 s ± std = 5.382e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3185174360 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.198e+00, 3.195e+00, 3.137e+00, 3.142e+00, 3.176e+00]
+	results.min() = 3.137e+00 s | results.max() = 3.198e+00 s
+	mean = 3.170e+00 s ± std = 2.859e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3185174360 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.039e-01, 5.022e-01, 5.024e-01, 5.037e-01, 5.029e-01]
+	results.min() = 5.022e-01 s | results.max() = 5.039e-01 s
+	mean = 5.030e-01 s ± std = 7.607e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3185174360 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[8.643e-01, 8.728e-01, 8.723e-01, 8.704e-01, 8.745e-01]
+	results.min() = 8.643e-01 s | results.max() = 8.745e-01 s
+	mean = 8.709e-01 s ± std = 3.963e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3185174360 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.615e+00, 1.635e+00, 1.656e+00, 1.656e+00, 1.670e+00]
+	results.min() = 1.615e+00 s | results.max() = 1.670e+00 s
+	mean = 1.646e+00 s ± std = 2.170e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3185174360 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[128, 128, 1], order='C', compressor=None)
+	[1.854e+02, 1.819e+02, 1.893e+02]
+	results.min() = 1.819e+02 s | results.max() = 1.893e+02 s
+	mean = 1.856e+02 s ± std = 3.725e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.500e-01, 3.619e-01, 3.631e-01, 3.634e-01, 3.646e-01]
+	results.min() = 3.619e-01 s | results.max() = 4.500e-01 s
+	mean = 3.806e-01 s ± std = 3.881e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[6.753e-01, 6.734e-01, 6.715e-01, 6.604e-01, 6.518e-01]
+	results.min() = 6.518e-01 s | results.max() = 6.753e-01 s
+	mean = 6.665e-01 s ± std = 1.004e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.266e+00, 1.270e+00, 1.279e+00, 1.285e+00, 1.282e+00]
+	results.min() = 1.266e+00 s | results.max() = 1.285e+00 s
+	mean = 1.276e+00 s ± std = 8.147e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.455e+00, 2.429e+00, 2.429e+00, 2.360e+00, 2.341e+00]
+	results.min() = 2.341e+00 s | results.max() = 2.455e+00 s
+	mean = 2.403e+00 s ± std = 4.935e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.472e-01, 3.465e-01, 3.465e-01, 3.480e-01, 3.459e-01]
+	results.min() = 3.459e-01 s | results.max() = 3.480e-01 s
+	mean = 3.468e-01 s ± std = 8.019e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[6.340e-01, 6.337e-01, 6.330e-01, 6.333e-01, 6.323e-01]
+	results.min() = 6.323e-01 s | results.max() = 6.340e-01 s
+	mean = 6.333e-01 s ± std = 6.651e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.201e+00, 1.205e+00, 1.211e+00, 1.208e+00, 1.207e+00]
+	results.min() = 1.201e+00 s | results.max() = 1.211e+00 s
+	mean = 1.207e+00 s ± std = 3.711e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[128, 128, 1], order='F', compressor='default')
+	[1.917e+02, 1.808e+02, 1.813e+02]
+	results.min() = 1.808e+02 s | results.max() = 1.917e+02 s
+	mean = 1.846e+02 s ± std = 6.129e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.496e-01, 3.915e-01, 3.934e-01, 3.922e-01, 3.927e-01]
+	results.min() = 3.915e-01 s | results.max() = 4.496e-01 s
+	mean = 4.039e-01 s ± std = 2.556e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3189652076 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[6.300e-01, 6.283e-01, 6.254e-01, 6.239e-01, 6.272e-01]
+	results.min() = 6.239e-01 s | results.max() = 6.300e-01 s
+	mean = 6.269e-01 s ± std = 2.408e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3189652076 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.103e+00, 1.107e+00, 1.104e+00, 1.109e+00, 1.107e+00]
+	results.min() = 1.103e+00 s | results.max() = 1.109e+00 s
+	mean = 1.106e+00 s ± std = 2.428e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3189652076 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.082e+00, 2.046e+00, 2.046e+00, 2.083e+00, 2.064e+00]
+	results.min() = 2.046e+00 s | results.max() = 2.083e+00 s
+	mean = 2.064e+00 s ± std = 1.847e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3189652076 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.950e-01, 3.952e-01, 3.949e-01, 3.956e-01, 3.949e-01]
+	results.min() = 3.949e-01 s | results.max() = 3.956e-01 s
+	mean = 3.951e-01 s ± std = 2.792e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3189652076 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[6.257e-01, 6.235e-01, 6.274e-01, 6.270e-01, 6.256e-01]
+	results.min() = 6.235e-01 s | results.max() = 6.274e-01 s
+	mean = 6.259e-01 s ± std = 1.524e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3189652076 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.100e+00, 1.105e+00, 1.110e+00, 1.106e+00, 1.106e+00]
+	results.min() = 1.100e+00 s | results.max() = 1.110e+00 s
+	mean = 1.106e+00 s ± std = 3.663e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3189652076 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[128, 128, 1], order='F', compressor=None)
+	[2.003e+02, 2.022e+02, 2.115e+02]
+	results.min() = 2.003e+02 s | results.max() = 2.115e+02 s
+	mean = 2.046e+02 s ± std = 6.000e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.913e-01, 2.646e-01, 2.658e-01, 2.660e-01, 2.659e-01]
+	results.min() = 2.646e-01 s | results.max() = 3.913e-01 s
+	mean = 2.907e-01 s ± std = 5.624e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.399e-01, 4.379e-01, 4.396e-01, 4.412e-01, 4.435e-01]
+	results.min() = 4.379e-01 s | results.max() = 4.435e-01 s
+	mean = 4.404e-01 s ± std = 2.073e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.903e-01, 7.895e-01, 7.882e-01, 7.873e-01, 7.896e-01]
+	results.min() = 7.873e-01 s | results.max() = 7.903e-01 s
+	mean = 7.890e-01 s ± std = 1.204e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.487e+00, 1.478e+00, 1.482e+00, 1.442e+00, 1.448e+00]
+	results.min() = 1.442e+00 s | results.max() = 1.487e+00 s
+	mean = 1.467e+00 s ± std = 2.065e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.631e-01, 2.619e-01, 2.649e-01, 2.631e-01, 2.613e-01]
+	results.min() = 2.613e-01 s | results.max() = 2.649e-01 s
+	mean = 2.629e-01 s ± std = 1.390e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.368e-01, 4.387e-01, 4.400e-01, 4.372e-01, 4.388e-01]
+	results.min() = 4.368e-01 s | results.max() = 4.400e-01 s
+	mean = 4.383e-01 s ± std = 1.299e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.843e-01, 7.837e-01, 7.847e-01, 7.752e-01, 8.148e-01]
+	results.min() = 7.752e-01 s | results.max() = 8.148e-01 s
+	mean = 7.885e-01 s ± std = 1.519e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278971 (4.6G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[256, 256, 1], order='C', compressor='default')
+	[1.182e+02, 1.285e+02, 1.324e+02]
+	results.min() = 1.182e+02 s | results.max() = 1.324e+02 s
+	mean = 1.264e+02 s ± std = 7.307e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.485e-01, 4.959e-01, 5.003e-01, 5.081e-01, 5.153e-01]
+	results.min() = 4.959e-01 s | results.max() = 5.485e-01 s
+	mean = 5.136e-01 s ± std = 2.088e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179498268 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[9.114e-01, 9.278e-01, 9.264e-01, 9.394e-01, 9.490e-01]
+	results.min() = 9.114e-01 s | results.max() = 9.490e-01 s
+	mean = 9.308e-01 s ± std = 1.423e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179498268 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.793e+00, 1.805e+00, 1.820e+00, 1.662e+00, 1.663e+00]
+	results.min() = 1.662e+00 s | results.max() = 1.820e+00 s
+	mean = 1.749e+00 s ± std = 7.935e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179498268 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.420e+00, 2.991e+00, 2.811e+00, 2.674e+00, 2.698e+00]
+	results.min() = 2.674e+00 s | results.max() = 3.420e+00 s
+	mean = 2.919e+00 s ± std = 3.067e-01 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179498268 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.194e-01, 4.261e-01, 4.240e-01, 4.263e-01, 4.256e-01]
+	results.min() = 4.194e-01 s | results.max() = 4.263e-01 s
+	mean = 4.243e-01 s ± std = 2.896e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179498268 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.628e-01, 7.604e-01, 7.620e-01, 7.586e-01, 7.578e-01]
+	results.min() = 7.578e-01 s | results.max() = 7.628e-01 s
+	mean = 7.603e-01 s ± std = 2.129e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179498268 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.373e+00, 1.397e+00, 1.416e+00, 1.416e+00, 1.432e+00]
+	results.min() = 1.373e+00 s | results.max() = 1.432e+00 s
+	mean = 1.407e+00 s ± std = 2.255e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179498268 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[256, 256, 1], order='C', compressor=None)
+	[1.317e+02, 1.273e+02, 1.268e+02]
+	results.min() = 1.268e+02 s | results.max() = 1.317e+02 s
+	mean = 1.286e+02 s ± std = 2.694e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.829e-01, 2.981e-01, 2.935e-01, 2.975e-01, 3.006e-01]
+	results.min() = 2.935e-01 s | results.max() = 3.829e-01 s
+	mean = 3.145e-01 s ± std = 3.833e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.916e-01, 5.932e-01, 5.834e-01, 5.905e-01, 5.908e-01]
+	results.min() = 5.834e-01 s | results.max() = 5.932e-01 s
+	mean = 5.899e-01 s ± std = 3.760e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.160e+00, 1.173e+00, 1.150e+00, 1.175e+00, 1.159e+00]
+	results.min() = 1.150e+00 s | results.max() = 1.175e+00 s
+	mean = 1.164e+00 s ± std = 1.031e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.306e+00, 2.844e+00, 2.910e+00, 2.920e+00, 2.985e+00]
+	results.min() = 2.306e+00 s | results.max() = 2.985e+00 s
+	mean = 2.793e+00 s ± std = 2.767e-01 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.672e-01, 3.639e-01, 3.618e-01, 3.661e-01, 3.643e-01]
+	results.min() = 3.618e-01 s | results.max() = 3.672e-01 s
+	mean = 3.647e-01 s ± std = 2.066e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.412e-01, 7.451e-01, 7.565e-01, 7.531e-01, 7.536e-01]
+	results.min() = 7.412e-01 s | results.max() = 7.565e-01 s
+	mean = 7.499e-01 s ± std = 6.425e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.526e+00, 1.537e+00, 1.530e+00, 1.533e+00, 1.533e+00]
+	results.min() = 1.526e+00 s | results.max() = 1.537e+00 s
+	mean = 1.532e+00 s ± std = 4.042e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[256, 256, 1], order='F', compressor='default')
+	[1.555e+02, 1.455e+02, 1.455e+02]
+	results.min() = 1.455e+02 s | results.max() = 1.555e+02 s
+	mean = 1.488e+02 s ± std = 5.780e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.543e-01, 2.899e-01, 3.065e-01, 2.897e-01, 2.911e-01]
+	results.min() = 2.897e-01 s | results.max() = 3.543e-01 s
+	mean = 3.063e-01 s ± std = 2.774e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184178729 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.429e-01, 4.466e-01, 4.382e-01, 4.456e-01, 4.423e-01]
+	results.min() = 4.382e-01 s | results.max() = 4.466e-01 s
+	mean = 4.431e-01 s ± std = 3.286e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184178729 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.549e-01, 7.459e-01, 7.456e-01, 7.464e-01, 7.486e-01]
+	results.min() = 7.456e-01 s | results.max() = 7.549e-01 s
+	mean = 7.483e-01 s ± std = 3.870e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184178729 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.372e+00, 1.371e+00, 1.379e+00, 1.357e+00, 1.311e+00]
+	results.min() = 1.311e+00 s | results.max() = 1.379e+00 s
+	mean = 1.358e+00 s ± std = 2.748e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184178729 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.902e-01, 2.899e-01, 2.786e-01, 2.709e-01, 2.782e-01]
+	results.min() = 2.709e-01 s | results.max() = 2.902e-01 s
+	mean = 2.816e-01 s ± std = 8.349e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184178729 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.428e-01, 4.361e-01, 4.406e-01, 4.496e-01, 4.433e-01]
+	results.min() = 4.361e-01 s | results.max() = 4.496e-01 s
+	mean = 4.425e-01 s ± std = 4.902e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184178729 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.606e-01, 7.679e-01, 7.693e-01, 7.592e-01, 7.621e-01]
+	results.min() = 7.592e-01 s | results.max() = 7.693e-01 s
+	mean = 7.638e-01 s ± std = 4.507e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184178729 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[256, 256, 1], order='F', compressor=None)
+	[1.502e+02, 1.583e+02, 1.632e+02]
+	results.min() = 1.502e+02 s | results.max() = 1.632e+02 s
+	mean = 1.572e+02 s ± std = 6.576e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.578e-01, 1.703e-01, 1.763e-01, 1.772e-01, 1.797e-01]
+	results.min() = 1.703e-01 s | results.max() = 2.578e-01 s
+	mean = 1.923e-01 s ± std = 3.679e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.808e-01, 2.801e-01, 2.804e-01, 2.781e-01, 2.788e-01]
+	results.min() = 2.781e-01 s | results.max() = 2.808e-01 s
+	mean = 2.796e-01 s ± std = 1.129e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.913e-01, 4.935e-01, 4.918e-01, 4.877e-01, 4.892e-01]
+	results.min() = 4.877e-01 s | results.max() = 4.935e-01 s
+	mean = 4.907e-01 s ± std = 2.255e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[9.119e-01, 9.023e-01, 8.730e-01, 8.165e-01, 8.640e-01]
+	results.min() = 8.165e-01 s | results.max() = 9.119e-01 s
+	mean = 8.735e-01 s ± std = 3.758e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.685e-01, 1.729e-01, 1.739e-01, 1.733e-01, 1.689e-01]
+	results.min() = 1.685e-01 s | results.max() = 1.739e-01 s
+	mean = 1.715e-01 s ± std = 2.597e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.657e-01, 2.663e-01, 2.727e-01, 2.753e-01, 2.735e-01]
+	results.min() = 2.657e-01 s | results.max() = 2.753e-01 s
+	mean = 2.707e-01 s ± std = 4.421e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.846e-01, 4.829e-01, 4.834e-01, 4.835e-01, 4.832e-01]
+	results.min() = 4.829e-01 s | results.max() = 4.846e-01 s
+	mean = 4.835e-01 s ± std = 6.676e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[512, 512, 1], order='C', compressor='default')
+	[9.444e+01, 8.168e+01, 6.765e+01]
+	results.min() = 6.765e+01 s | results.max() = 9.444e+01 s
+	mean = 8.126e+01 s ± std = 1.340e+01 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.861e-01, 5.612e-01, 5.533e-01, 5.297e-01, 5.066e-01]
+	results.min() = 5.066e-01 s | results.max() = 5.861e-01 s
+	mean = 5.474e-01 s ± std = 3.043e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179061617 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[8.777e-01, 8.832e-01, 8.784e-01, 8.972e-01, 8.966e-01]
+	results.min() = 8.777e-01 s | results.max() = 8.972e-01 s
+	mean = 8.866e-01 s ± std = 9.636e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179061617 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.646e+00, 1.675e+00, 1.667e+00, 1.663e+00, 1.632e+00]
+	results.min() = 1.632e+00 s | results.max() = 1.675e+00 s
+	mean = 1.657e+00 s ± std = 1.737e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179061617 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.032e+00, 3.111e+00, 3.067e+00, 3.225e+00, 3.220e+00]
+	results.min() = 3.032e+00 s | results.max() = 3.225e+00 s
+	mean = 3.131e+00 s ± std = 8.838e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179061617 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.565e-01, 5.519e-01, 5.616e-01, 5.532e-01, 5.738e-01]
+	results.min() = 5.519e-01 s | results.max() = 5.738e-01 s
+	mean = 5.594e-01 s ± std = 8.886e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179061617 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[8.812e-01, 8.991e-01, 1.049e+00, 1.225e+00, 1.229e+00]
+	results.min() = 8.812e-01 s | results.max() = 1.229e+00 s
+	mean = 1.057e+00 s ± std = 1.687e-01 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179061617 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.185e+00, 2.190e+00, 2.197e+00, 2.212e+00, 2.211e+00]
+	results.min() = 2.185e+00 s | results.max() = 2.212e+00 s
+	mean = 2.199e+00 s ± std = 1.207e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3179061617 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[512, 512, 1], order='C', compressor=None)
+	[8.966e+01, 7.757e+01, 7.816e+01]
+	results.min() = 7.757e+01 s | results.max() = 8.966e+01 s
+	mean = 8.180e+01 s ± std = 6.813e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.059e-01, 4.161e-01, 4.150e-01, 4.175e-01, 4.169e-01]
+	results.min() = 4.150e-01 s | results.max() = 5.059e-01 s
+	mean = 4.343e-01 s ± std = 4.003e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[8.406e-01, 8.457e-01, 8.446e-01, 8.509e-01, 8.559e-01]
+	results.min() = 8.406e-01 s | results.max() = 8.559e-01 s
+	mean = 8.475e-01 s ± std = 5.926e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.707e+00, 1.700e+00, 1.703e+00, 1.707e+00, 1.708e+00]
+	results.min() = 1.700e+00 s | results.max() = 1.708e+00 s
+	mean = 1.705e+00 s ± std = 3.514e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.444e+00, 3.241e+00, 3.247e+00, 3.290e+00, 3.376e+00]
+	results.min() = 3.241e+00 s | results.max() = 3.444e+00 s
+	mean = 3.320e+00 s ± std = 8.799e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.163e-01, 4.158e-01, 4.169e-01, 4.123e-01, 4.173e-01]
+	results.min() = 4.123e-01 s | results.max() = 4.173e-01 s
+	mean = 4.157e-01 s ± std = 1.971e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[8.392e-01, 8.430e-01, 8.438e-01, 8.424e-01, 8.428e-01]
+	results.min() = 8.392e-01 s | results.max() = 8.438e-01 s
+	mean = 8.423e-01 s ± std = 1.764e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.429e+00, 1.350e+00, 1.861e+00, 1.863e+00, 1.866e+00]
+	results.min() = 1.350e+00 s | results.max() = 1.866e+00 s
+	mean = 1.674e+00 s ± std = 2.608e-01 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[512, 512, 1], order='F', compressor='default')
+	[1.029e+02, 1.143e+02, 1.182e+02]
+	results.min() = 1.029e+02 s | results.max() = 1.182e+02 s
+	mean = 1.118e+02 s ± std = 7.955e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.194e-01, 3.499e-01, 3.364e-01, 3.285e-01, 3.270e-01]
+	results.min() = 3.270e-01 s | results.max() = 4.194e-01 s
+	mean = 3.522e-01 s ± std = 3.861e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184226974 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.364e-01, 4.720e-01, 4.616e-01, 4.693e-01, 4.734e-01]
+	results.min() = 4.616e-01 s | results.max() = 5.364e-01 s
+	mean = 4.826e-01 s ± std = 3.047e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184226974 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.636e-01, 7.969e-01, 7.421e-01, 7.443e-01, 7.482e-01]
+	results.min() = 7.421e-01 s | results.max() = 7.969e-01 s
+	mean = 7.590e-01 s ± std = 2.276e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184226974 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.322e+00, 1.331e+00, 1.305e+00, 1.322e+00, 1.294e+00]
+	results.min() = 1.294e+00 s | results.max() = 1.331e+00 s
+	mean = 1.315e+00 s ± std = 1.489e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184226974 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.712e-01, 3.552e-01, 3.366e-01, 3.382e-01, 3.214e-01]
+	results.min() = 3.214e-01 s | results.max() = 3.712e-01 s
+	mean = 3.445e-01 s ± std = 1.912e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184226974 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.589e-01, 4.696e-01, 4.659e-01, 5.009e-01, 5.459e-01]
+	results.min() = 4.589e-01 s | results.max() = 5.459e-01 s
+	mean = 4.883e-01 s ± std = 3.603e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184226974 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.655e-01, 7.364e-01, 7.981e-01, 8.243e-01, 8.469e-01]
+	results.min() = 7.364e-01 s | results.max() = 8.469e-01 s
+	mean = 7.942e-01 s ± std = 4.434e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184226974 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[512, 512, 1], order='F', compressor=None)
+	[9.796e+01, 1.093e+02, 1.117e+02]
+	results.min() = 9.796e+01 s | results.max() = 1.117e+02 s
+	mean = 1.063e+02 s ± std = 7.318e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.301e-01, 1.689e-01, 1.680e-01, 1.672e-01, 1.604e-01]
+	results.min() = 1.604e-01 s | results.max() = 2.301e-01 s
+	mean = 1.789e-01 s ± std = 2.881e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.261e-01, 1.851e-01, 1.848e-01, 2.032e-01, 2.012e-01]
+	results.min() = 1.848e-01 s | results.max() = 2.261e-01 s
+	mean = 2.001e-01 s ± std = 1.693e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.259e-01, 3.317e-01, 3.282e-01, 3.243e-01, 3.463e-01]
+	results.min() = 3.243e-01 s | results.max() = 3.463e-01 s
+	mean = 3.313e-01 s ± std = 8.860e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[6.520e-01, 6.446e-01, 6.485e-01, 6.739e-01, 6.514e-01]
+	results.min() = 6.446e-01 s | results.max() = 6.739e-01 s
+	mean = 6.541e-01 s ± std = 1.147e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.370e-01, 1.352e-01, 1.331e-01, 1.400e-01, 1.334e-01]
+	results.min() = 1.331e-01 s | results.max() = 1.400e-01 s
+	mean = 1.357e-01 s ± std = 2.844e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.085e-01, 2.029e-01, 2.070e-01, 2.088e-01, 2.027e-01]
+	results.min() = 2.027e-01 s | results.max() = 2.088e-01 s
+	mean = 2.060e-01 s ± std = 2.991e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.541e-01, 3.552e-01, 3.540e-01, 3.532e-01, 3.536e-01]
+	results.min() = 3.532e-01 s | results.max() = 3.552e-01 s
+	mean = 3.540e-01 s ± std = 7.403e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165051 (4.7G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[1024, 1024, 1], order='C', compressor='default')
+	[5.926e+01, 4.803e+01, 4.818e+01]
+	results.min() = 4.803e+01 s | results.max() = 5.926e+01 s
+	mean = 5.183e+01 s ± std = 6.443e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[8.197e-01, 7.016e-01, 7.323e-01, 7.093e-01, 7.143e-01]
+	results.min() = 7.016e-01 s | results.max() = 8.197e-01 s
+	mean = 7.354e-01 s ± std = 4.845e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3180643267 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.091e+00, 1.121e+00, 1.059e+00, 1.095e+00, 1.074e+00]
+	results.min() = 1.059e+00 s | results.max() = 1.121e+00 s
+	mean = 1.088e+00 s ± std = 2.334e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3180643267 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.874e+00, 1.837e+00, 1.827e+00, 1.938e+00, 1.935e+00]
+	results.min() = 1.827e+00 s | results.max() = 1.938e+00 s
+	mean = 1.882e+00 s ± std = 5.252e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3180643267 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.481e+00, 3.424e+00, 3.347e+00, 3.261e+00, 3.240e+00]
+	results.min() = 3.240e+00 s | results.max() = 3.481e+00 s
+	mean = 3.351e+00 s ± std = 1.033e-01 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3180643267 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[6.660e-01, 6.859e-01, 6.596e-01, 6.658e-01, 6.651e-01]
+	results.min() = 6.596e-01 s | results.max() = 6.859e-01 s
+	mean = 6.685e-01 s ± std = 1.007e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3180643267 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.050e+00, 1.028e+00, 1.034e+00, 1.014e+00, 1.149e+00]
+	results.min() = 1.014e+00 s | results.max() = 1.149e+00 s
+	mean = 1.055e+00 s ± std = 5.408e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3180643267 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.806e+00, 1.801e+00, 1.806e+00, 1.784e+00, 1.799e+00]
+	results.min() = 1.784e+00 s | results.max() = 1.806e+00 s
+	mean = 1.799e+00 s ± std = 8.879e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3180643267 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[1024, 1024, 1], order='C', compressor=None)
+	[5.852e+01, 4.563e+01, 4.572e+01]
+	results.min() = 4.563e+01 s | results.max() = 5.852e+01 s
+	mean = 4.996e+01 s ± std = 7.418e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.404e-01, 4.381e-01, 4.389e-01, 4.371e-01, 4.335e-01]
+	results.min() = 4.335e-01 s | results.max() = 5.404e-01 s
+	mean = 4.576e-01 s ± std = 4.633e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.864e-01, 7.760e-01, 7.767e-01, 7.735e-01, 7.736e-01]
+	results.min() = 7.735e-01 s | results.max() = 7.864e-01 s
+	mean = 7.772e-01 s ± std = 5.298e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.439e+00, 1.452e+00, 1.456e+00, 1.752e+00, 1.458e+00]
+	results.min() = 1.439e+00 s | results.max() = 1.752e+00 s
+	mean = 1.511e+00 s ± std = 1.348e-01 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.915e+00, 2.877e+00, 3.046e+00, 2.925e+00, 2.924e+00]
+	results.min() = 2.877e+00 s | results.max() = 3.046e+00 s
+	mean = 2.937e+00 s ± std = 6.367e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.402e-01, 4.432e-01, 4.435e-01, 4.442e-01, 4.471e-01]
+	results.min() = 4.402e-01 s | results.max() = 4.471e-01 s
+	mean = 4.437e-01 s ± std = 2.453e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[8.211e-01, 8.144e-01, 8.068e-01, 8.047e-01, 8.045e-01]
+	results.min() = 8.045e-01 s | results.max() = 8.211e-01 s
+	mean = 8.103e-01 s ± std = 7.260e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.782e+00, 1.493e+00, 1.509e+00, 1.517e+00, 1.568e+00]
+	results.min() = 1.493e+00 s | results.max() = 1.782e+00 s
+	mean = 1.574e+00 s ± std = 1.197e-01 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[1024, 1024, 1], order='F', compressor='default')
+	[6.361e+01, 6.142e+01, 5.997e+01]
+	results.min() = 5.997e+01 s | results.max() = 6.361e+01 s
+	mean = 6.167e+01 s ± std = 1.828e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.033e-01, 5.633e-01, 5.187e-01, 5.223e-01, 5.292e-01]
+	results.min() = 5.033e-01 s | results.max() = 5.633e-01 s
+	mean = 5.274e-01 s ± std = 2.221e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3186002414 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[6.643e-01, 6.747e-01, 6.217e-01, 6.149e-01, 6.646e-01]
+	results.min() = 6.149e-01 s | results.max() = 6.747e-01 s
+	mean = 6.480e-01 s ± std = 2.758e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3186002414 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[8.746e-01, 7.968e-01, 8.072e-01, 8.171e-01, 8.213e-01]
+	results.min() = 7.968e-01 s | results.max() = 8.746e-01 s
+	mean = 8.234e-01 s ± std = 3.013e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3186002414 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.268e+00, 1.257e+00, 1.236e+00, 1.284e+00, 1.184e+00]
+	results.min() = 1.184e+00 s | results.max() = 1.284e+00 s
+	mean = 1.246e+00 s ± std = 3.831e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3186002414 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.318e-01, 4.208e-01, 4.315e-01, 4.318e-01, 4.201e-01]
+	results.min() = 4.201e-01 s | results.max() = 4.318e-01 s
+	mean = 4.272e-01 s ± std = 6.193e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3186002414 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.453e-01, 5.235e-01, 5.358e-01, 5.267e-01, 5.206e-01]
+	results.min() = 5.206e-01 s | results.max() = 5.453e-01 s
+	mean = 5.304e-01 s ± std = 1.007e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3186002414 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.344e-01, 7.457e-01, 7.512e-01, 9.582e-01, 9.394e-01]
+	results.min() = 7.344e-01 s | results.max() = 9.582e-01 s
+	mean = 8.258e-01 s ± std = 1.127e-01 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3186002414 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[1024, 1024, 1], order='F', compressor=None)
+	[6.441e+01, 5.130e+01, 5.140e+01]
+	results.min() = 5.130e+01 s | results.max() = 6.441e+01 s
+	mean = 5.570e+01 s ± std = 7.542e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[9.365e-01, 3.250e-01, 1.805e-01, 1.751e-01, 1.850e-01]
+	results.min() = 1.751e-01 s | results.max() = 9.365e-01 s
+	mean = 3.604e-01 s ± std = 3.281e-01 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.595e-01, 2.560e-01, 2.573e-01, 2.644e-01, 2.552e-01]
+	results.min() = 2.552e-01 s | results.max() = 2.644e-01 s
+	mean = 2.585e-01 s ± std = 3.658e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.171e-01, 4.205e-01, 4.172e-01, 4.125e-01, 4.120e-01]
+	results.min() = 4.120e-01 s | results.max() = 4.205e-01 s
+	mean = 4.158e-01 s ± std = 3.559e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.480e-01, 7.364e-01, 7.354e-01, 7.372e-01, 7.349e-01]
+	results.min() = 7.349e-01 s | results.max() = 7.480e-01 s
+	mean = 7.384e-01 s ± std = 5.461e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.809e-01, 1.837e-01, 1.801e-01, 1.810e-01, 1.824e-01]
+	results.min() = 1.801e-01 s | results.max() = 1.837e-01 s
+	mean = 1.816e-01 s ± std = 1.418e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.438e-01, 7.008e-01, 2.760e-01, 2.765e-01, 2.724e-01]
+	results.min() = 2.438e-01 s | results.max() = 7.008e-01 s
+	mean = 3.539e-01 s ± std = 1.944e-01 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.665e-01, 4.672e-01, 4.698e-01, 4.707e-01, 4.638e-01]
+	results.min() = 4.638e-01 s | results.max() = 4.707e-01 s
+	mean = 4.676e-01 s ± std = 2.755e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (1024, 1024, 1), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5368709373 (5.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[128, 128, -1], order='C', compressor='default')
+	[2.583e+01, 1.572e+01, 2.666e+01]
+	results.min() = 1.572e+01 s | results.max() = 2.666e+01 s
+	mean = 2.274e+01 s ± std = 6.087e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.307e-01, 1.655e-01, 1.652e-01, 1.655e-01, 1.638e-01]
+	results.min() = 1.638e-01 s | results.max() = 2.307e-01 s
+	mean = 1.781e-01 s ± std = 2.942e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266103887 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.762e-01, 2.756e-01, 2.722e-01, 2.755e-01, 2.725e-01]
+	results.min() = 2.722e-01 s | results.max() = 2.762e-01 s
+	mean = 2.744e-01 s ± std = 1.933e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266103887 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.848e-01, 4.884e-01, 4.862e-01, 4.844e-01, 4.705e-01]
+	results.min() = 4.705e-01 s | results.max() = 4.884e-01 s
+	mean = 4.829e-01 s ± std = 7.104e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266103887 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.073e+00, 1.127e+00, 1.110e+00, 1.100e+00, 1.101e+00]
+	results.min() = 1.073e+00 s | results.max() = 1.127e+00 s
+	mean = 1.102e+00 s ± std = 1.973e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266103887 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.858e-01, 1.901e-01, 1.880e-01, 1.879e-01, 1.881e-01]
+	results.min() = 1.858e-01 s | results.max() = 1.901e-01 s
+	mean = 1.880e-01 s ± std = 1.505e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266103887 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.085e-01, 3.127e-01, 3.111e-01, 3.103e-01, 3.088e-01]
+	results.min() = 3.085e-01 s | results.max() = 3.127e-01 s
+	mean = 3.103e-01 s ± std = 1.720e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266103887 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.566e-01, 5.695e-01, 6.063e-01, 5.883e-01, 5.844e-01]
+	results.min() = 5.566e-01 s | results.max() = 6.063e-01 s
+	mean = 5.810e-01 s ± std = 1.894e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266103887 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[128, 128, -1], order='C', compressor=None)
+	[2.670e+01, 1.186e+01, 1.198e+01]
+	results.min() = 1.186e+01 s | results.max() = 2.670e+01 s
+	mean = 1.684e+01 s ± std = 8.532e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.566e-01, 7.869e-02, 7.916e-02, 7.852e-02, 7.877e-02]
+	results.min() = 7.852e-02 s | results.max() = 1.566e-01 s
+	mean = 9.435e-02 s ± std = 3.481e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.549e-01, 1.541e-01, 1.522e-01, 1.531e-01, 1.534e-01]
+	results.min() = 1.522e-01 s | results.max() = 1.549e-01 s
+	mean = 1.535e-01 s ± std = 1.056e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.215e-01, 2.963e-01, 2.843e-01, 2.727e-01, 3.103e-01]
+	results.min() = 2.727e-01 s | results.max() = 3.215e-01 s
+	mean = 2.970e-01 s ± std = 1.957e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[6.185e-01, 7.215e-01, 5.727e-01, 5.797e-01, 6.039e-01]
+	results.min() = 5.727e-01 s | results.max() = 7.215e-01 s
+	mean = 6.193e-01 s ± std = 6.005e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[8.035e-02, 8.033e-02, 8.034e-02, 8.043e-02, 8.084e-02]
+	results.min() = 8.033e-02 s | results.max() = 8.084e-02 s
+	mean = 8.046e-02 s ± std = 2.162e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.449e-01, 1.441e-01, 1.458e-01, 1.456e-01, 1.460e-01]
+	results.min() = 1.441e-01 s | results.max() = 1.460e-01 s
+	mean = 1.453e-01 s ± std = 7.655e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.908e-01, 2.901e-01, 2.896e-01, 2.898e-01, 2.898e-01]
+	results.min() = 2.896e-01 s | results.max() = 2.908e-01 s
+	mean = 2.900e-01 s ± std = 4.529e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[128, 128, -1], order='F', compressor='default')
+	[2.948e+01, 1.894e+01, 2.011e+01]
+	results.min() = 1.894e+01 s | results.max() = 2.948e+01 s
+	mean = 2.285e+01 s ± std = 5.778e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.427e-01, 1.657e-01, 1.715e-01, 1.725e-01, 1.707e-01]
+	results.min() = 1.657e-01 s | results.max() = 2.427e-01 s
+	mean = 1.846e-01 s ± std = 3.257e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3182880357 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.862e-01, 2.883e-01, 2.864e-01, 2.887e-01, 2.872e-01]
+	results.min() = 2.862e-01 s | results.max() = 2.887e-01 s
+	mean = 2.873e-01 s ± std = 1.126e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3182880357 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.170e-01, 5.129e-01, 4.098e-01, 4.040e-01, 4.043e-01]
+	results.min() = 4.040e-01 s | results.max() = 5.170e-01 s
+	mean = 4.496e-01 s ± std = 5.970e-02 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3182880357 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.749e-01, 7.700e-01, 7.768e-01, 7.696e-01, 7.726e-01]
+	results.min() = 7.696e-01 s | results.max() = 7.768e-01 s
+	mean = 7.728e-01 s ± std = 3.090e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3182880357 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.249e-01, 1.261e-01, 1.260e-01, 1.249e-01, 1.260e-01]
+	results.min() = 1.249e-01 s | results.max() = 1.261e-01 s
+	mean = 1.256e-01 s ± std = 6.303e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3182880357 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.171e-01, 2.187e-01, 2.186e-01, 2.187e-01, 2.193e-01]
+	results.min() = 2.171e-01 s | results.max() = 2.193e-01 s
+	mean = 2.185e-01 s ± std = 8.273e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3182880357 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.059e-01, 4.030e-01, 4.052e-01, 4.050e-01, 4.014e-01]
+	results.min() = 4.014e-01 s | results.max() = 4.059e-01 s
+	mean = 4.041e-01 s ± std = 1.873e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3182880357 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[128, 128, -1], order='F', compressor=None)
+	[2.538e+01, 1.304e+01, 1.317e+01]
+	results.min() = 1.304e+01 s | results.max() = 2.538e+01 s
+	mean = 1.720e+01 s ± std = 7.084e+00 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.193e-02, 7.113e-02, 7.153e-02, 7.108e-02, 7.120e-02]
+	results.min() = 7.108e-02 s | results.max() = 7.193e-02 s
+	mean = 7.137e-02 s ± std = 3.554e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.352e-01, 1.349e-01, 1.347e-01, 1.344e-01, 1.349e-01]
+	results.min() = 1.344e-01 s | results.max() = 1.352e-01 s
+	mean = 1.348e-01 s ± std = 2.852e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.636e-01, 2.635e-01, 2.631e-01, 2.632e-01, 2.631e-01]
+	results.min() = 2.631e-01 s | results.max() = 2.636e-01 s
+	mean = 2.633e-01 s ± std = 2.163e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.199e-01, 5.125e-01, 5.117e-01, 5.123e-01, 5.128e-01]
+	results.min() = 5.117e-01 s | results.max() = 5.199e-01 s
+	mean = 5.138e-01 s ± std = 3.429e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.136e-02, 7.109e-02, 7.125e-02, 7.101e-02, 7.109e-02]
+	results.min() = 7.101e-02 s | results.max() = 7.136e-02 s
+	mean = 7.116e-02 s ± std = 1.398e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.349e-01, 1.351e-01, 1.351e-01, 1.347e-01, 1.349e-01]
+	results.min() = 1.347e-01 s | results.max() = 1.351e-01 s
+	mean = 1.349e-01 s ± std = 1.581e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.634e-01, 2.636e-01, 2.636e-01, 2.637e-01, 2.633e-01]
+	results.min() = 2.633e-01 s | results.max() = 2.637e-01 s
+	mean = 2.635e-01 s ± std = 1.662e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (128, 128, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 4949278972 (4.6G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[256, 256, -1], order='C', compressor='default')
+	[7.155e+00, 6.877e+00, 6.933e+00]
+	results.min() = 6.877e+00 s | results.max() = 7.155e+00 s
+	mean = 6.989e+00 s ± std = 1.471e-01 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.295e-01, 1.342e-01, 1.318e-01, 1.332e-01, 1.281e-01]
+	results.min() = 1.281e-01 s | results.max() = 1.342e-01 s
+	mean = 1.314e-01 s ± std = 2.536e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266801446 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.053e-01, 2.057e-01, 2.064e-01, 2.069e-01, 2.054e-01]
+	results.min() = 2.053e-01 s | results.max() = 2.069e-01 s
+	mean = 2.059e-01 s ± std = 7.089e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266801446 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.559e-01, 3.558e-01, 3.543e-01, 3.553e-01, 3.544e-01]
+	results.min() = 3.543e-01 s | results.max() = 3.559e-01 s
+	mean = 3.551e-01 s ± std = 7.722e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266801446 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[6.542e-01, 6.563e-01, 6.542e-01, 6.525e-01, 6.566e-01]
+	results.min() = 6.525e-01 s | results.max() = 6.566e-01 s
+	mean = 6.548e-01 s ± std = 1.696e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266801446 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.275e-01, 1.320e-01, 1.300e-01, 1.319e-01, 1.274e-01]
+	results.min() = 1.274e-01 s | results.max() = 1.320e-01 s
+	mean = 1.298e-01 s ± std = 2.250e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266801446 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.058e-01, 2.066e-01, 2.054e-01, 2.053e-01, 2.050e-01]
+	results.min() = 2.050e-01 s | results.max() = 2.066e-01 s
+	mean = 2.056e-01 s ± std = 5.847e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266801446 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.552e-01, 3.539e-01, 3.542e-01, 3.558e-01, 3.555e-01]
+	results.min() = 3.539e-01 s | results.max() = 3.558e-01 s
+	mean = 3.549e-01 s ± std = 8.426e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3266801446 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[256, 256, -1], order='C', compressor=None)
+	[7.070e+00, 7.072e+00, 7.093e+00]
+	results.min() = 7.070e+00 s | results.max() = 7.093e+00 s
+	mean = 7.078e+00 s ± std = 1.259e-02 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.725e-02, 7.535e-02, 7.465e-02, 7.537e-02, 7.410e-02]
+	results.min() = 7.410e-02 s | results.max() = 7.725e-02 s
+	mean = 7.534e-02 s ± std = 1.187e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.309e-01, 1.310e-01, 1.309e-01, 1.310e-01, 1.312e-01]
+	results.min() = 1.309e-01 s | results.max() = 1.312e-01 s
+	mean = 1.310e-01 s ± std = 1.312e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.417e-01, 2.423e-01, 2.417e-01, 2.423e-01, 2.415e-01]
+	results.min() = 2.415e-01 s | results.max() = 2.423e-01 s
+	mean = 2.419e-01 s ± std = 3.495e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.634e-01, 4.633e-01, 4.636e-01, 4.626e-01, 4.633e-01]
+	results.min() = 4.626e-01 s | results.max() = 4.636e-01 s
+	mean = 4.632e-01 s ± std = 3.570e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.514e-02, 7.614e-02, 7.616e-02, 7.532e-02, 7.517e-02]
+	results.min() = 7.514e-02 s | results.max() = 7.616e-02 s
+	mean = 7.559e-02 s ± std = 5.185e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.312e-01, 1.309e-01, 1.311e-01, 1.313e-01, 1.311e-01]
+	results.min() = 1.309e-01 s | results.max() = 1.313e-01 s
+	mean = 1.311e-01 s ± std = 1.519e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.421e-01, 2.448e-01, 2.423e-01, 2.422e-01, 2.416e-01]
+	results.min() = 2.416e-01 s | results.max() = 2.448e-01 s
+	mean = 2.426e-01 s ± std = 1.236e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[256, 256, -1], order='F', compressor='default')
+	[1.116e+01, 1.120e+01, 1.130e+01]
+	results.min() = 1.116e+01 s | results.max() = 1.130e+01 s
+	mean = 1.122e+01 s ± std = 7.011e-02 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.345e-01, 1.331e-01, 1.376e-01, 1.327e-01, 1.370e-01]
+	results.min() = 1.327e-01 s | results.max() = 1.376e-01 s
+	mean = 1.350e-01 s ± std = 2.224e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3183583530 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.162e-01, 2.157e-01, 2.167e-01, 2.158e-01, 2.139e-01]
+	results.min() = 2.139e-01 s | results.max() = 2.167e-01 s
+	mean = 2.157e-01 s ± std = 1.063e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3183583530 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.772e-01, 3.772e-01, 3.774e-01, 3.755e-01, 3.769e-01]
+	results.min() = 3.755e-01 s | results.max() = 3.774e-01 s
+	mean = 3.768e-01 s ± std = 7.611e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3183583530 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[6.994e-01, 7.001e-01, 7.012e-01, 6.990e-01, 7.022e-01]
+	results.min() = 6.990e-01 s | results.max() = 7.022e-01 s
+	mean = 7.004e-01 s ± std = 1.296e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3183583530 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.340e-01, 1.384e-01, 1.350e-01, 1.329e-01, 1.361e-01]
+	results.min() = 1.329e-01 s | results.max() = 1.384e-01 s
+	mean = 1.353e-01 s ± std = 2.110e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3183583530 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.163e-01, 2.152e-01, 2.154e-01, 2.144e-01, 2.154e-01]
+	results.min() = 2.144e-01 s | results.max() = 2.163e-01 s
+	mean = 2.153e-01 s ± std = 6.561e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3183583530 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.760e-01, 3.749e-01, 3.788e-01, 3.781e-01, 3.774e-01]
+	results.min() = 3.749e-01 s | results.max() = 3.788e-01 s
+	mean = 3.770e-01 s ± std = 1.595e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3183583530 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[256, 256, -1], order='F', compressor=None)
+	[1.034e+01, 1.045e+01, 1.106e+01]
+	results.min() = 1.034e+01 s | results.max() = 1.106e+01 s
+	mean = 1.061e+01 s ± std = 3.863e-01 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[8.051e-02, 7.719e-02, 7.759e-02, 7.753e-02, 7.797e-02]
+	results.min() = 7.719e-02 s | results.max() = 8.051e-02 s
+	mean = 7.816e-02 s ± std = 1.344e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.377e-01, 1.379e-01, 1.375e-01, 1.375e-01, 1.375e-01]
+	results.min() = 1.375e-01 s | results.max() = 1.379e-01 s
+	mean = 1.376e-01 s ± std = 1.874e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.605e-01, 2.610e-01, 2.603e-01, 2.610e-01, 2.609e-01]
+	results.min() = 2.603e-01 s | results.max() = 2.610e-01 s
+	mean = 2.608e-01 s ± std = 3.302e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.064e-01, 5.062e-01, 5.051e-01, 5.064e-01, 5.063e-01]
+	results.min() = 5.051e-01 s | results.max() = 5.064e-01 s
+	mean = 5.061e-01 s ± std = 5.578e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.729e-02, 7.652e-02, 7.869e-02, 7.667e-02, 7.727e-02]
+	results.min() = 7.652e-02 s | results.max() = 7.869e-02 s
+	mean = 7.729e-02 s ± std = 8.551e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.374e-01, 1.376e-01, 1.369e-01, 1.376e-01, 1.374e-01]
+	results.min() = 1.369e-01 s | results.max() = 1.376e-01 s
+	mean = 1.374e-01 s ± std = 3.137e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.599e-01, 2.604e-01, 2.603e-01, 2.611e-01, 2.604e-01]
+	results.min() = 2.599e-01 s | results.max() = 2.611e-01 s
+	mean = 2.604e-01 s ± std = 4.281e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (256, 256, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[512, 512, -1], order='C', compressor='default')
+	[7.122e+00, 7.095e+00, 7.105e+00]
+	results.min() = 7.095e+00 s | results.max() = 7.122e+00 s
+	mean = 7.107e+00 s ± std = 1.362e-02 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.633e-01, 1.629e-01, 1.619e-01, 1.629e-01, 1.597e-01]
+	results.min() = 1.597e-01 s | results.max() = 1.633e-01 s
+	mean = 1.621e-01 s ± std = 1.452e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3267293592 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.303e-01, 2.359e-01, 2.282e-01, 2.301e-01, 2.260e-01]
+	results.min() = 2.260e-01 s | results.max() = 2.359e-01 s
+	mean = 2.301e-01 s ± std = 3.655e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3267293592 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.703e-01, 3.693e-01, 3.691e-01, 3.685e-01, 3.710e-01]
+	results.min() = 3.685e-01 s | results.max() = 3.710e-01 s
+	mean = 3.697e-01 s ± std = 1.013e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3267293592 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[6.508e-01, 6.491e-01, 6.499e-01, 6.517e-01, 6.517e-01]
+	results.min() = 6.491e-01 s | results.max() = 6.517e-01 s
+	mean = 6.506e-01 s ± std = 1.131e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3267293592 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.569e-01, 1.601e-01, 1.643e-01, 1.620e-01, 1.554e-01]
+	results.min() = 1.554e-01 s | results.max() = 1.643e-01 s
+	mean = 1.597e-01 s ± std = 3.648e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3267293592 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.299e-01, 2.290e-01, 2.314e-01, 2.293e-01, 2.260e-01]
+	results.min() = 2.260e-01 s | results.max() = 2.314e-01 s
+	mean = 2.291e-01 s ± std = 1.948e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3267293592 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[3.696e-01, 3.709e-01, 3.709e-01, 3.700e-01, 3.691e-01]
+	results.min() = 3.691e-01 s | results.max() = 3.709e-01 s
+	mean = 3.701e-01 s ± std = 8.127e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 3267293592 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[512, 512, -1], order='C', compressor=None)
+	[6.404e+00, 6.522e+00, 6.558e+00]
+	results.min() = 6.404e+00 s | results.max() = 6.558e+00 s
+	mean = 6.494e+00 s ± std = 8.063e-02 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.007e-01, 1.003e-01, 1.004e-01, 9.947e-02, 9.979e-02]
+	results.min() = 9.947e-02 s | results.max() = 1.007e-01 s
+	mean = 1.001e-01 s ± std = 4.969e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.587e-01, 1.579e-01, 1.552e-01, 1.586e-01, 1.593e-01]
+	results.min() = 1.552e-01 s | results.max() = 1.593e-01 s
+	mean = 1.579e-01 s ± std = 1.584e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.697e-01, 2.715e-01, 2.712e-01, 2.707e-01, 2.704e-01]
+	results.min() = 2.697e-01 s | results.max() = 2.715e-01 s
+	mean = 2.707e-01 s ± std = 7.054e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.975e-01, 4.967e-01, 4.974e-01, 4.981e-01, 4.978e-01]
+	results.min() = 4.967e-01 s | results.max() = 4.981e-01 s
+	mean = 4.975e-01 s ± std = 5.448e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[9.937e-02, 1.012e-01, 1.011e-01, 1.002e-01, 1.006e-01]
+	results.min() = 9.937e-02 s | results.max() = 1.012e-01 s
+	mean = 1.005e-01 s ± std = 7.376e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.590e-01, 1.576e-01, 1.595e-01, 1.573e-01, 1.562e-01]
+	results.min() = 1.562e-01 s | results.max() = 1.595e-01 s
+	mean = 1.579e-01 s ± std = 1.323e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.709e-01, 2.707e-01, 2.704e-01, 2.708e-01, 2.699e-01]
+	results.min() = 2.699e-01 s | results.max() = 2.709e-01 s
+	mean = 2.705e-01 s ± std = 4.328e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = C, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[512, 512, -1], order='F', compressor='default')
+	[2.504e+01, 2.488e+01, 2.492e+01]
+	results.min() = 2.488e+01 s | results.max() = 2.504e+01 s
+	mean = 2.495e+01 s ± std = 8.415e-02 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.765e-01, 1.705e-01, 1.725e-01, 1.704e-01, 1.679e-01]
+	results.min() = 1.679e-01 s | results.max() = 1.765e-01 s
+	mean = 1.716e-01 s ± std = 3.194e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184078175 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.569e-01, 2.472e-01, 2.528e-01, 2.479e-01, 2.457e-01]
+	results.min() = 2.457e-01 s | results.max() = 2.569e-01 s
+	mean = 2.501e-01 s ± std = 4.635e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184078175 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.113e-01, 4.104e-01, 4.094e-01, 4.080e-01, 4.093e-01]
+	results.min() = 4.080e-01 s | results.max() = 4.113e-01 s
+	mean = 4.097e-01 s ± std = 1.237e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184078175 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[7.299e-01, 7.324e-01, 7.313e-01, 7.342e-01, 7.305e-01]
+	results.min() = 7.299e-01 s | results.max() = 7.342e-01 s
+	mean = 7.317e-01 s ± std = 1.713e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184078175 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.679e-01, 1.700e-01, 1.676e-01, 1.691e-01, 1.724e-01]
+	results.min() = 1.676e-01 s | results.max() = 1.724e-01 s
+	mean = 1.694e-01 s ± std = 1.947e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184078175 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.481e-01, 2.557e-01, 2.508e-01, 2.528e-01, 2.547e-01]
+	results.min() = 2.481e-01 s | results.max() = 2.557e-01 s
+	mean = 2.524e-01 s ± std = 3.036e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184078175 (3.0G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[4.082e-01, 4.100e-01, 4.097e-01, 4.095e-01, 4.095e-01]
+	results.min() = 4.082e-01 s | results.max() = 4.100e-01 s
+	mean = 4.094e-01 s ± std = 6.993e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = Blosc(cname='lz4', clevel=5, shuffle=SHUFFLE, blocksize=0), filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 3184078175 (3.0G)
+
+converting files/G1_7_top/profile.hdf5 to files/G1_7_top/profile.zarr (chunk=[512, 512, -1], order='F', compressor=None)
+	[2.327e+01, 2.330e+01, 2.333e+01]
+	results.min() = 2.327e+01 s | results.max() = 2.333e+01 s
+	mean = 2.330e+01 s ± std = 3.064e-02 s
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.103e-01, 1.087e-01, 1.093e-01, 1.072e-01, 1.086e-01]
+	results.min() = 1.072e-01 s | results.max() = 1.103e-01 s
+	mean = 1.088e-01 s ± std = 1.147e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.731e-01, 1.693e-01, 1.694e-01, 1.688e-01, 1.718e-01]
+	results.min() = 1.688e-01 s | results.max() = 1.731e-01 s
+	mean = 1.705e-01 s ± std = 1.848e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.945e-01, 2.937e-01, 2.938e-01, 2.937e-01, 2.932e-01]
+	results.min() = 2.932e-01 s | results.max() = 2.945e-01 s
+	mean = 2.938e-01 s ± std = 4.649e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[5.470e-01, 5.483e-01, 5.492e-01, 5.482e-01, 5.482e-01]
+	results.min() = 5.470e-01 s | results.max() = 5.492e-01 s
+	mean = 5.482e-01 s ± std = 7.481e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [1024, 1024, 1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.065e-01, 1.089e-01, 1.100e-01, 1.072e-01, 1.096e-01]
+	results.min() = 1.065e-01 s | results.max() = 1.100e-01 s
+	mean = 1.085e-01 s ± std = 1.512e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [128, 128, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[1.717e-01, 1.743e-01, 1.705e-01, 1.720e-01, 1.691e-01]
+	results.min() = 1.691e-01 s | results.max() = 1.743e-01 s
+	mean = 1.715e-01 s ± std = 1.905e-03 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [256, 256, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
+Tile3DZarrBenchmark (duration averaged on 200 iterations, repeated 5 times.)
+	[2.942e-01, 2.932e-01, 2.936e-01, 2.941e-01, 2.943e-01]
+	results.min() = 2.932e-01 s | results.max() = 2.943e-01 s
+	mean = 2.939e-01 s ± std = 4.577e-04 s
+Zarr file: files/G1_7_top/profile.zarr, using tile = [512, 512, -1]
+	shape = (7474, 10239, 32), chunks = (512, 512, 32), compressor = None, filters = None
+	order = F, size (mem) = 4897682304 (4.6G), size (disk) 5033165052 (4.7G)
+
