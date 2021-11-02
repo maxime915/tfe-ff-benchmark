@@ -1,13 +1,15 @@
 "imzml_to_zarr: converts imzML images to Zarr files"
 
 import argparse
-from typing import Callable
+import sys
+import timeit
 import warnings
-import numcodecs
+from typing import Callable
 
+import numcodecs
 import numpy as np
-from pyimzml import ImzMLParser
 import zarr
+from pyimzml import ImzMLParser
 
 
 def _convert_processed(
@@ -169,9 +171,82 @@ def convert(imzml_path: str, zarr_path: str, **kwargs) -> None:
 
 
 if __name__ == "__main__":
-    # more parsing options ?
-    argparser = argparse.ArgumentParser()
-    argparser.add_argument('imzml', type=str)
-    argparser.add_argument('zarr', type=str)
-    args = argparser.parse_args()
-    convert(args.imzml, args.zarr)
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('imzml', type=str, help='input imzML file')
+    parser.add_argument('zarr', nargs='?', type=str, default=None,
+                        help='output path, defaults to random unique suffix')
+
+    # chunk
+    chunk_group = parser.add_mutually_exclusive_group()
+    chunk_group.add_argument('--auto-chunk', dest='auto-chunk', action='store_true',
+                             help='automatic chunking for array storage (default option)')
+    chunk_group.add_argument('--no-chunk', dest='auto-chunk', action='store_false',
+                             help='disable chunking for array storage')
+    chunk_group.add_argument('--chunks', type=int, nargs='+', default=[],
+                             help='Chunk shape : list of positive integers (-1 means equal to array shape)')
+    parser.set_defaults(auto_chunk=True)
+
+    # C / Fortran array order
+    parser.add_argument('--order', default='C', choices=['C', 'F'],
+                        help='Memory layout to be used within each chunk (C vs Fortran)')
+
+    # metadata chaching
+    parser.add_argument('--cache-metadata', default=True,
+                        choices=[True, False], help='If True, array configuration metadata '
+                        'will be cached for the lifetime of the object. If False, array '
+                        'metadata will be reloaded prior to all data access and modification '
+                        'operations (may incur overhead depending on storage and data access pattern).')
+
+    # Compressor -> default, none, or some evaluated object
+    parser.add_argument('--compressor', type=str, default="default", help='either'
+                        + ' "default", "none" or some python code to construct'
+                        + ' the compressor object')
+
+    parser.add_argument('--benchmark', action='store_true',
+                        help="time conversion")
+
+    args = parser.parse_args()
+
+    if args.zarr is None:
+        # get unique new filename
+        import uuid
+        args.zarr = args.imzml[:-5] + str(uuid.uuid4()) + '.zarr'
+
+    chunks = args.auto_chunk
+    if args.chunks:
+        chunks = args.chunks
+        for i, c in enumerate(chunks):
+            try:
+                chunks[i] = int(c)
+                if chunks[i] == -1:
+                    pass  # will be set to shape[i]
+                elif chunks[i] < 1:
+                    raise ValueError(f'"{c}" is not a valid chunk size')
+            except ValueError as e:
+                sys.exit(f"unable to parse chunk option: {args.chunk}")
+
+    # compressor : None, default or some evaluated object
+    if args.compressor == 'none':
+        args.compressor = None
+    elif args.compressor != 'default':
+        # Zlib, GZip, BZ2, LZMA?, Blosc, Zstd, lz4, ZFPY, and a lot of others...
+        import codecs
+
+        try:
+            args.compressor = eval(args.compressor)
+        except Exception as e:
+            print(f'unable to evaluate compressor\n\n{e}')
+
+    if args.benchmark:
+        results = timeit.Timer(converter(args.imzml, args.zarr, chunks=chunks, compressor=args.compressor,
+                               cache_metadata=args.cache_metadata, order=args.order)).repeat(3, number=10)
+        results = np.array(results) / 10
+        res = "[" + ", ".join([f'{v:5.3e}' for v in results]) + "]"
+        print((f'results: {res}: {results.min():5.3e} s to {results.max():5.3e} s, '
+               f'{results.mean():5.3e} s ± {results.std(ddof=1):5.3e} s'))
+    else:
+        convert(args.imzml, args.zarr, chunks=chunks, compressor=args.compressor,
+                cache_metadata=args.cache_metadata, order=args.order)
+
+    print(zarr.open_group(args.zarr, mode='r')['0'].info)
