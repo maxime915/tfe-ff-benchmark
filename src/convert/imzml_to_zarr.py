@@ -1,67 +1,142 @@
 "imzml_to_zarr: converts imzML images to Zarr files"
 
 import argparse
-import typing
+from typing import Callable
+import warnings
+import numcodecs
 
-import numpy
-import pyimzml.ImzMLParser as imzML
+import numpy as np
+from pyimzml import ImzMLParser
 import zarr
 
 
-def converter(imzml_path: str, zarr_path: str, **kwargs) -> typing.Callable[[], None]:
+def _convert_processed(
+    parser: ImzMLParser.ImzMLParser,
+    zarr_group: zarr.Group,
+    **kwargs
+) -> None:
+    """- parser should have all the information for the imzML, already parsed
+    - zarr_group represent a group that can be used to create file at the correct
+    location
+    - shape, dtype, etc should not be in kwargs
+    """
+
+    shape = (parser.imzmldict['max count of pixels x'],
+             parser.imzmldict['max count of pixels y'])
+
+    temp_store = zarr.TempStore()
+    temp_group = zarr.group(temp_store, overwrite=False)
+
+    # use a copy of the parameters
+    temp_param = kwargs.copy()
+    temp_param['chunks'] = (1, 1)
+    temp_param['shape'] = shape
+    temp_param['compressor'] = None
+
+    # create temporary ragged arrays -> fast write to chunks
+    temp_int = temp_group.empty('intensities', object_codec=numcodecs.VLenArray(
+        parser.intensityPrecision), dtype=object, **temp_param)
+    temp_mzs = temp_group.empty('mzs', object_codec=numcodecs.VLenArray(
+        parser.mzPrecision), dtype=object, **temp_param)
+
+    for idx, (x, y, _) in enumerate(parser.coordinates):
+        temp_mzs[x-1, y-1], temp_int[x-1, y-1] = parser.getspectrum(idx)
+
+    # create ragged arrays for final storage
+    intensities = zarr_group.empty('intensities', object_codec=numcodecs.VLenArray(
+        parser.intensityPrecision), shape=shape, dtype=object, **kwargs)
+    mzs = zarr_group.empty('mzs', object_codec=numcodecs.VLenArray(
+        parser.mzPrecision), shape=shape, dtype=object, **kwargs)
+
+    # re-chunk
+    intensities[:] = temp_int[:]
+    mzs[:] = temp_mzs
+
+    # remove temporary store (the automatic removal is a shutdown only)
+    temp_store.rmdir()
+
+
+def _convert_continuous(
+    parser: ImzMLParser.ImzMLParser,
+    zarr_group: zarr.Group,
+    **kwargs
+) -> None:
+    """- parser should have all the information for the imzML, already parsed
+    - zarr_group represent a group that can be used to create file at the correct
+    location
+    - shape, dtype, etc should not be in kwargs
+    """
+
+    shape = (parser.imzmldict['max count of pixels x'],
+             parser.imzmldict['max count of pixels y'],
+             parser.mzLengths[0])
+
+    temp_store = zarr.TempStore()
+    temp_group = zarr.group(temp_store, overwrite=False)
+    temp_int = temp_group.empty('intensities', shape=shape, dtype=parser.intensityPrecision,
+                                chunks=(1, 1, -1), compressor=None)
+
+    # create array to be filled -> use default options
+    mzs = zarr_group.create('mzs', shape=shape[2:], dtype=parser.mzPrecision)
+
+    # fill m/z
+    parser.m.seek(parser.mzOffsets[0])
+    mzs[:] = np.fromfile(parser.m, count=parser.mzLengths[0],
+                         dtype=parser.mzPrecision)
+
+    for idx, (x, y, _) in enumerate(parser.coordinates):
+
+        # manual call to seek instead of offset: repeatidly calling fromfile
+        # with the same offset drifts, this is not the expected behavior so
+        # the file is seek'ed manually before reading
+
+        parser.m.seek(parser.intensityOffsets[idx])
+        temp_int[x-1, y-1, :] = np.fromfile(
+            parser.m, count=parser.intensityLengths[idx], dtype=parser.intensityPrecision)
+
+    # create array for final storage
+    intensities = zarr_group.empty('intensities', shape=shape,
+        dtype=parser.intensityPrecision, **kwargs)
+
+    # re-chunk
+    intensities[:] = temp_int[:]
+
+    # cleanup
+    temp_store.rmdir()
+
+
+def converter(imzml_path: str, zarr_path: str, **kwargs) -> Callable[[], None]:
     "returns a function that does the convertion from imzML to Zarr"
 
     include_spectra_metadata = kwargs.pop('include-spectra-metadata', None)
     overwrite = kwargs.pop('overwrite', True)
 
-    if 'shape' in kwargs:  # TODO add warning
-        kwargs.pop('shape', None)
-    if 'dtype' in kwargs:  # TODO add warning
-        kwargs.pop('dtype', None)
-
-    # TODO evaluate performance... are there a lot of active threads ?
-    # why aren't any of them hitting close to 100% activity ? [60-80]% CPU usage, total
+    for key in ['shape', 'dtype', 'max-shape', 'max_shape']:
+        if key in kwargs:
+            kwargs.pop(key, None)
+            warnings.warn(f'"{key}" argument ignored in imzML -> Zarr conversion')
 
     def converter_fun() -> None:
 
         # the ImzMLParser object automatically parses the whole .imzML file at once
-        # this creates a huge slow-down when most of it could potentially be parsed
-        # online & in parallel to allow parallel conversion.
-        parser = imzML.ImzMLParser(
-            imzml_path, 'lxml', include_spectra_metadata=include_spectra_metadata)
+        with warnings.catch_warnings(record=True) as _:
+            parser = ImzMLParser.ImzMLParser(imzml_path, 'lxml',
+                include_spectra_metadata=include_spectra_metadata)
 
-        # TODO processed mode to be implemented, will there ever be another one ?
-
-        # check for continuous binary mode
-        if not parser.metadata.file_description.param_by_name.get('continuous', False):
-            raise ValueError(
-                'unsupported imzML file: mode should be continuous')
-
-        # TODO are there any other type supported by the standard
-
-        # check for dtype
-        if not parser.metadata.referenceable_param_groups['intensities'].\
-                param_by_name.get('32-bit float', False):
-            raise ValueError(
-                'unsupported imzML file: intensities should have float32 dtype.')
-        if not parser.metadata.referenceable_param_groups['mzArray'].\
-                param_by_name.get('64-bit float', False):
-            raise ValueError(
-                'unsupported imzML file: mzArray should have float64 dtype.')
-
-        # TODO imzML seems to support full 3D image... is it the case ?
+        # imzML seems to support full 3D image... is it the case ?
         # obtained "3D" dataset just have long m/z bands,
         # z coordinate is still zero for all sample
 
         # check for 2d planes
         if parser.imzmldict.get('max count of pixels z', 1) != 1:
-            raise ValueError(
-                'unsupported imzML file: should have 1 z dimension')
+            raise ValueError('unsupported imzML file: should have 1 z dimension')
 
-        # get amount of m/z values per pixel
-        shape = (parser.imzmldict['max count of pixels x'],
-                 parser.imzmldict['max count of pixels y'],
-                 parser.mzLengths[0])
+        # check for binary mode
+        is_continuous = 'continuous' in parser.metadata.file_description.param_by_name
+        is_processed = 'processed' in parser.metadata.file_description.param_by_name
+
+        if is_processed == is_continuous:
+            raise ValueError('unsupported imzML file: mode should be continuous or processed')
 
         store = zarr.DirectoryStore(zarr_path)
         zarr_file = zarr.group(store=store, overwrite=overwrite)
@@ -70,24 +145,20 @@ def converter(imzml_path: str, zarr_path: str, **kwargs) -> typing.Callable[[], 
         zarr_file.attrs['multiscales'] = {
             'version': '0.3',
             'name': zarr_path,
-            'datasets': [{'path': '0'}, {'path': 'mzs'}],
+            'datasets': [{'path': 'intensities'}, {'path': 'mzs'}],
             'axes': ['x', 'y', 'c'],
             'type': 'conversion from imzML file',
-            'metadata': {'original': imzml_path},  # TODO include UUID
+            'metadata': {'original': imzml_path},  # include UUID ?
         }
-        # TODO Omero metadata?
+        # Omero metadata?
 
-        array3d = zarr_file.create(
-            '0', shape=shape, dtype=numpy.float32, **kwargs)
-        mzs = zarr_file.create(
-            'mzs', shape=shape[2:], chunks=True, dtype=numpy.float64)
+        if is_continuous:
+            _convert_continuous(parser, zarr_file, **kwargs)
+        else:
+            _convert_processed(parser, zarr_file, **kwargs)
 
-        # copy a single m/z sequence : this file is continuous so its the same for all (x, y)
-        mzs[:] = parser.coordinates[0][0]
-
-        for idx, (x, y, _) in enumerate(parser.coordinates):
-            _, intensities = parser.getspectrum(idx)
-            array3d[x-1, y-1, :] = intensities
+        # close underlining idb file
+        parser.m.close()
 
     return converter_fun
 
@@ -98,9 +169,9 @@ def convert(imzml_path: str, zarr_path: str, **kwargs) -> None:
 
 
 if __name__ == "__main__":
-    # TODO more parsing options ?
+    # more parsing options ?
     argparser = argparse.ArgumentParser()
-    argparser.add_argument('imzml', type=str, nargs=1)
-    argparser.add_argument('zarr', type=str, nargs=1)
+    argparser.add_argument('imzml', type=str)
+    argparser.add_argument('zarr', type=str)
     args = argparser.parse_args()
     convert(args.imzml, args.zarr)
