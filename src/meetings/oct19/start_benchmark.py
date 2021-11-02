@@ -17,9 +17,9 @@ import uuid
 
 import numpy
 
-from .benchmark.tile3d_zarr import run_benchmark as zarr_benchmark
-from .benchmark.tile3d_hdf5 import run_benchmark as hdf5_benchmark
-from .convert.companion_to_zarr import converter
+from ...benchmark.tile3d_zarr import run_benchmark as zarr_benchmark
+from ...benchmark.tile3d_hdf5 import run_benchmark as hdf5_benchmark
+from ...convert.companion_to_zarr import converter
 
 _CONVERSION_NUMBER = 2
 _CONVERSION_REPEAT = 3
@@ -29,6 +29,7 @@ _ACCESS_REPEAT = 5
 
 
 def _run(hdf5_path: str):
+    return
     if hdf5_path[-5:] != '.hdf5':
         raise ValueError(f'not a HDF5 file :{hdf5_path}')
     zarr_path = f'{hdf5_path[:-5]}_{uuid.uuid4()}.zarr'
