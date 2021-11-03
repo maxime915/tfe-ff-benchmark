@@ -1,4 +1,4 @@
-"hdf5 companion: benchmark Zarr companion file for band access"
+"zarr companion: benchmark Zarr companion file for band access"
 
 import random
 
@@ -27,11 +27,10 @@ class ZarrCompanionBenchmark(BenchmarkABC, re_str=r'.*profile\.zarr'):
         sum(band)  # do something with it
 
     def info(self, verbosity: Verbosity) -> str:
-        data = zarr.open(self.file, mode='r')['0']
-
         info = f'Zarr Companion: {self.file}'
 
         if verbosity == Verbosity.VERBOSE:
+            data = zarr.open(self.file, mode='r')['0']
             zarr_info = str(data.info)[:-1].split('\n')
             zarr_info = [item.split(':') for item in zarr_info]
             zarr_info = {l.strip(): r.strip() for (l, r) in zarr_info}

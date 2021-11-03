@@ -38,8 +38,8 @@ def _zarr_info(file: str, verbosity: Verbosity, key: str) -> str:
     return info
 
 
-class ImzMLBandBenchmark(BenchmarkABC):
-    "benchmark for imzML focussed on a single band"
+class ZarrImzMLBandBenchmark(BenchmarkABC):
+    "benchmark for imzML converted to zarr focussed on a single band"
 
     def __init__(self, path: str) -> None:
         self.file = path
@@ -64,8 +64,8 @@ class ImzMLBandBenchmark(BenchmarkABC):
         return _zarr_info(self.file, verbosity, 'band access')
 
 
-class ImzMLSumBenchmark(BenchmarkABC):
-    "benchmark for imzML focussed on the sum of values accross all bands"
+class ZarrImzMLSumBenchmark(BenchmarkABC):
+    "benchmark for imzML converted to zarr focussed on the sum of values accross all bands"
 
     def __init__(self, path: str) -> None:
         self.file = path
@@ -89,9 +89,9 @@ def _main():
     args = parse_args()
 
     for file in args.files:
-        ImzMLBandBenchmark(file).bench(
+        ZarrImzMLBandBenchmark(file).bench(
             Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
-        ImzMLSumBenchmark(file).bench(
+        ZarrImzMLSumBenchmark(file).bench(
             Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
 
 
