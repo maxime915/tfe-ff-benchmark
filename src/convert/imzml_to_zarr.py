@@ -44,6 +44,12 @@ def _convert_processed(
     for idx, (x, y, _) in enumerate(parser.coordinates):
         temp_mzs[x-1, y-1], temp_int[x-1, y-1] = parser.getspectrum(idx)
 
+    # make sure the caller knows that 3rd axis has full chunk (un-supported)
+    if 'chunks' in kwargs and isinstance(kwargs['chunks'], (tuple, list)) and len(kwargs['chunks']) > 2:
+        if kwargs['chunks'][2] != -1:
+            warnings.warn(f'unsupported chunk {kwargs["chunks"]} for processed imzml, third axis will be full')
+        kwargs['chunks'] = kwargs['chunks'][:2]
+
     # create ragged arrays for final storage
     intensities = zarr_group.empty('intensities', object_codec=numcodecs.VLenArray(
         parser.intensityPrecision), shape=shape, dtype=object, **kwargs)
@@ -98,7 +104,7 @@ def _convert_continuous(
 
     # create array for final storage
     intensities = zarr_group.empty('intensities', shape=shape,
-        dtype=parser.intensityPrecision, **kwargs)
+                                   dtype=parser.intensityPrecision, **kwargs)
 
     # re-chunk
     intensities[:] = temp_int[:]
@@ -123,7 +129,7 @@ def converter(imzml_path: str, zarr_path: str, **kwargs) -> Callable[[], None]:
         # the ImzMLParser object automatically parses the whole .imzML file at once
         with warnings.catch_warnings(record=True) as _:
             parser = ImzMLParser.ImzMLParser(imzml_path, 'lxml',
-                include_spectra_metadata=include_spectra_metadata)
+                                             include_spectra_metadata=include_spectra_metadata)
 
         # imzML seems to support full 3D image... is it the case ?
         # obtained "3D" dataset just have long m/z bands,
@@ -248,5 +254,3 @@ if __name__ == "__main__":
     else:
         convert(args.imzml, args.zarr, chunks=chunks, compressor=args.compressor,
                 cache_metadata=args.cache_metadata, order=args.order)
-
-    print(zarr.open_group(args.zarr, mode='r')['0'].info)

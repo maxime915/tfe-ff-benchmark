@@ -28,11 +28,12 @@ _DB_DIR = pathlib.Path(__file__).resolve().parent / 'results'
 if not _DB_DIR.exists():
     _DB_DIR.mkdir()
 
+# conversion isn't monitored as the rechunking is not in its final form
 _CONVERSION_NUMBER = 1
 _CONVERSION_REPEAT = 1
 
-_ACCESS_NUMBER = 1
-_ACCESS_REPEAT = 1
+_ACCESS_NUMBER = 100
+_ACCESS_REPEAT = 5
 
 _CONVERSION_KEY = 'conversion'
 _ACCESS_IMZML_KEY = 'imzml_raw'
@@ -60,15 +61,15 @@ def _run(file: str) -> None:
     shelf = _make_db(file)
 
     tile_size = ((16, 16), (32, 32), (64, 64),  # small tiless
-                    (256, 256), (512, 512),  # network-sized tiles
-                    (1024, 1024), (2048, 2048))  # large tiles (?)
+                 (256, 256), (512, 512),  # network-sized tiles
+                 (1024, 1024), (2048, 2048))  # large tiles (?)
 
     # TODO support overlap in sum benchmark
     overlap_options = ((0, 0))  # no overlap for now
     # overlap_options += ((0, 1), (1, 0), (1, 1))
 
-    # thin, auto or max
-    chunk_options = ((1, 1), True, (-1, -1))
+    # thin, auto or max NOTE (-1, -1, -1) is not supported by all compressors
+    chunk_options = ((1, 1), True, (-1, -1, 1))
 
     order_options = ('C', 'F')
 
@@ -127,6 +128,7 @@ def _run(file: str) -> None:
             shelf[_ACCESS_ZARR_KEY] = tmp
 
     shelf.close()
+
 
 # remove warnings emitted by pyimzml
 warnings.filterwarnings('ignore')
