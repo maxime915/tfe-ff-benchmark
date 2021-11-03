@@ -1,6 +1,7 @@
 "imzml: benchmark imzML in tiled and spectral access"
 
 import random
+from typing import Tuple
 
 import numpy as np
 import pyimzml.ImzMLParser
@@ -55,8 +56,17 @@ class ImzMLBandBenchmark(BenchmarkABC):
 class ImzMLSumBenchmark(BenchmarkABC):
     "benchmark for imzML focussed on the sum of values accross all bands"
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, tiles: Tuple[int, int]) -> None:
         self.file = path
+        self.tiles = tiles
+
+        # make sure the file is big enough for the tiles
+        parser = pyimzml.ImzMLParser.ImzMLParser(self.file)
+        shape = (parser.imzmldict['max count of pixels y'],
+                 parser.imzmldict['max count of pixels x'])
+
+        if any(t > s for t, s in zip(tiles, shape)):
+            self.broken = True
 
     def task(self) -> None:
         parser = pyimzml.ImzMLParser.ImzMLParser(self.file)
@@ -65,21 +75,27 @@ class ImzMLSumBenchmark(BenchmarkABC):
         shape = (parser.imzmldict['max count of pixels y'],
                  parser.imzmldict['max count of pixels x'])
 
-        img = np.zeros(shape)
+        point = [random.randrange(shape[i] - self.tiles[i]) for i in range(2)]
+        img = np.zeros(shape=self.tiles)
 
         # load data
-        for idx, (x, y, _) in enumerate(parser.coordinates):
-            # only read the intensity band
-            parser.m.seek(parser.intensityOffsets[idx])
-
-            img[y-1, x-1] = np.fromfile(parser.m, parser.intensityPrecision,
-                                        parser.intensityLengths[idx]).sum()
+        for x in range(point[0], point[0]+self.tiles[0]):
+            for y in range(point[1], point[1]+self.tiles[1]):
+                try:
+                    idx = parser.coordinates.index((x+1, y+1, 1))
+                except ValueError:
+                    # not all pixels are present in the imzml, absent value are
+                    # often assumed as zero so this is what I did
+                    continue
+                parser.m.seek(parser.intensityOffsets[idx])
+                img[x-point[0], y-point[1]] = np.fromfile(
+                    parser.m, parser.intensityPrecision, parser.intensityLengths[idx]).sum()
 
         img.flatten()  # do something with it
         parser.m.close()
 
     def info(self, verbosity: Verbosity) -> str:
-        return _imzml_info(self.file, verbosity, 'sum access')
+        return _imzml_info(self.file, verbosity, f'sum access with tiles={self.tiles}')
 
 
 def _main():
@@ -89,7 +105,7 @@ def _main():
     for file in args.files:
         ImzMLBandBenchmark(file).bench(
             Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
-        ImzMLSumBenchmark(file).bench(
+        ImzMLSumBenchmark(file, tiles=(100, 100)).bench(
             Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
 
 
