@@ -12,14 +12,16 @@ import datetime
 import itertools
 import pathlib
 import shelve
+import shutil
 import sys
 import timeit
 import uuid
 import warnings
 
-from ...convert.imzml_to_zarr import converter
 from ...benchmark.imzml import ImzMLBandBenchmark, ImzMLSumBenchmark
-from ...benchmark.zarr_imzml import ZarrImzMLBandBenchmark, ZarrImzMLSumBenchmark
+from ...benchmark.zarr_imzml import (ZarrImzMLBandBenchmark,
+                                     ZarrImzMLSumBenchmark)
+from ...convert.imzml_to_zarr import converter
 
 if len(sys.argv) == 1:
     sys.exit('expected at least one arguments')
@@ -126,6 +128,8 @@ def _run(file: str) -> None:
             tmp = shelf[_ACCESS_ZARR_KEY]
             tmp[(tile, overlap)] = results
             shelf[_ACCESS_ZARR_KEY] = tmp
+        
+        shutil.rmtree(zarr_path)
 
     shelf.close()
 
