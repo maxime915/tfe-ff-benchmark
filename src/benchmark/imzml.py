@@ -1,13 +1,67 @@
 "imzml: benchmark imzML in tiled and spectral access"
 
 import random
-from typing import Tuple
+from typing import NamedTuple, Tuple
 
 import numpy as np
 import pyimzml.ImzMLParser
 
 from .utils import parse_args
 from .benchmark_abc import BenchmarkABC, Verbosity
+
+
+class ImzMLInfo(NamedTuple):
+    'info of an imzML image (file independent)'
+    shape: Tuple[int, int, int]  # x y z
+    continuous_mode: bool
+    path: str
+    band_size_min: int  # for continuous mode, min and max are the same
+    band_size_max: int
+    mzs_min: float
+    mzs_max: float
+
+
+def imzml_path_to_info(path: str) -> ImzMLInfo:
+    return parser_to_info(pyimzml.ImzMLParser.ImzMLParser(path, 'lxml'))
+
+
+def _band_stat(mzs: np.ndarray) -> Tuple[int, float, float]:
+    "build an ImzMLInfo object from a path to an imzml file"
+    return len(mzs), mzs.min(), mzs.max()
+
+
+def parser_to_info(parser: pyimzml.ImzMLParser.ImzMLParser) -> ImzMLInfo:
+    "build an ImzMLInfo object from a pyimzml ImzMLParser"
+    band_s_min, mzs_min, mzs_max = _band_stat(parser.getspectrum(0)[0])
+    band_s_max = band_s_min
+
+    limit = len(parser.coordinates)
+    if 'continuous' in parser.metadata.file_description.param_by_name:
+        limit = -1
+
+    for i in range(1, limit):
+        mzs, _ = parser.getspectrum(i)
+        band_s, mz_min, mz_max = _band_stat(mzs)
+        if band_s < band_s_min:
+            band_s_min = band_s
+        elif band_s > band_s_max:
+            band_s_max = band_s
+        if mz_min < mzs_min:
+            mzs_min = mz_min
+        if mz_max > mzs_max:
+            mzs_max = mz_max
+
+    return ImzMLInfo(
+        shape=(parser.imzmldict['max count of pixels x'],
+               parser.imzmldict['max count of pixels y'],
+               parser.imzmldict['max count of pixels z']),
+        continuous_mode='continuous' in parser.metadata.file_description.param_by_name,
+        path=parser.filename,
+        band_size_min=band_s_min,
+        band_size_max=band_s_max,
+        mzs_min=mzs_min,
+        mzs_max=mzs_max
+    )
 
 
 def _imzml_info(file: str, verbosity: Verbosity, key: str) -> str:

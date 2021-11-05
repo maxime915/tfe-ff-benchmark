@@ -10,6 +10,33 @@ from zarr.util import human_readable_size
 
 from .utils import parse_args
 from .benchmark_abc import BenchmarkABC, Verbosity
+from .imzml import ImzMLInfo
+
+
+def zarr_imzml_path_to_info(path: str) -> ImzMLInfo:
+    intensities = zarr.open_array(path + '/intensities', mode='r')
+    mzs = zarr.open_array(path + '/mzs', mode='r')
+
+    if len(mzs.shape) == 1:
+        return ImzMLInfo(
+            shape=intensities.shape[:-1],
+            continuous_mode=True,
+            path=path,
+            band_size_min=mzs.shape[0],
+            band_size_max=mzs.shape[0],
+            mzs_min=np.min(mzs),
+            mzs_max=np.max(mzs),
+        )
+    else:
+        return ImzMLInfo(
+            shape=intensities.shape,
+            continuous_mode=False,
+            path=path,
+            band_size_min=np.vectorize(len)(mzs).min(),
+            band_size_max=np.vectorize(len)(mzs).max(),
+            mzs_min=np.vectorize(np.min)(mzs).min(),
+            mzs_max=np.vectorize(np.max)(mzs).max(),
+        )
 
 
 def _zarr_info(file: str, verbosity: Verbosity, key: str) -> str:
