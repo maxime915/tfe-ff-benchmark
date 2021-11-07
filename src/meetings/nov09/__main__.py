@@ -50,7 +50,15 @@ def _make_db(file: str) -> shelve.Shelf:
     key = (file, now)
     shelf = shelve.open(str(_DB_DIR / str(hash(key))))
 
+    shelf['file'] = file
+    shelf['date'] = now
     shelf['key'] = key
+    shelf['parameters'] = {
+        'conversion_number': _CONVERSION_NUMBER,
+        'conversion_repeat': _CONVERSION_REPEAT,
+        'access_number': _ACCESS_NUMBER,
+        'access_repeat': _ACCESS_REPEAT
+    }
     shelf[_ACCESS_IMZML_KEY] = {}
     shelf[_ACCESS_ZARR_KEY] = {}
     shelf[_CONVERSION_KEY] = {}
@@ -111,14 +119,15 @@ def _run(imzml_file: str) -> None:
         # write data to log
         tmp = shelf[_CONVERSION_KEY]
         tmp[(chunk, order, compressor, 'time')] = results
-        tmp[(chunk, order, compressor, 'infos')] = zarr.open_array(zarr_path + '/intensities').info_items()
+        tmp[(chunk, order, compressor, 'infos')] = zarr.open_array(
+            zarr_path + '/intensities').info_items()
         shelf[_CONVERSION_KEY] = tmp
 
         # benchmark converted file - band access
         results = timeit.Timer(ZarrImzMLBandBenchmark(zarr_path).task).repeat(
             _ACCESS_REPEAT, _ACCESS_NUMBER)
         tmp = shelf[_ACCESS_ZARR_KEY]
-        tmp['band'] = results
+        tmp[(chunk, order, compressor, 'band')] = results
         shelf[_ACCESS_ZARR_KEY] = tmp
 
         # benchmark converted file - tile access
@@ -129,19 +138,20 @@ def _run(imzml_file: str) -> None:
             results = timeit.Timer(benchmark.task).repeat(
                 _ACCESS_REPEAT, _ACCESS_NUMBER)
             tmp = shelf[_ACCESS_ZARR_KEY]
-            tmp[tile] = results
+            tmp[(chunk, order, compressor, tile)] = results
             shelf[_ACCESS_ZARR_KEY] = tmp
 
             for overlap in overlap_options:
-                benchmark = ZarrImzMLOverlapSumBenchmark(zarr_path, tile, overlap)
+                benchmark = ZarrImzMLOverlapSumBenchmark(
+                    zarr_path, tile, overlap)
                 if hasattr(benchmark, 'broken'):
                     continue
                 results = timeit.Timer(benchmark.task).repeat(
                     _ACCESS_REPEAT, _ACCESS_NUMBER)
                 tmp = shelf[_ACCESS_ZARR_OVERLAP_KEY]
-                tmp[(tile, overlap)] = results
+                tmp[(chunk, order, compressor, tile, overlap)] = results
                 shelf[_ACCESS_ZARR_OVERLAP_KEY] = tmp
-        
+
         shutil.rmtree(zarr_path)
 
     shelf.close()
