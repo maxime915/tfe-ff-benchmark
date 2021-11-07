@@ -44,9 +44,8 @@ def _zarr_info(file: str, verbosity: Verbosity, key: str) -> str:
     info = f'zarr from imzML file: {file} / {key}'
 
     if verbosity == Verbosity.VERBOSE:
-        group = zarr.open(file, mode='r')
-        intensities = group.intensities
-        mzs = group.mzs
+        intensities = zarr.open_array(file + '/intensities', mode='r')
+        mzs = zarr.open_array(file + '/mzs', mode='r')
 
         is_continuous = len(mzs.shape) == 1
 
@@ -92,6 +91,82 @@ class ZarrImzMLBandBenchmark(BenchmarkABC):
         return _zarr_info(self.file, verbosity, 'band access')
 
 
+class ZarrImzMLOverlapSumBenchmark(BenchmarkABC):
+    """benchmark for imzML converted to zarr focussed on the sum of values
+    accross all bands, loading on chunks border or inside full chunks
+    
+    there is  img.shape[i], img.chunksize[i], tiles[i], overlap[i]
+
+    - img.chunksize[i] <= img.shape[i]  (enforced by zarr iff all chunks are full size)
+    - chunk_count[i] = img.shape[i] // img.shape[i]
+    - we need chunk_count[i] > 1 to make sure there are at least two full chunks
+    - we need tiles[i] <= img.chunksize[i]  (otherwise we would span too many chunks)
+
+    generation:
+
+    - it we should overlap for axis i
+        - choose a point on a random 'right' border at axis i
+        - offset the point by tiles[i]/2 to the 'left'
+    - otherwise
+        - choose a point on a random 'right' border at axis i
+    
+    """
+
+    def __init__(self, path: str, tiles: Tuple[int, int], overlap: Tuple[int, int]) -> None:
+        self.file = path
+        self.tiles = tiles
+        self.overlap = overlap
+
+        # make sure the file is big enough for the tiles
+        intensities = zarr.open_array(self.file + '/intensities', mode='r')
+
+        # should not specify a tile larger than the image's chunks
+        if any(t > s for t, s in zip(tiles, intensities.chunks[:2])):
+            self.broken = True
+            return
+
+        # there should be at least two full chunk
+        if any(s // c < 2 for s, c in zip(intensities.shape[:2], intensities.chunks[:2])):
+            self.broken = True
+            return
+
+    def task(self) -> None:
+        intensities = da.from_zarr(self.file, '/intensities')
+        mzs = da.from_zarr(self.file, '/mzs')
+
+        # continuous & processed mode have different shape -> take (x,y) only
+        shape = intensities.shape[:2]
+        chunk_shape = intensities.chunksize[:2]
+
+        # how many (full) chunk per axis
+        chunk_count = [s // c for s, c in zip(shape, chunk_shape)]
+
+        # select one random full chunk to use as overlap border
+        chunk_idx = [random.randrange(c-o)+o if c-o !=
+                     0 else o for c, o in zip(chunk_count, self.overlap)]
+
+        # if overlap
+        #   set a halfway before the chunk edge (to make sure it is crossed)
+        # else
+        #   select the beginning of the chunk
+        point = [i * c - t // 2 if o else i * c for i, c, o, t in zip(chunk_idx, chunk_shape, self.overlap, self.tiles)]
+
+        # get a tuple slice object as index
+        slice_tpl = tuple(slice(p, p+t) for p, t in zip(point, self.tiles))
+
+        # pre-load tile
+        intensities = intensities[slice_tpl]
+
+        if len(mzs.shape) == 1:
+            intensities.sum(axis=-1).compute().flatten()
+        else:
+            # no need to compute()
+            np.vectorize(np.sum)(intensities).flatten()
+
+    def info(self, verbosity: Verbosity) -> str:
+        return _zarr_info(self.file, verbosity, f'sum access with tiles={self.tiles}')
+
+
 class ZarrImzMLSumBenchmark(BenchmarkABC):
     "benchmark for imzML converted to zarr focussed on the sum of values accross all bands"
 
@@ -100,7 +175,7 @@ class ZarrImzMLSumBenchmark(BenchmarkABC):
         self.tiles = tiles
 
         # make sure the file is big enough for the tiles
-        intensities = da.from_zarr(self.file, '/intensities')
+        intensities = zarr.open_array(self.file + '/intensities', mode='r')
 
         if any(t > s for t, s in zip(tiles, intensities.shape[:2])):
             self.broken = True
