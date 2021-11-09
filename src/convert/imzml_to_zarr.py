@@ -3,6 +3,7 @@
 import argparse
 import sys
 import timeit
+import uuid
 import warnings
 from typing import Callable
 
@@ -185,13 +186,21 @@ if __name__ == "__main__":
 
     # chunk
     chunk_group = parser.add_mutually_exclusive_group()
-    chunk_group.add_argument('--auto-chunk', dest='auto-chunk', action='store_true',
+    chunk_group.add_argument('--auto-chunk', dest='auto_chunk', action='store_true',
                              help='automatic chunking for array storage (default option)')
-    chunk_group.add_argument('--no-chunk', dest='auto-chunk', action='store_false',
+    chunk_group.add_argument('--no-chunk', dest='auto_chunk', action='store_false',
                              help='disable chunking for array storage')
     chunk_group.add_argument('--chunks', type=int, nargs='+', default=[],
                              help='Chunk shape : list of positive integers (-1 means equal to array shape)')
     parser.set_defaults(auto_chunk=True)
+
+    # rand name
+    rand_name = parser.add_mutually_exclusive_group()
+    rand_name.add_argument('--add-rand-suffix', dest='rand-name', action='store_true',
+                           help='if zarr is not specified, guess the zarr file by adding a random UUID4 suffix and changing the extension')
+    rand_name.add_argument('--no-rand-suffix', dest='rand-name', action='store_false',
+                           help='if zarr is not specified, guess the zarr file by changing the extension (default)')
+    parser.set_defaults(rand_name=False)
 
     # C / Fortran array order
     parser.add_argument('--order', default='C', choices=['C', 'F'],
@@ -216,8 +225,10 @@ if __name__ == "__main__":
 
     if args.zarr is None:
         # get unique new filename
-        import uuid
-        args.zarr = args.imzml[:-5] + str(uuid.uuid4()) + '.zarr'
+        if args.rand_name:
+            args.zarr = args.imzml[:-4] + str(uuid.uuid4()) + '.zarr'
+        else:
+            args.zarr = args.imzml[:-4] + 'zarr'
 
     chunks = args.auto_chunk
     if args.chunks:
@@ -252,5 +263,6 @@ if __name__ == "__main__":
         print((f'results: {res}: {results.min():5.3e} s to {results.max():5.3e} s, '
                f'{results.mean():5.3e} s ± {results.std(ddof=1):5.3e} s'))
     else:
-        convert(args.imzml, args.zarr, chunks=chunks, compressor=args.compressor,
-                cache_metadata=args.cache_metadata, order=args.order)
+        time = timeit.Timer(converter(args.imzml, args.zarr, chunks=chunks, compressor=args.compressor,
+                                      cache_metadata=args.cache_metadata, order=args.order)).timeit(1)
+        print(f'converted {args.imzml} to {args.zarr} in {time:.4}s')
