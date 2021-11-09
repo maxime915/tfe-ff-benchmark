@@ -141,16 +141,17 @@ def _run(imzml_file: str) -> None:
             tmp[(chunk, order, compressor, tile)] = results
             shelf[_ACCESS_ZARR_KEY] = tmp
 
-            for overlap in overlap_options:
-                benchmark = ZarrImzMLOverlapSumBenchmark(
-                    zarr_path, tile, overlap)
-                if hasattr(benchmark, 'broken'):
-                    continue
-                results = timeit.Timer(benchmark.task).repeat(
-                    _ACCESS_REPEAT, _ACCESS_NUMBER)
-                tmp = shelf[_ACCESS_ZARR_OVERLAP_KEY]
-                tmp[(chunk, order, compressor, tile, overlap)] = results
-                shelf[_ACCESS_ZARR_OVERLAP_KEY] = tmp
+            # lack of time, not ran
+            # for overlap in overlap_options:
+            #     benchmark = ZarrImzMLOverlapSumBenchmark(
+            #         zarr_path, tile, overlap)
+            #     if hasattr(benchmark, 'broken'):
+            #         continue
+            #     results = timeit.Timer(benchmark.task).repeat(
+            #         _ACCESS_REPEAT, _ACCESS_NUMBER)
+            #     tmp = shelf[_ACCESS_ZARR_OVERLAP_KEY]
+            #     tmp[(chunk, order, compressor, tile, overlap)] = results
+            #     shelf[_ACCESS_ZARR_OVERLAP_KEY] = tmp
 
         shutil.rmtree(zarr_path)
 
