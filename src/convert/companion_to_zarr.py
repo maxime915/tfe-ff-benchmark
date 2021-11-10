@@ -47,9 +47,9 @@ if __name__ == "__main__":
 
     # chunk
     chunk_group = parser.add_mutually_exclusive_group()
-    chunk_group.add_argument('--auto-chunk', dest='auto-chunk', action='store_true',
+    chunk_group.add_argument('--auto-chunk', dest='auto_chunk', action='store_true',
                              help='automatic chunking for array storage (default option)')
-    chunk_group.add_argument('--no-chunk', dest='auto-chunk', action='store_false',
+    chunk_group.add_argument('--no-chunk', dest='auto_chunk', action='store_false',
                              help='disable chunking for array storage')
     chunk_group.add_argument('--chunks', type=int, nargs='+', default=[],
                              help='Chunk shape : list of positive integers (-1 means equal to array shape)')

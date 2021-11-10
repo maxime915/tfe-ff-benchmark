@@ -196,9 +196,9 @@ if __name__ == "__main__":
 
     # rand name
     rand_name = parser.add_mutually_exclusive_group()
-    rand_name.add_argument('--add-rand-suffix', dest='rand-name', action='store_true',
+    rand_name.add_argument('--add-rand-suffix', dest='rand_name', action='store_true',
                            help='if zarr is not specified, guess the zarr file by adding a random UUID4 suffix and changing the extension')
-    rand_name.add_argument('--no-rand-suffix', dest='rand-name', action='store_false',
+    rand_name.add_argument('--no-rand-suffix', dest='rand_name', action='store_false',
                            help='if zarr is not specified, guess the zarr file by changing the extension (default)')
     parser.set_defaults(rand_name=False)
 
