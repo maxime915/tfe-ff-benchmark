@@ -29,17 +29,17 @@ def _run(path: pathlib.Path, rec=True) -> None:
         sizes = (path.stat().st_size, ibd.stat().st_size)
         end = time.time()
 
-        print(infos)
         print(path.stem)
         print(f'\tcontinuous mode: {infos.continuous_mode}')
-        print(f'\tshape (x, y, z): {infos.shape}', end='')
+        print(f'\tintensity precision: {infos.intensity_precision} \t| \tmzs precision: {infos.mzs_precision}')
+        print(f'\tshape: {infos.shape}', end=' \t|')
         if infos.continuous_mode:
             print(f' \tlen(m/Z): {infos.band_size_min}')
         else:
             print(f' \tlen(m/Z): [{infos.band_size_min}, {infos.band_size_max}]')
-        print(f'\tm/Z \\in [{infos.mzs_min}, {infos.mzs_max}]')
+        print(f'\tm/Z: min = {infos.mzs_min:.2f} \t| \tmax = {infos.mzs_max:.2f}')
         print(f'\timzML size: {sizeof_fmt(sizes[0])} \t| \tibd size: {sizeof_fmt(sizes[1])}')
-        print(f'\ttook {end - start}s to analyze')
+        print(f'\ttook {end - start:.2f}s to analyze')
         print('')
 
 
