@@ -226,9 +226,9 @@ if __name__ == "__main__":
     if args.zarr is None:
         # get unique new filename
         if args.rand_name:
-            args.zarr = args.imzml[:-4] + str(uuid.uuid4()) + '.zarr'
+            args.zarr = args.imzml[:-5] + str(uuid.uuid4()) + '.zarr'
         else:
-            args.zarr = args.imzml[:-4] + 'zarr'
+            args.zarr = args.imzml[:-5] + 'zarr'
 
     chunks = args.auto_chunk
     if args.chunks:
