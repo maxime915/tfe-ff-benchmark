@@ -36,6 +36,8 @@ def zarr_imzml_path_to_info(path: str) -> ImzMLInfo:
             band_size_max=np.vectorize(len)(mzs).max(),
             mzs_min=np.vectorize(np.min)(mzs).min(),
             mzs_max=np.vectorize(np.max)(mzs).max(),
+            mzs_precision=mzs.dtype,
+            intensity_precision=intensities.dtype,
         )
 
 

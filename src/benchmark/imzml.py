@@ -19,6 +19,8 @@ class ImzMLInfo(NamedTuple):
     band_size_max: int
     mzs_min: float
     mzs_max: float
+    intensity_precision: np.dtype
+    mzs_precision: np.dtype
 
 
 def imzml_path_to_info(path: str) -> ImzMLInfo:
@@ -34,14 +36,17 @@ def parser_to_info(parser: pyimzml.ImzMLParser.ImzMLParser) -> ImzMLInfo:
     "build an ImzMLInfo object from a pyimzml ImzMLParser"
     band_s_min, mzs_min, mzs_max = _band_stat(parser.getspectrum(0)[0])
     band_s_max = band_s_min
+    band_s_sum = band_s_min
 
     limit = len(parser.coordinates)
     if 'continuous' in parser.metadata.file_description.param_by_name:
+        band_s_sum *= len(parser.coordinates)
         limit = -1
 
     for i in range(1, limit):
         mzs, _ = parser.getspectrum(i)
         band_s, mz_min, mz_max = _band_stat(mzs)
+        band_s_sum += len(mzs)
         if band_s < band_s_min:
             band_s_min = band_s
         elif band_s > band_s_max:
@@ -60,7 +65,9 @@ def parser_to_info(parser: pyimzml.ImzMLParser.ImzMLParser) -> ImzMLInfo:
         band_size_min=band_s_min,
         band_size_max=band_s_max,
         mzs_min=mzs_min,
-        mzs_max=mzs_max
+        mzs_max=mzs_max,
+        intensity_precision=np.dtype(parser.intensityPrecision),
+        mzs_precision=np.dtype(parser.mzPrecision),
     )
 
 
