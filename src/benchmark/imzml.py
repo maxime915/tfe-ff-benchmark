@@ -115,7 +115,7 @@ class ImzMLBandBenchmark(BenchmarkABC):
 
 
 class ImzMLSumBenchmark(BenchmarkABC):
-    "benchmark for imzML focussed on the sum of values accross all bands"
+    "benchmark for imzML focussed on the sum of values accross all bands (TIC)"
 
     def __init__(self, path: str, tiles: Tuple[int, int]) -> None:
         self.file = path
@@ -139,17 +139,19 @@ class ImzMLSumBenchmark(BenchmarkABC):
         point = [random.randrange(shape[i] - self.tiles[i]) for i in range(2)]
         img = np.zeros(shape=self.tiles)
 
+        # store mapping (x, y) -> idx for faster index in slice
+        mapper = -np.ones(shape, dtype='i')
+        for idx, (x, y, _) in enumerate(parser.coordinates):
+            mapper[y-1, x-1] = idx
+
         # load data
-        for x in range(point[0], point[0]+self.tiles[0]):
-            for y in range(point[1], point[1]+self.tiles[1]):
-                try:
-                    idx = parser.coordinates.index((x+1, y+1, 1))
-                except ValueError:
-                    # not all pixels are present in the imzml, absent value are
-                    # often assumed as zero so this is what I did
+        for y in range(point[0], point[0]+self.tiles[0]):
+            for x in range(point[1], point[1]+self.tiles[1]):
+                idx = mapper[y, x]
+                if idx < 0:
                     continue
                 parser.m.seek(parser.intensityOffsets[idx])
-                img[x-point[0], y-point[1]] = np.fromfile(
+                img[y-point[0], x-point[1]] = np.fromfile(
                     parser.m, parser.intensityPrecision, parser.intensityLengths[idx]).sum()
 
         img.flatten()  # do something with it
