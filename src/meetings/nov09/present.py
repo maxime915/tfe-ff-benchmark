@@ -113,7 +113,7 @@ elif command == "tic":
         
         axis.bar(names, values, width=0.8)
         axis.set_yscale('log')
-        axis.set_title(f'Total Ion Count Access time (sum over all bands) - {mode} mode file')
+        axis.set_title(f'Total Ion Current Access time (sum over all bands) - {mode} mode file')
         axis.set_ylabel('Mean time (s)')
         
         fig.tight_layout()
