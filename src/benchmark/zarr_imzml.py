@@ -96,7 +96,7 @@ class ZarrImzMLBandBenchmark(BenchmarkABC):
 class ZarrImzMLOverlapSumBenchmark(BenchmarkABC):
     """benchmark for imzML converted to zarr focussed on the sum of values
     accross all bands, loading on chunks border or inside full chunks
-    
+
     there is  img.shape[i], img.chunksize[i], tiles[i], overlap[i]
 
     - img.chunksize[i] <= img.shape[i]  (enforced by zarr iff all chunks are full size)
@@ -111,7 +111,7 @@ class ZarrImzMLOverlapSumBenchmark(BenchmarkABC):
         - offset the point by tiles[i]/2 to the 'left'
     - otherwise
         - choose a point on a random 'right' border at axis i
-    
+
     """
 
     def __init__(self, path: str, tiles: Tuple[int, int], overlap: Tuple[int, int]) -> None:
@@ -151,7 +151,8 @@ class ZarrImzMLOverlapSumBenchmark(BenchmarkABC):
         #   set a halfway before the chunk edge (to make sure it is crossed)
         # else
         #   select the beginning of the chunk
-        point = [i * c - t // 2 if o else i * c for i, c, o, t in zip(chunk_idx, chunk_shape, self.overlap, self.tiles)]
+        point = [i * c - t // 2 if o else i * c for i, c, o,
+                 t in zip(chunk_idx, chunk_shape, self.overlap, self.tiles)]
 
         # get a tuple slice object as index
         slice_tpl = tuple(slice(p, p+t) for p, t in zip(point, self.tiles))
@@ -202,6 +203,62 @@ class ZarrImzMLSumBenchmark(BenchmarkABC):
         return _zarr_info(self.file, verbosity, f'sum access with tiles={self.tiles}')
 
 
+class ZarrImzMLSearchBenchmark(BenchmarkABC):
+    """benchmark for imzML converted to zarr focussed on an approximate slice
+    of value close to m/z"""
+
+    def __init__(self, path: str, tiles: Tuple[int, int],
+                 infos: ImzMLInfo) -> None:
+        self.file = path
+        self.tiles = tiles
+        self.infos = infos
+
+        if any(t > s for t, s in zip(tiles, infos.shape[:2])):
+            self.broken = True
+
+    def task(self) -> None:
+        intensities = da.from_zarr(self.file, '/intensities')
+        mzs = da.from_zarr(self.file, '/mzs')
+
+        mz_val = self.infos.mzs_min + random.random() * (self.infos.mzs_max -
+                                                         self.infos.mzs_min)
+        mz_tol = 0.1
+
+        point = [random.randrange(
+            intensities.shape[i] - self.tiles[i]) for i in range(2)]
+        slice_tpl = tuple(slice(p, p+t) for p, t in zip(point, self.tiles))
+
+        @da.as_gufunc(signature='(),()->()', output_dtypes=float, vectorize=True)
+        def search_processed_band(mz_band: np.ndarray, int_band: np.ndarray) -> float:
+
+            low = np.searchsorted(mz_band, mz_val - mz_tol, side='left')
+            high = 1 + np.searchsorted(mz_band, mz_val + mz_tol, side='right')
+
+            # reduction of the intensity band (wbt empty bands?)
+            return int_band[low:high].sum()
+
+        def do_continuous_image() -> da.Array:
+            # search the unique mzs band
+            low = da.searchsorted(mzs, da.array([mz_val-mz_tol]),
+                                  side='left')[0]
+            high = 1 + da.searchsorted(mzs, da.array([mz_val+mz_tol]),
+                                       side='right')[0]
+
+            return intensities[..., low:high].sum(axis=-1)
+
+        # grab sub window
+        intensities = intensities[slice_tpl]
+        if len(mzs.shape) > 1:
+            mzs = mzs[slice_tpl]  # sliceable only in processed mode
+            img = search_processed_band(mzs, intensities).compute()
+        else:
+            img = do_continuous_image()
+        img.flatten()
+
+    def info(self, verbosity: Verbosity) -> str:
+        return _zarr_info(self.file, verbosity, f'sum access with tiles={self.tiles}')
+
+
 def _main():
 
     args = parse_args()
@@ -210,6 +267,10 @@ def _main():
         ZarrImzMLBandBenchmark(file).bench(
             Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
         ZarrImzMLSumBenchmark(file, tiles=(10, 10)).bench(
+            Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
+        infos = zarr_imzml_path_to_info(file)
+        tiles = (32, 32)
+        ZarrImzMLSearchBenchmark(file, tiles, infos).bench(
             Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
 
 

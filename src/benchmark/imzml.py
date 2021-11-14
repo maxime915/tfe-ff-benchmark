@@ -161,6 +161,94 @@ class ImzMLSumBenchmark(BenchmarkABC):
         return _imzml_info(self.file, verbosity, f'sum access with tiles={self.tiles}')
 
 
+class ImzMLSearchBenchmark(BenchmarkABC):
+    """benchmark for imzml focussed on an approximate slice of a value close to m/z"""
+
+    def __init__(self, path: str, tiles: Tuple[int, int],
+                 infos: ImzMLInfo) -> None:
+        self.file = path
+        self.tiles = tiles
+        self.infos = infos
+
+        shape = infos.shape[:2]
+        if any(t > s for t, s in zip(tiles, shape)):
+            self.broken = True
+
+    def task(self) -> None:
+        parser = pyimzml.ImzMLParser.ImzMLParser(self.file)
+
+        mz_val = self.infos.mzs_min + random.random() * (self.infos.mzs_max -
+                                                         self.infos.mzs_min)
+        mz_tol = 0.1
+
+        # flip x,y because images assume first dim as y
+        shape = (parser.imzmldict['max count of pixels y'],
+                 parser.imzmldict['max count of pixels x'])
+
+        point = [random.randrange(shape[i] - self.tiles[i]) for i in range(2)]
+        img = np.zeros(shape=self.tiles)
+
+        # store mapping (x, y) -> idx for faster index in slice
+        mapper = -np.ones(shape, dtype='i')
+        for idx, (x, y, _) in enumerate(parser.coordinates):
+            mapper[y-1, x-1] = idx
+
+        if 'continuous' in parser.metadata.file_description.param_by_name:
+            # search once in m/Z
+            parser.m.seek(parser.mzOffsets[0])
+            mzs = np.fromfile(parser.m, parser.mzPrecision,
+                              parser.mzLengths[0])
+
+            mz_min = np.searchsorted(mzs, mz_val - mz_tol, side='left')
+            mz_max = 1 + np.searchsorted(mzs, mz_val + mz_tol, side='right')
+
+            # build offsets from index
+            length = mz_max - mz_min
+
+            # load all needed bands
+            for y in range(point[0], point[0]+self.tiles[0]):
+                for x in range(point[1], point[1]+self.tiles[1]):
+                    idx = mapper[y, x]
+                    if idx < 0:
+                        continue
+
+                    # load all required pixels
+                    parser.m.seek(mz_min + parser.intensityOffsets[idx])
+                    img[y-point[0], x-point[1]] = np.fromfile(
+                        parser.m, parser.intensityPrecision, length).sum()
+
+        else:
+            for y in range(point[0], point[0]+self.tiles[0]):
+                for x in range(point[1], point[1]+self.tiles[1]):
+                    idx = mapper[y, x]
+                    if idx < 0:
+                        continue
+
+                    # search once in m/Z
+                    parser.m.seek(parser.mzOffsets[0])
+                    mzs = np.fromfile(
+                        parser.m, parser.mzPrecision, parser.mzLengths[0])
+
+                    mz_min = np.searchsorted(mzs, mz_val - mz_tol,
+                                             side='left')
+                    mz_max = 1 + np.searchsorted(mzs, mz_val + mz_tol,
+                                                 side='right')
+
+                    # build offsets from index
+                    length = mz_max - mz_min
+
+                    # load all required pixels
+                    parser.m.seek(mz_min + parser.intensityOffsets[idx])
+                    img[y-point[0], x-point[1]] = np.fromfile(
+                        parser.m, parser.intensityPrecision, length).sum()
+
+        img.flatten()  # do something with it
+        parser.m.close()
+
+    def info(self, verbosity: Verbosity) -> str:
+        return _imzml_info(self.file, verbosity, f'sum access with tiles={self.tiles}')
+
+
 def _main():
 
     args = parse_args()
