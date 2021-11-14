@@ -9,8 +9,10 @@ from typing import Callable
 
 import numcodecs
 import numpy as np
+import rechunker
 import zarr
 from pyimzml import ImzMLParser
+from zarr.util import guess_chunks
 
 
 def _convert_processed(
@@ -27,42 +29,84 @@ def _convert_processed(
     shape = (parser.imzmldict['max count of pixels x'],
              parser.imzmldict['max count of pixels y'])
 
-    temp_store = zarr.TempStore()
-    temp_group = zarr.group(temp_store, overwrite=False)
+    fast_store = zarr.TempStore()
+    fast_group = zarr.group(fast_store, overwrite=False)
 
     # use a copy of the parameters
-    temp_param = kwargs.copy()
-    temp_param['chunks'] = (1, 1)
-    temp_param['shape'] = shape
-    temp_param['compressor'] = None
+    fast_params = kwargs.copy()
+    fast_params['chunks'] = (1, 1)
+    fast_params['shape'] = shape
+    fast_params['compressor'] = None
 
     # create temporary ragged arrays -> fast write to chunks
-    temp_int = temp_group.empty('intensities', object_codec=numcodecs.VLenArray(
-        parser.intensityPrecision), dtype=object, **temp_param)
-    temp_mzs = temp_group.empty('mzs', object_codec=numcodecs.VLenArray(
-        parser.mzPrecision), dtype=object, **temp_param)
+    fast_int = fast_group.empty('intensities', object_codec=numcodecs.VLenArray(
+        parser.intensityPrecision), dtype=object, **fast_params)
+    fast_mzs = fast_group.empty('mzs', object_codec=numcodecs.VLenArray(
+        parser.mzPrecision), dtype=object, **fast_params)
 
+    read_start = timeit.default_timer()
+
+    # read data into fast arrays
+    sumlen = 0
     for idx, (x, y, _) in enumerate(parser.coordinates):
-        temp_mzs[x-1, y-1], temp_int[x-1, y-1] = parser.getspectrum(idx)
+        intensities, mzs = parser.getspectrum(idx)
+        sumlen += len(mzs)
 
-    # make sure the caller knows that 3rd axis has full chunk (un-supported)
+        fast_mzs[x-1, y-1] = mzs
+        fast_int[x-1, y-1] = intensities
+
+    read_end = timeit.default_timer()
+
+    # only 2D chunks (or chunks with -1 as their last args)
     if 'chunks' in kwargs and isinstance(kwargs['chunks'], (tuple, list)) and len(kwargs['chunks']) > 2:
         if kwargs['chunks'][2] != -1:
-            warnings.warn(f'unsupported chunk {kwargs["chunks"]} for processed imzml, third axis will be full')
+            warnings.warn(
+                f'unsupported chunk {kwargs["chunks"]} for processed imzml, third axis will be full')
         kwargs['chunks'] = kwargs['chunks'][:2]
 
-    # create ragged arrays for final storage
-    intensities = zarr_group.empty('intensities', object_codec=numcodecs.VLenArray(
-        parser.intensityPrecision), shape=shape, dtype=object, **kwargs)
-    mzs = zarr_group.empty('mzs', object_codec=numcodecs.VLenArray(
-        parser.mzPrecision), shape=shape, dtype=object, **kwargs)
+    # guess chunks
+    chunks = kwargs.pop('chunks', True)
+    if chunks == True:
+        # mzs & intensities have the same shape & chunks to have a file bijection
+        meansize = sumlen * \
+            np.dtype(parser.intensityPrecision).itemsize // len(parser.coordinates)
+        chunks = guess_chunks(shape, meansize)
 
-    # re-chunk
-    intensities[:] = temp_int[:]
-    mzs[:] = temp_mzs
+    # reformat chunks for rechunker
+    chunks = [c if c > 0 else s for c, s in zip(chunks, shape)]
 
-    # remove temporary store (the automatic removal is a shutdown only)
+    temp_store = zarr.TempStore()
+
+    rechunked = rechunker.rechunk(
+        source=fast_group,
+        target_chunks={
+            'intensities': chunks,
+            'mzs': chunks,
+        },
+        max_mem='4GB',
+        target_store=zarr_group.store,
+        target_options={
+            'intensities': {
+                **kwargs,
+                'object_codec': numcodecs.VLenArray(parser.intensityPrecision)
+            },
+            'mzs': {
+                **kwargs,
+                'object_codec': numcodecs.VLenArray(parser.mzPrecision)
+            },
+        },
+        temp_store=temp_store)
+    rechunked.execute()
+
+    end_rechunk = timeit.default_timer()
+
+    print('done')
+    print(f'reading     : {read_end-read_start: 5.2f}s')
+    print(f'rechunking  : {end_rechunk-read_end: 5.2f}s')
+
+    # remove temporary stores
     temp_store.rmdir()
+    fast_store.rmdir()
 
 
 def _convert_continuous(
@@ -80,37 +124,67 @@ def _convert_continuous(
              parser.imzmldict['max count of pixels y'],
              parser.mzLengths[0])
 
-    temp_store = zarr.TempStore()
-    temp_group = zarr.group(temp_store, overwrite=False)
-    temp_int = temp_group.empty('intensities', shape=shape, dtype=parser.intensityPrecision,
-                                chunks=(1, 1, -1), compressor=None)
+    # create a temporary store for the first stage of the conversion
+    fast_store = zarr.TempStore()
+    fast_group = zarr.group(fast_store, overwrite=False)
+    fast_intensities = fast_group.empty('intensities', shape=shape, dtype=parser.intensityPrecision,
+                                        chunks=(1, 1, -1), compressor=None)
+    # store m/Z in the final group
+    mzs = zarr_group.empty(
+        'mzs',
+        shape=shape[-1:],
+        dtype=parser.mzPrecision,
+        # default chunks is fine
+        compressor=None,  # small array, little gain to compression
+    )
 
-    # create array to be filled -> use default options
-    mzs = zarr_group.create('mzs', shape=shape[2:], dtype=parser.mzPrecision)
+    read_start = timeit.default_timer()
 
-    # fill m/z
     parser.m.seek(parser.mzOffsets[0])
     mzs[:] = np.fromfile(parser.m, count=parser.mzLengths[0],
                          dtype=parser.mzPrecision)
 
+    # fill intensities into the fast store
     for idx, (x, y, _) in enumerate(parser.coordinates):
-
-        # manual call to seek instead of offset: repeatidly calling fromfile
-        # with the same offset drifts, this is not the expected behavior so
-        # the file is seek'ed manually before reading
-
         parser.m.seek(parser.intensityOffsets[idx])
-        temp_int[x-1, y-1, :] = np.fromfile(
-            parser.m, count=parser.intensityLengths[idx], dtype=parser.intensityPrecision)
+        fast_intensities[x-1, y-1, :] = np.fromfile(parser.m, count=parser.intensityLengths[idx],
+                                                    dtype=parser.intensityPrecision)
 
-    # create array for final storage
-    intensities = zarr_group.empty('intensities', shape=shape,
-                                   dtype=parser.intensityPrecision, **kwargs)
+    read_end = timeit.default_timer()
 
-    # re-chunk
-    intensities[:] = temp_int[:]
+    # guess chunks
+    chunks = kwargs.pop('chunks', True)
+    if chunks == True:
+        chunks = guess_chunks(shape, np.dtype(
+            parser.intensityPrecision).itemsize)
 
-    # cleanup
+    # reformat chunks for rechunker
+    chunks = [c if c > 0 else s for c, s in zip(chunks, shape)]
+
+    # temporary store for rechunker
+    temp_store = zarr.TempStore()
+
+    rechunked = rechunker.rechunk(
+        source=fast_group,
+        target_chunks={
+            'intensities': chunks,
+        },
+        max_mem=2147483647,  # 2GB for the compressor buffer
+        target_store=zarr_group.store,
+        target_options={
+            'intensities': kwargs,
+        },
+        temp_store=temp_store)
+    rechunked.execute()
+
+    end_rechunk = timeit.default_timer()
+
+    print('done')
+    print(f'reading     : {read_end-read_start: 5.2f}s')
+    print(f'rechunking  : {end_rechunk-read_end: 5.2f}s')
+
+   # remove temporary stores
+    fast_store.rmdir()
     temp_store.rmdir()
 
 
