@@ -63,7 +63,7 @@ class DB:
         result = {}
         with shelve.open(self.path, flag='r') as shelf:
             for key_raw, value in shelf.items():
-                key = pickle.loads(codecs.decode(key_raw, "base64"))
+                key = pickle.loads(codecs.decode(key_raw.encode(), "base64"))
                 result[key] = value
 
         return result
