@@ -173,8 +173,8 @@ def _run(imzml_file: str) -> None:
     print(f'CPU time: {cpu_time_end-cpu_time_start}')
 
 
-# remove warnings emitted by pyimzml
-warnings.filterwarnings('ignore')
+# remove warnings emitted by pyimzml about accession typos (they)
+warnings.filterwarnings('ignore', message=r'.*Accession IMS.*')
 
 for _file in sys.argv[1:]:
     _run(_file)
