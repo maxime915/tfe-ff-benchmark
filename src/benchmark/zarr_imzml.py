@@ -2,6 +2,7 @@
 
 import random
 from typing import Tuple
+import warnings
 
 import dask.array as da
 import numpy as np
@@ -125,11 +126,13 @@ class ZarrImzMLOverlapSumBenchmark(BenchmarkABC):
         # should not specify a tile larger than the image's chunks
         if any(t > s for t, s in zip(tiles, intensities.chunks[:2])):
             self.broken = True
+            warnings.warn(f'tiles {tiles} too large for chunks {intensities.chunks[:2]}')
             return
 
         # there should be at least two full chunk
         if any(s // c < 2 for s, c in zip(intensities.shape[:2], intensities.chunks[:2])):
             self.broken = True
+            warnings.warn(f'chunks {intensities.chunks[:2]} too large for shape {intensities.shape[:2]}')
             return
 
     def task(self) -> None:
@@ -182,6 +185,7 @@ class ZarrImzMLSumBenchmark(BenchmarkABC):
 
         if any(t > s for t, s in zip(tiles, intensities.shape[:2])):
             self.broken = True
+            warnings.warn(f'tiles {tiles} too large for shape {intensities.shape}')
 
     def task(self) -> None:
         intensities = da.from_zarr(self.file, '/intensities')
@@ -215,6 +219,7 @@ class ZarrImzMLSearchBenchmark(BenchmarkABC):
 
         if any(t > s for t, s in zip(tiles, infos.shape[:2])):
             self.broken = True
+            warnings.warn(f'tiles {tiles} too large for shape {infos.shape}')
 
     def task(self) -> None:
         intensities = da.from_zarr(self.file, '/intensities')

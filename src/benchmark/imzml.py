@@ -2,6 +2,7 @@
 
 import random
 from typing import NamedTuple, Tuple
+import warnings
 
 import numpy as np
 import pyimzml.ImzMLParser
@@ -128,6 +129,7 @@ class ImzMLSumBenchmark(BenchmarkABC):
 
         if any(t > s for t, s in zip(tiles, shape)):
             self.broken = True
+            warnings.warn(f'tiles {tiles} too large for shape {shape}')
 
     def task(self) -> None:
         parser = pyimzml.ImzMLParser.ImzMLParser(self.file)
@@ -173,6 +175,7 @@ class ImzMLSearchBenchmark(BenchmarkABC):
         shape = infos.shape[:2]
         if any(t > s for t, s in zip(tiles, shape)):
             self.broken = True
+            warnings.warn(f'tiles {tiles} too large for shape {shape}')
 
     def task(self) -> None:
         parser = pyimzml.ImzMLParser.ImzMLParser(self.file)
