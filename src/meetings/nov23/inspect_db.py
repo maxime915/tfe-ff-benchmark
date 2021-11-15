@@ -1,6 +1,7 @@
 "inspect_db: show information on a result file"
 
 import argparse
+import collections
 
 from .db import DB
 
@@ -8,7 +9,7 @@ from .db import DB
 def inspect(db_path: str, full: bool = False) -> None:
     ""
     db = DB(db_path)
-    content = db.load_all()
+    content = collections.OrderedDict(sorted(db.load_all().items()))
     for key, value in content.items():
         if full:
             print(f'db[{key}] = {value}')
