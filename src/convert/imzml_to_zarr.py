@@ -1,4 +1,41 @@
-"imzml_to_zarr: converts imzML images to Zarr files"
+"""imzml_to_zarr: converts imzML images to Zarr files
+
+2 stage conversion process [genereal idea]:
+
+    - create a Zarr array with no compressor, and chunks similar to the spectrums
+    - parse the whole .imzML file
+    - read each spectrum one by one, write it to the previous Zarr array
+    - create a Zarr array with the required parameters (compressor, order, chunks)
+    - copy the first array to the second one
+
+
+Full in-memory transit [fast but prohibitive due to memory usage]:
+    - temporary Zarr has chunks (1, 1, -1) for continuous and (1, 1) for processed
+    - to rechunk: load the whole array in memory, then write it back to the destination
+    - possibly high memory usage
+    - much faster than doing the one stage conversion
+
+Using rechunker [current]:
+    - temporary Zarr has chunks (1, 1, -1) for continuous and (1, 1) for processed
+    - rechunking is done via rechunker [bad support for VLA]
+    - allow to limit the total used memory
+    - memory support for VLA is not working (may use too much memory and fail)
+
+Using zarr.copy [todo]:
+    - create an empty destination Array with the desired parameters
+    - create a temporary Zarr with chunks (1, 1, X) [cont.] or (1, 1) [proc.] where
+        X is the value from the destination Array's chunks
+    - read the spectrums to the temporary Array
+    IF HIGH SIZE ARRAY:
+        - use zarr.copy function to make the copy
+        - one-to-many mapping between chunks (each write requires multiple read, but
+            each temporary chunk is only read once)
+        - no memory limitation but the output chunks should fit in memory and 
+            this approach shouldn't use more than that
+    ELSE:
+        - load array in memory
+        - write it to the destination directly
+"""
 
 import argparse
 import sys
@@ -13,6 +50,9 @@ import rechunker
 import zarr
 from pyimzml import ImzMLParser
 from zarr.util import guess_chunks
+
+# 2GiB - 1 (to satisfy Blosc compressor limit)
+_MAX_MEMORY = 2147483647
 
 
 def _convert_processed(
@@ -77,13 +117,19 @@ def _convert_processed(
 
     temp_store = zarr.TempStore()
 
+    # rechunker assumes that the object dtype is 'O' which has size 8.
+    #   In reality, the whole sub-array is much larger than that.
+    #   The limit is divided by the mean size of the sub arrays to restore the memory limmit
+
+    max_mem = (_MAX_MEMORY * np.dtype('0').itemsize) // meansize
+
     rechunked = rechunker.rechunk(
         source=fast_group,
         target_chunks={
             'intensities': chunks,
             'mzs': chunks,
         },
-        max_mem='4GB',
+        max_mem=max_mem,
         target_store=zarr_group.store,
         target_options={
             'intensities': {
@@ -169,7 +215,7 @@ def _convert_continuous(
         target_chunks={
             'intensities': chunks,
         },
-        max_mem=2147483647,  # 2GB for the compressor buffer
+        max_mem=_MAX_MEMORY,
         target_store=zarr_group.store,
         target_options={
             'intensities': kwargs,
