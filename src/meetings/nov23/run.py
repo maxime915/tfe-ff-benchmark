@@ -9,10 +9,13 @@ save all data inside a shelve.Shelf (useful in case of late failure)
 """
 
 import itertools
+import multiprocessing
+import os
 import shutil
 import sys
 import time
 import timeit
+import typing
 import uuid
 import warnings
 
@@ -44,6 +47,69 @@ _ZARR_REPEAT = 5
 
 _IMZML_KEY = 'imzml_raw'
 _ZARR_KEY = 'imzml_zarr'
+
+
+def _bench(bench: typing.Callable[[], None], name: str, repeat: int,
+           number: int) -> typing.List[float]:
+    """_bench: run a benchmark of *bench* in a new process
+
+    - name: str to print at the beginning
+    - repeat, number: see timeit.repeat
+    - bench: function to benchmark
+
+    returns: a list of float if OK, [-1] otherwise"""
+
+    print(f'doing {name}...')
+    sys.stdout.flush()
+
+    # send results and CPU time
+    pipe_left, pipe_right = multiprocessing.Pipe()
+
+    # function to run the benchmark into
+    def body():
+        try:
+            cpu_time_start = time.process_time()
+
+            results = timeit.Timer(bench).repeat(repeat, number)
+
+            cpu_time_end = time.process_time()
+
+            pipe_left.send(results)
+            pipe_left.send(cpu_time_end - cpu_time_start)
+        except Exception as e:
+            pipe_left.send(str(e))
+
+    # new process to avoid everything crashing if OOMKiller wakes up
+    process = multiprocessing.Process(target=body)
+
+    # record wall time in parent process in case of error: better than nothing
+    wall_time_start = timeit.default_timer()
+
+    # start benchmark and wait for results
+    process.start()
+    process.join()
+
+    wall_time = timeit.default_timer() - wall_time_start
+
+    # if processed was killed, receive nothing.
+    if process.exitcode < 0:
+        print(f'\tfailed after {wall_time: 5.2f}, {process.exitcode=}')
+        sys.stdout.flush()
+        return [-1]
+
+    # if excpetion aborted benchmark, receive a str with the message
+    exception = pipe_right.recv()
+    if isinstance(exception, str):
+        print(f'\tfailed after {wall_time: 5.2f}, with {exception=}')
+        sys.stdout.flush()
+        return [-1]
+
+    # everything went fine, receive results and CPU time
+    results = exception
+    proc_time = pipe_right.recv()
+    print(f'\tdone! (WTime: {wall_time: 5.2f}, CPUTime: {proc_time: 5.2f})')
+    sys.stdout.flush()
+    return results
 
 
 def _run(imzml_file: str) -> None:
@@ -89,8 +155,7 @@ def _run(imzml_file: str) -> None:
     options = itertools.product(chunk_choice, order_choice, compressor_choice)
 
     # benchmark imzML raw - band access
-    results = timeit.Timer(ImzMLBandBenchmark(imzml_file).task).repeat(
-        _IMZML_REPEAT, _IMZML_NUMBER)
+    results = _bench(ImzMLBandBenchmark(imzml_file).task, 'imzml: band', _IMZML_REPEAT, _IMZML_NUMBER)
     store.save_val_at(results, _IMZML_KEY, 'band')
 
     # benchmark imzML raw - tile access (TIC & search)
@@ -99,16 +164,14 @@ def _run(imzml_file: str) -> None:
         if hasattr(benchmark, 'broken'):
             continue
 
-        results = timeit.Timer(benchmark.task).repeat(
-            _IMZML_REPEAT, _IMZML_NUMBER)
+        results = _bench(benchmark.task, f'imzml TIC {tile}', _IMZML_REPEAT, _IMZML_NUMBER)
         store.save_val_at(results, _IMZML_KEY, 'tic', tile)
 
         benchmark = ImzMLSearchBenchmark(imzml_file, tile, imzml_info)
         if hasattr(benchmark, 'broken'):
             continue
 
-        results = timeit.Timer(benchmark.task).repeat(
-            _IMZML_REPEAT, _IMZML_NUMBER)
+        results = _bench(benchmark.task, f'imzml search {tile}', _IMZML_REPEAT, _IMZML_NUMBER)
         store.save_val_at(results, _IMZML_KEY, 'search', tile)
 
     for chunk, order, compressor in options:
@@ -118,8 +181,7 @@ def _run(imzml_file: str) -> None:
         # conversion
         conversion = converter(imzml_file, zarr_path, chunks=chunk,
                                compressor=compressor, cache_metadata=True, order=order)
-        results = timeit.Timer(conversion).repeat(
-            _CONVERSION_REPEAT, _CONVERSION_NUMBER)
+        results = _bench(conversion, f'conversion {chunk} {order}, {compressor}', _CONVERSION_REPEAT, _CONVERSION_NUMBER)
         store.save_val_at(results, *base_key, 'conversion time')
 
         # infos
@@ -132,8 +194,7 @@ def _run(imzml_file: str) -> None:
         print(f'{chunk = }, {order = }, {compressor = }')
 
         # benchmark converted file - band access
-        results = timeit.Timer(ZarrImzMLBandBenchmark(zarr_path).task).repeat(
-            _ZARR_REPEAT, _ZARR_NUMBER)
+        results = _bench(ZarrImzMLBandBenchmark(zarr_path).task, 'zarr band', _ZARR_REPEAT, _ZARR_NUMBER)
         store.save_val_at(results, *base_key, 'band')
 
         # benchmark converted file - tile access
@@ -141,15 +202,13 @@ def _run(imzml_file: str) -> None:
             benchmark = ZarrImzMLSumBenchmark(zarr_path, tile)
             if hasattr(benchmark, 'broken'):
                 continue
-            results = timeit.Timer(benchmark.task).repeat(
-                _ZARR_REPEAT, _ZARR_NUMBER)
+            results = _bench(benchmark.task, f'zarr tic {tile}', _ZARR_REPEAT, _ZARR_NUMBER)
             store.save_val_at(results, *base_key, 'tic', tile)
 
             benchmark = ZarrImzMLSearchBenchmark(zarr_path, tile, imzml_info)
             if hasattr(benchmark, 'broken'):
                 continue
-            results = timeit.Timer(benchmark.task).repeat(
-                _ZARR_REPEAT, _ZARR_NUMBER)
+            results = _bench(benchmark.task, f'zarr search {tile}', _ZARR_REPEAT, _ZARR_NUMBER)
             store.save_val_at(results, *base_key, 'search', tile)
 
             # benchmark converted file - tile access with overlap
@@ -158,8 +217,7 @@ def _run(imzml_file: str) -> None:
                     zarr_path, tile, overlap)
                 if hasattr(benchmark, 'broken'):
                     continue
-                results = timeit.Timer(benchmark.task).repeat(
-                    _ZARR_REPEAT, _ZARR_NUMBER)
+                results = _bench(benchmark.task, f'zarr tic {tile} {overlap}', _ZARR_REPEAT, _ZARR_NUMBER)
                 store.save_val_at(results, *base_key,
                                   'tic-overlap', tile, overlap)
 
@@ -169,12 +227,13 @@ def _run(imzml_file: str) -> None:
     wall_time_end = timeit.default_timer()
 
     print(f'ImzML / Zarr benchmark on {imzml_file}')
-    print(f'Wall time: {wall_time_end-wall_time_start}')
-    print(f'CPU time: {cpu_time_end-cpu_time_start}')
+    print(f'Total wall time: {wall_time_end-wall_time_start}')
+    print(f'Total CPU time: {cpu_time_end-cpu_time_start}')
 
 
 # remove warnings emitted by pyimzml about accession typos (they)
 warnings.filterwarnings('ignore', message=r'.*Accession IMS.*')
 
+print(f'starting benchmark at PID: {os.getpid()}')
 for _file in sys.argv[1:]:
     _run(_file)
