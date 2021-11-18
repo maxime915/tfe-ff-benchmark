@@ -49,7 +49,7 @@ from .without_rechunker import _convert_continuous as convert_continuous_nr
 from .without_rechunker import _convert_processed as convert_processed_nr
 
 
-def converter(imzml_path: str, zarr_path: str, max_mem: int = -1, use_rechunker=True, **kwargs) -> Callable[[], None]:
+def converter(imzml_path: str, zarr_path: str, max_mem: int = -1, use_rechunker=False, **kwargs) -> Callable[[], None]:
     "returns a function that does the convertion from imzML to Zarr"
 
     include_spectra_metadata = kwargs.pop('include-spectra-metadata', None)

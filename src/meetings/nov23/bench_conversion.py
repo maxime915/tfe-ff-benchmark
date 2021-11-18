@@ -84,7 +84,7 @@ def _bench(bench: typing.Callable[[], None], name: str, repeat: int,
     # everything went fine, receive results and CPU time
     results = exception
     proc_time = pipe_right.recv()
-    print(f'\tdone! (WTime: {wall_time: 5.2f}, CPUTime: {proc_time: 5.2f}')
+    print(f'\tdone! (WTime: {wall_time: 5.2f}, CPUTime: {proc_time: 5.2f})')
     sys.stdout.flush()
     return results
 
