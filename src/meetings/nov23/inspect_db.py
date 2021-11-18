@@ -9,7 +9,10 @@ from .db import DB
 def inspect(db_path: str, full: bool = False) -> None:
     ""
     db = DB(db_path)
-    content = collections.OrderedDict(sorted(db.load_all().items()))
+    try:
+        content = collections.OrderedDict(sorted(db.load_all().items()))
+    except Exception:
+        content = collections.OrderedDict(sorted(db.load_all().items(), key=str))
     for key, value in content.items():
         if full:
             print(f'db[{key}] = {value}')
