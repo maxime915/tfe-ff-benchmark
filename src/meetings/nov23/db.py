@@ -12,17 +12,20 @@ import typing
 _ALPHA_NUM = string.ascii_letters + string.digits
 
 
-def get_db_dir(file_or_dir: str = __file__) -> pathlib.Path:
+def get_db_dir(file_or_dir: str = __file__, name : str = 'results') -> pathlib.Path:
     """get a directory suitable to contain the db
 
     - if file_or_dir is a dir, a sub-dir 'results' will be created & returned
-    - else, a sibling dir 'results' will be created & returned"""
+    - else, a sibling dir 'results' will be created & returned
+    
+    - name: directory name
+    """
 
     path = pathlib.Path(file_or_dir).resolve()
     if path.is_file():
         path = path.parent
 
-    db_dir = path / 'results'
+    db_dir = path / name
     if not db_dir.exists():
         db_dir.mkdir()
 
