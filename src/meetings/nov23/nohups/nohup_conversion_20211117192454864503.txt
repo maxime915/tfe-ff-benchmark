@@ -1,0 +1,365 @@
+nohup: ignoring input
+os.getpid()=28691
+doing conversion base_key=((1, 1), 'default', 'C', True, 1073741824)...
+done
+reading     :  78.24s	rechunking  :  139.27s
+done
+reading     :  90.80s	rechunking  :  197.93s
+	done! (WTime:  534.14, CPUTime:  355.77
+doing conversion base_key=((1, 1), 'default', 'C', True, 2147483648)...
+done
+reading     :  103.95s	rechunking  :  125.44s
+done
+reading     :  95.98s	rechunking  :  200.81s
+	done! (WTime:  571.14, CPUTime:  353.62
+doing conversion base_key=((1, 1), 'default', 'C', True, 4294967296)...
+done
+reading     :  106.15s	rechunking  :  116.62s
+done
+reading     :  93.05s	rechunking  :  127.58s
+	done! (WTime:  478.89, CPUTime:  390.59
+doing conversion base_key=((1, 1), 'default', 'C', False, 1073741824)...
+done branch='used zarr'
+reading     :  91.84s	rechunking  :  184.34s
+done branch='used zarr'
+reading     :  91.17s	rechunking  :  186.84s
+	done! (WTime:  589.99, CPUTime:  332.11
+doing conversion base_key=((1, 1), 'default', 'C', False, 2147483648)...
+done branch='used zarr'
+reading     :  90.47s	rechunking  :  188.82s
+done branch='used zarr'
+reading     :  91.78s	rechunking  :  183.66s
+	done! (WTime:  584.07, CPUTime:  334.38
+doing conversion base_key=((1, 1), 'default', 'C', False, 4294967296)...
+done branch='used zarr'
+reading     :  91.65s	rechunking  :  184.15s
+done branch='used zarr'
+reading     :  91.78s	rechunking  :  194.74s
+	done! (WTime:  600.02, CPUTime:  334.23
+doing conversion base_key=((1, 1), 'default', 'F', True, 1073741824)...
+done
+reading     :  89.01s	rechunking  :  122.86s
+done
+reading     :  91.05s	rechunking  :  166.95s
+	done! (WTime:  506.49, CPUTime:  351.47
+doing conversion base_key=((1, 1), 'default', 'F', True, 2147483648)...
+done
+reading     :  91.90s	rechunking  :  124.15s
+done
+reading     :  95.54s	rechunking  :  206.31s
+	done! (WTime:  552.92, CPUTime:  355.16
+doing conversion base_key=((1, 1), 'default', 'F', True, 4294967296)...
+done
+reading     :  104.09s	rechunking  :  105.43s
+done
+reading     :  92.71s	rechunking  :  127.64s
+	done! (WTime:  464.07, CPUTime:  374.81
+doing conversion base_key=((1, 1), 'default', 'F', False, 1073741824)...
+done branch='used zarr'
+reading     :  91.36s	rechunking  :  87.30s
+done branch='used zarr'
+reading     :  91.01s	rechunking  :  87.63s
+	done! (WTime:  398.33, CPUTime:  280.60
+doing conversion base_key=((1, 1), 'default', 'F', False, 2147483648)...
+done branch='used zarr'
+reading     :  91.82s	rechunking  :  174.38s
+done branch='used zarr'
+reading     :  92.05s	rechunking  :  86.71s
+	done! (WTime:  472.91, CPUTime:  299.08
+doing conversion base_key=((1, 1), 'default', 'F', False, 4294967296)...
+done branch='used zarr'
+reading     :  90.33s	rechunking  :  86.72s
+done branch='used zarr'
+reading     :  90.40s	rechunking  :  87.53s
+	done! (WTime:  399.22, CPUTime:  277.98
+doing conversion base_key=((1, 1), None, 'C', True, 1073741824)...
+done
+reading     :  91.28s	rechunking  :  127.04s
+done
+reading     :  91.54s	rechunking  :  165.89s
+	done! (WTime:  506.52, CPUTime:  334.89
+doing conversion base_key=((1, 1), None, 'C', True, 2147483648)...
+done
+reading     :  91.62s	rechunking  :  119.10s
+done
+reading     :  92.78s	rechunking  :  191.17s
+	done! (WTime:  527.75, CPUTime:  338.58
+doing conversion base_key=((1, 1), None, 'C', True, 4294967296)...
+done
+reading     :  99.85s	rechunking  :  110.45s
+done
+reading     :  93.60s	rechunking  :  130.02s
+	done! (WTime:  469.76, CPUTime:  356.01
+doing conversion base_key=((1, 1), None, 'C', False, 1073741824)...
+done branch='used zarr'
+reading     :  91.14s	rechunking  :  103.53s
+done branch='used zarr'
+reading     :  91.68s	rechunking  :  89.71s
+	done! (WTime:  413.14, CPUTime:  260.22
+doing conversion base_key=((1, 1), None, 'C', False, 2147483648)...
+done branch='used zarr'
+reading     :  91.06s	rechunking  :  89.70s
+done branch='used zarr'
+reading     :  92.00s	rechunking  :  89.58s
+	done! (WTime:  404.56, CPUTime:  267.32
+doing conversion base_key=((1, 1), None, 'C', False, 4294967296)...
+done branch='used zarr'
+reading     :  91.34s	rechunking  :  90.20s
+done branch='used zarr'
+reading     :  91.28s	rechunking  :  89.78s
+	done! (WTime:  401.58, CPUTime:  265.48
+doing conversion base_key=((1, 1), None, 'F', True, 1073741824)...
+done
+reading     :  91.16s	rechunking  :  133.31s
+done
+reading     :  93.18s	rechunking  :  150.59s
+	done! (WTime:  496.76, CPUTime:  325.75
+doing conversion base_key=((1, 1), None, 'F', True, 2147483648)...
+done
+reading     :  90.82s	rechunking  :  120.12s
+done
+reading     :  92.62s	rechunking  :  201.26s
+	done! (WTime:  542.91, CPUTime:  336.71
+doing conversion base_key=((1, 1), None, 'F', True, 4294967296)...
+done
+reading     :  102.64s	rechunking  :  123.68s
+done
+reading     :  92.23s	rechunking  :  198.72s
+	done! (WTime:  554.46, CPUTime:  366.36
+doing conversion base_key=((1, 1), None, 'F', False, 1073741824)...
+done branch='used zarr'
+reading     :  104.91s	rechunking  :  90.94s
+done branch='used zarr'
+reading     :  91.84s	rechunking  :  89.76s
+	done! (WTime:  415.81, CPUTime:  267.09
+doing conversion base_key=((1, 1), None, 'F', False, 2147483648)...
+done branch='used zarr'
+reading     :  90.54s	rechunking  :  89.76s
+done branch='used zarr'
+reading     :  91.68s	rechunking  :  90.34s
+	done! (WTime:  406.22, CPUTime:  263.01
+doing conversion base_key=((1, 1), None, 'F', False, 4294967296)...
+done branch='used zarr'
+reading     :  91.09s	rechunking  :  89.19s
+done branch='used zarr'
+reading     :  91.31s	rechunking  :  89.13s
+	done! (WTime:  398.85, CPUTime:  264.74
+doing conversion base_key=(True, 'default', 'C', True, 1073741824)...
+done
+reading     :  89.00s	rechunking  :  93.29s
+done
+reading     :  90.29s	rechunking  :  115.10s
+	done! (WTime:  411.86, CPUTime:  231.47
+doing conversion base_key=(True, 'default', 'C', True, 2147483648)...
+done
+reading     :  90.07s	rechunking  :  68.44s
+done
+reading     :  90.42s	rechunking  :  113.97s
+	done! (WTime:  398.21, CPUTime:  234.82
+doing conversion base_key=(True, 'default', 'C', True, 4294967296)...
+done
+reading     :  90.86s	rechunking  :  85.44s
+done
+reading     :  96.16s	rechunking  :  103.28s
+	done! (WTime:  411.85, CPUTime:  250.90
+doing conversion base_key=(True, 'default', 'C', False, 1073741824)...
+done branch='used zarr'
+reading     :  94.51s	rechunking  :  51.54s
+done branch='used zarr'
+reading     :  91.09s	rechunking  :  50.63s
+	done! (WTime:  317.95, CPUTime:  189.13
+doing conversion base_key=(True, 'default', 'C', False, 2147483648)...
+done branch='used zarr'
+reading     :  90.52s	rechunking  :  51.31s
+done branch='used zarr'
+reading     :  90.36s	rechunking  :  50.75s
+	done! (WTime:  313.15, CPUTime:  186.78
+doing conversion base_key=(True, 'default', 'C', False, 4294967296)...
+done branch='used zarr'
+reading     :  90.22s	rechunking  :  51.12s
+done branch='used zarr'
+reading     :  90.66s	rechunking  :  50.67s
+	done! (WTime:  312.63, CPUTime:  186.94
+doing conversion base_key=(True, 'default', 'F', True, 1073741824)...
+done
+reading     :  90.57s	rechunking  :  81.55s
+done
+reading     :  91.01s	rechunking  :  126.22s
+	done! (WTime:  416.18, CPUTime:  229.24
+doing conversion base_key=(True, 'default', 'F', True, 2147483648)...
+done
+reading     :  93.39s	rechunking  :  66.00s
+done
+reading     :  91.35s	rechunking  :  161.74s
+	done! (WTime:  445.34, CPUTime:  241.32
+doing conversion base_key=(True, 'default', 'F', True, 4294967296)...
+done
+reading     :  107.81s	rechunking  :  78.77s
+done
+reading     :  90.90s	rechunking  :  167.83s
+	done! (WTime:  477.57, CPUTime:  255.14
+doing conversion base_key=(True, 'default', 'F', False, 1073741824)...
+done branch='used zarr'
+reading     :  91.09s	rechunking  :  51.25s
+done branch='used zarr'
+reading     :  90.20s	rechunking  :  50.13s
+	done! (WTime:  312.91, CPUTime:  190.74
+doing conversion base_key=(True, 'default', 'F', False, 2147483648)...
+done branch='used zarr'
+reading     :  90.10s	rechunking  :  51.24s
+done branch='used zarr'
+reading     :  91.18s	rechunking  :  50.47s
+	done! (WTime:  314.17, CPUTime:  187.20
+doing conversion base_key=(True, 'default', 'F', False, 4294967296)...
+done branch='used zarr'
+reading     :  90.14s	rechunking  :  50.70s
+done branch='used zarr'
+reading     :  90.88s	rechunking  :  50.12s
+	done! (WTime:  312.07, CPUTime:  186.39
+doing conversion base_key=(True, None, 'C', True, 1073741824)...
+done
+reading     :  93.21s	rechunking  :  98.32s
+done
+reading     :  90.44s	rechunking  :  129.89s
+	done! (WTime:  442.89, CPUTime:  212.10
+doing conversion base_key=(True, None, 'C', True, 2147483648)...
+done
+reading     :  90.89s	rechunking  :  95.91s
+done
+reading     :  93.39s	rechunking  :  103.40s
+	done! (WTime:  417.70, CPUTime:  233.48
+doing conversion base_key=(True, None, 'C', True, 4294967296)...
+done
+reading     :  95.84s	rechunking  :  90.91s
+done
+reading     :  93.64s	rechunking  :  116.43s
+	done! (WTime:  423.98, CPUTime:  222.52
+doing conversion base_key=(True, None, 'C', False, 1073741824)...
+done branch='used zarr'
+reading     :  90.87s	rechunking  :  63.14s
+done branch='used zarr'
+reading     :  91.17s	rechunking  :  62.55s
+	done! (WTime:  339.06, CPUTime:  179.28
+doing conversion base_key=(True, None, 'C', False, 2147483648)...
+done branch='used zarr'
+reading     :  91.62s	rechunking  :  62.64s
+done branch='used zarr'
+reading     :  90.96s	rechunking  :  62.78s
+	done! (WTime:  339.96, CPUTime:  177.35
+doing conversion base_key=(True, None, 'C', False, 4294967296)...
+done branch='used zarr'
+reading     :  91.31s	rechunking  :  62.89s
+done branch='used zarr'
+reading     :  90.71s	rechunking  :  63.28s
+	done! (WTime:  342.50, CPUTime:  178.03
+doing conversion base_key=(True, None, 'F', True, 1073741824)...
+done
+reading     :  90.35s	rechunking  :  75.92s
+done
+reading     :  90.68s	rechunking  :  133.94s
+	done! (WTime:  431.41, CPUTime:  200.43
+doing conversion base_key=(True, None, 'F', True, 2147483648)...
+done
+reading     :  92.02s	rechunking  :  82.12s
+done
+reading     :  90.33s	rechunking  :  173.96s
+	done! (WTime:  472.32, CPUTime:  222.04
+doing conversion base_key=(True, None, 'F', True, 4294967296)...
+done
+reading     :  109.34s	rechunking  :  88.13s
+done
+reading     :  94.25s	rechunking  :  175.65s
+	done! (WTime:  496.53, CPUTime:  232.24
+doing conversion base_key=(True, None, 'F', False, 1073741824)...
+done branch='used zarr'
+reading     :  91.69s	rechunking  :  62.44s
+done branch='used zarr'
+reading     :  90.81s	rechunking  :  62.46s
+	done! (WTime:  336.65, CPUTime:  177.99
+doing conversion base_key=(True, None, 'F', False, 2147483648)...
+done branch='used zarr'
+reading     :  90.24s	rechunking  :  62.46s
+done branch='used zarr'
+reading     :  90.54s	rechunking  :  62.71s
+	done! (WTime:  344.76, CPUTime:  176.70
+doing conversion base_key=(True, None, 'F', False, 4294967296)...
+done branch='used zarr'
+reading     :  90.27s	rechunking  :  62.76s
+done branch='used zarr'
+reading     :  91.06s	rechunking  :  62.37s
+	done! (WTime:  337.36, CPUTime:  177.44
+doing conversion base_key=((-1, -1), 'default', 'C', True, 1073741824)...
+	failed after  100.65, with exception='Target chunk memory (1328432) exceeds max_mem (177477)'
+doing conversion base_key=((-1, -1), 'default', 'C', True, 2147483648)...
+	failed after  99.63, with exception='Target chunk memory (1328432) exceeds max_mem (354955)'
+doing conversion base_key=((-1, -1), 'default', 'C', True, 4294967296)...
+	failed after  100.21, with exception='Target chunk memory (1328432) exceeds max_mem (709911)'
+doing conversion base_key=((-1, -1), 'default', 'C', False, 1073741824)...
+	failed after  105.39, with exception='Codec does not support buffers of > 2147483647 bytes'
+doing conversion base_key=((-1, -1), 'default', 'C', False, 2147483648)...
+	failed after  105.79, with exception='Codec does not support buffers of > 2147483647 bytes'
+doing conversion base_key=((-1, -1), 'default', 'C', False, 4294967296)...
+	failed after  105.18, with exception='Codec does not support buffers of > 2147483647 bytes'
+doing conversion base_key=((-1, -1), 'default', 'F', True, 1073741824)...
+	failed after  99.67, with exception='Target chunk memory (1328432) exceeds max_mem (177477)'
+doing conversion base_key=((-1, -1), 'default', 'F', True, 2147483648)...
+	failed after  98.64, with exception='Target chunk memory (1328432) exceeds max_mem (354955)'
+doing conversion base_key=((-1, -1), 'default', 'F', True, 4294967296)...
+	failed after  98.47, with exception='Target chunk memory (1328432) exceeds max_mem (709911)'
+doing conversion base_key=((-1, -1), 'default', 'F', False, 1073741824)...
+	failed after  104.42, with exception='Codec does not support buffers of > 2147483647 bytes'
+doing conversion base_key=((-1, -1), 'default', 'F', False, 2147483648)...
+	failed after  105.29, with exception='Codec does not support buffers of > 2147483647 bytes'
+doing conversion base_key=((-1, -1), 'default', 'F', False, 4294967296)...
+	failed after  104.22, with exception='Codec does not support buffers of > 2147483647 bytes'
+doing conversion base_key=((-1, -1), None, 'C', True, 1073741824)...
+	failed after  98.54, with exception='Target chunk memory (1328432) exceeds max_mem (177477)'
+doing conversion base_key=((-1, -1), None, 'C', True, 2147483648)...
+	failed after  98.89, with exception='Target chunk memory (1328432) exceeds max_mem (354955)'
+doing conversion base_key=((-1, -1), None, 'C', True, 4294967296)...
+	failed after  98.78, with exception='Target chunk memory (1328432) exceeds max_mem (709911)'
+doing conversion base_key=((-1, -1), None, 'C', False, 1073741824)...
+done branch='used zarr'
+reading     :  89.53s	rechunking  :  112.69s
+done branch='used zarr'
+reading     :  96.03s	rechunking  :  140.52s
+	done! (WTime:  468.27, CPUTime:  204.22
+doing conversion base_key=((-1, -1), None, 'C', False, 2147483648)...
+done branch='used zarr'
+reading     :  103.33s	rechunking  :  107.59s
+done branch='used zarr'
+reading     :  90.65s	rechunking  :  136.60s
+	done! (WTime:  470.76, CPUTime:  201.31
+doing conversion base_key=((-1, -1), None, 'C', False, 4294967296)...
+done branch='used zarr'
+reading     :  104.53s	rechunking  :  108.58s
+done branch='used zarr'
+reading     :  90.89s	rechunking  :  135.97s
+	done! (WTime:  470.58, CPUTime:  199.76
+doing conversion base_key=((-1, -1), None, 'F', True, 1073741824)...
+	failed after  114.74, with exception='Target chunk memory (1328432) exceeds max_mem (177477)'
+doing conversion base_key=((-1, -1), None, 'F', True, 2147483648)...
+	failed after  99.83, with exception='Target chunk memory (1328432) exceeds max_mem (354955)'
+doing conversion base_key=((-1, -1), None, 'F', True, 4294967296)...
+	failed after  100.04, with exception='Target chunk memory (1328432) exceeds max_mem (709911)'
+doing conversion base_key=((-1, -1), None, 'F', False, 1073741824)...
+done branch='used zarr'
+reading     :  89.75s	rechunking  :  107.69s
+done branch='used zarr'
+reading     :  91.77s	rechunking  :  137.76s
+	done! (WTime:  455.21, CPUTime:  200.75
+doing conversion base_key=((-1, -1), None, 'F', False, 2147483648)...
+done branch='used zarr'
+reading     :  104.21s	rechunking  :  107.58s
+done branch='used zarr'
+reading     :  90.40s	rechunking  :  136.72s
+	done! (WTime:  469.20, CPUTime:  202.39
+doing conversion base_key=((-1, -1), None, 'F', False, 4294967296)...
+done branch='used zarr'
+reading     :  103.02s	rechunking  :  107.12s
+done branch='used zarr'
+reading     :  90.27s	rechunking  :  136.39s
+	done! (WTime:  467.93, CPUTime:  202.15
+Conversion on files/goteborg_12_processed.imzML
+Total wall time: 25819.606765549004
+Total CPU time: 213.543982024
