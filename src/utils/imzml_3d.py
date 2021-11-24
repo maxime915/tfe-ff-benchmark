@@ -7,54 +7,57 @@ import numpy as np
 from pyimzml.ImzMLParser import ImzMLParser
 
 
-def show_3d_planes(imzml_path: str, save_to: str = '', show: bool = True) -> None:
+def show_3d_planes(
+        imzml_path: str, save_to: str = '', show: bool = True
+        ) -> None:
     """load a file, and show the TIC of all z planes
 
-    - save_to: str, path to save the sublane to (appended by _z.png) [falsy value do not store]
+    - save_to: str, path to save the sublane to (appended by _z.png) [falsy 
+        value do not store]
     - show: request a call to matplotlib.pyplot.imshow"""
 
-    parser = ImzMLParser(imzml_path)
+    parser = ImzMLParser(imzml_path, include_spectra_metadata='full')
 
     shape = (parser.imzmldict['max count of pixels y'],
-             parser.imzmldict['max count of pixels x'])
+            parser.imzmldict['max count of pixels x'])
 
     path_stem = imzml_path.split('/')[-1]
 
-    def show_subplane(start, stop, z=0):
+    # use a dict for all Z values
+    #   to avoid having all images in memory at once, only save
+    #   a list of indices in each plane
+    planes = {}
 
+    for idx, (coordinates, metadata) in enumerate(zip(
+            parser.coordinates, parser.spectrum_full_metadata)):
+        assert len(metadata.scans) == 1
+        depth_plane = metadata.scans[0].user_params[2][3]
+
+        if depth_plane not in planes:
+            planes[depth_plane] = []
+
+        planes[depth_plane].append((idx, coordinates))
+
+    # draw the planes one by one
+    for depth, coordinates in planes.items():
         img = np.zeros(shape)
 
-        last_x = parser.coordinates[start][0]
-        next_start = stop
-
-        for i in range(start, stop):
-            x, y, _ = parser.coordinates[i]
-
-            if x < last_x:
-                next_start = i
-                break
-
-            _, intensities = parser.getspectrum(i)
-            img[y-1, x-1] = intensities.sum()
-
-            last_x = x
+        for idx, (x, y, _) in coordinates:
+            _, intensities = parser.getspectrum(idx)
+            img[y-1][x-1] = intensities.sum()
 
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
 
-        ax.set_title(f'{path_stem} {z=}')
+        ax.set_title(f'{path_stem}\n{depth=}')
         ax.imshow(img)
 
         if len(save_to) > 0:
-            fig.savefig(save_to + f'_{z}.png')
+            fig.savefig(save_to + f'_{depth}.png')
 
         if show:
+            plt.tight_layout()
             plt.show()
-
-        if next_start < stop:
-            show_subplane(next_start, stop, z+1)
-
-    show_subplane(0, len(parser.coordinates))
 
 
 if __name__ == "__main__":
