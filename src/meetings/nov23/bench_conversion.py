@@ -4,6 +4,7 @@
 import itertools
 import multiprocessing
 import os
+import pathlib
 import shutil
 import sys
 import time
@@ -123,6 +124,15 @@ def _run(imzml_file: str) -> None:
             (-1, -1),
         )
 
+    # save all choice option into the db for further analysis
+    store.save_val_at({
+        'rechunker_choice': rechunker_choice,
+        'max_mem_choice': max_mem_choice,
+        'order_choice': order_choice,
+        'compressor_choice': compressor_choice,
+        'chunk_choice': chunk_choice
+    }, 'benchmark parameters')
+
     options = itertools.product(chunk_choice, compressor_choice, order_choice,
                                 rechunker_choice, max_mem_choice)
 
@@ -156,7 +166,9 @@ def _run(imzml_file: str) -> None:
             store.save_val_at('no info: failed', *base_key,'infos', 'intensities')
             store.save_val_at('no info: failed', *base_key, 'infos', 'mzs')
 
-        shutil.rmtree(zarr_path)
+        # remote file if conversion was started
+        if pathlib.Path(zarr_path).exists():
+            shutil.rmtree(zarr_path)
 
     cpu_time_end = time.process_time()
     wall_time_end = default_timer()
