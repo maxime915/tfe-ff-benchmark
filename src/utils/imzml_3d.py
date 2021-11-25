@@ -1,6 +1,7 @@
 "imzml 3d: get 3d info from an imzML file"
 
 import argparse
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -16,12 +17,18 @@ def show_3d_planes(
         value do not store]
     - show: request a call to matplotlib.pyplot.imshow"""
 
+    print(f'opening file {imzml_path}')
+
     parser = ImzMLParser(imzml_path, include_spectra_metadata='full')
 
     shape = (parser.imzmldict['max count of pixels y'],
             parser.imzmldict['max count of pixels x'])
 
     path_stem = imzml_path.split('/')[-1]
+
+    mode = 'continuous' if 'continuous' in parser.metadata.file_description.param_by_name else 'processed'
+
+    print(f'image {path_stem} of shape {shape}, type {mode}')
 
     # use a dict for all Z values
     #   to avoid having all images in memory at once, only save
@@ -67,6 +74,8 @@ if __name__ == "__main__":
     _parser.add_argument('files', nargs='+', type=str)
 
     _args = _parser.parse_args()
+
+    warnings.filterwarnings('ignore', message=r'.*Accession IMS.*')
 
     for _file in _args.files:
         show_3d_planes(_file, save_to=_args.save_to, show=_args.show)
