@@ -71,16 +71,6 @@ class DB:
 
         return result
 
-    def __getitem__(self, key) -> typing.Any:
-        if isinstance(key, tuple):
-            return self.load(*key)
-        return self.load(key)
-
-    def __setitem__(self, key, value) -> None:
-        if isinstance(key, tuple):
-            return self.save_val_at(value, *key)
-        return self.save_val_at(value, key)
-
 
 def get_db_for_file(file: str, db_dir: pathlib.Path = None) -> DB:
     if db_dir is None:
