@@ -11,6 +11,7 @@ save all data inside a shelve.Shelf (useful in case of late failure)
 import itertools
 import multiprocessing
 import os
+import pathlib
 import shutil
 import sys
 import time
@@ -149,8 +150,17 @@ def _run(imzml_file: str) -> None:
         chunk_choice = (
             (1, 1),
             True,
-            (-1, -1),
+            (-1, -1), # this will most likely fails, especially with conversion
         )
+
+    # save all choice option into the db for further analysis
+    store.save_val_at({
+        'tile_choice': tile_choice,
+        'overlap_choice': overlap_choice,
+        'order_choice': order_choice,
+        'compressor_choice': compressor_choice,
+        'chunk_choice': chunk_choice
+    }, 'benchmark parameters')
 
     options = itertools.product(chunk_choice, order_choice, compressor_choice)
 
@@ -179,10 +189,18 @@ def _run(imzml_file: str) -> None:
         base_key = (_ZARR_KEY, chunk, compressor, order)
 
         # conversion
+        # use rechunker for continuous mode and other method for processed mode
         conversion = converter(imzml_file, zarr_path, chunks=chunk,
-                               compressor=compressor, cache_metadata=True, order=order)
+                               compressor=compressor, cache_metadata=True, order=order,
+                               use_rechunker=imzml_info.continuous_mode)
         results = _bench(conversion, f'conversion {chunk} {order}, {compressor}', _CONVERSION_REPEAT, _CONVERSION_NUMBER)
         store.save_val_at(results, *base_key, 'conversion time')
+
+        # handle conversion failure
+        if results == [-1]:
+            store.save_val_at('no info: failed', *base_key, 'infos', 'intensities')
+            store.save_val_at('no info: failed', *base_key, 'infos', 'mzs')
+            continue
 
         # infos
         infos_int = zarr.open_array(zarr_path + '/intensities').info_items()
@@ -221,7 +239,8 @@ def _run(imzml_file: str) -> None:
                 store.save_val_at(results, *base_key,
                                   'tic-overlap', tile, overlap)
 
-        shutil.rmtree(zarr_path)
+        if pathlib.Path(zarr_path).exists():
+            shutil.rmtree(zarr_path)
 
     cpu_time_end = time.process_time()
     wall_time_end = timeit.default_timer()
