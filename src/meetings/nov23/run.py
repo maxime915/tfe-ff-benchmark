@@ -50,6 +50,8 @@ _IMZML_KEY = 'imzml_raw'
 _ZARR_KEY = 'imzml_zarr'
 
 
+# NOTE improvement idea: store repeat and number directly to avoid extra
+#   boilerplate everywhere and store these numbers as well to make the tool more versatile
 def _bench(bench: typing.Callable[[], None], name: str, repeat: int,
            number: int) -> typing.List[float]:
     """_bench: run a benchmark of *bench* in a new process
@@ -150,7 +152,7 @@ def _run(imzml_file: str) -> None:
         chunk_choice = (
             (1, 1),
             True,
-            (-1, -1), # this will most likely fails, especially with conversion
+            (-1, -1),  # this will most likely fails, especially with conversion
         )
 
     # save all choice option into the db for further analysis
@@ -165,7 +167,8 @@ def _run(imzml_file: str) -> None:
     options = itertools.product(chunk_choice, order_choice, compressor_choice)
 
     # benchmark imzML raw - band access
-    results = _bench(ImzMLBandBenchmark(imzml_file).task, 'imzml: band', _IMZML_REPEAT, _IMZML_NUMBER)
+    results = _bench(ImzMLBandBenchmark(imzml_file).task,
+                     'imzml: band', _IMZML_REPEAT, _IMZML_NUMBER)
     store.save_val_at(results, _IMZML_KEY, 'band')
 
     # benchmark imzML raw - tile access (TIC & search)
@@ -174,14 +177,16 @@ def _run(imzml_file: str) -> None:
         if hasattr(benchmark, 'broken'):
             continue
 
-        results = _bench(benchmark.task, f'imzml TIC {tile}', _IMZML_REPEAT, _IMZML_NUMBER)
+        results = _bench(
+            benchmark.task, f'imzml TIC {tile}', _IMZML_REPEAT, _IMZML_NUMBER)
         store.save_val_at(results, _IMZML_KEY, 'tic', tile)
 
         benchmark = ImzMLSearchBenchmark(imzml_file, tile, imzml_info)
         if hasattr(benchmark, 'broken'):
             continue
 
-        results = _bench(benchmark.task, f'imzml search {tile}', _IMZML_REPEAT, _IMZML_NUMBER)
+        results = _bench(
+            benchmark.task, f'imzml search {tile}', _IMZML_REPEAT, _IMZML_NUMBER)
         store.save_val_at(results, _IMZML_KEY, 'search', tile)
 
     for chunk, order, compressor in options:
@@ -193,12 +198,14 @@ def _run(imzml_file: str) -> None:
         conversion = converter(imzml_file, zarr_path, chunks=chunk,
                                compressor=compressor, cache_metadata=True, order=order,
                                use_rechunker=imzml_info.continuous_mode)
-        results = _bench(conversion, f'conversion {chunk} {order}, {compressor}', _CONVERSION_REPEAT, _CONVERSION_NUMBER)
+        results = _bench(
+            conversion, f'conversion {chunk} {order}, {compressor}', _CONVERSION_REPEAT, _CONVERSION_NUMBER)
         store.save_val_at(results, *base_key, 'conversion time')
 
         # handle conversion failure
         if results == [-1]:
-            store.save_val_at('no info: failed', *base_key, 'infos', 'intensities')
+            store.save_val_at('no info: failed', *base_key,
+                              'infos', 'intensities')
             store.save_val_at('no info: failed', *base_key, 'infos', 'mzs')
             continue
 
@@ -212,7 +219,8 @@ def _run(imzml_file: str) -> None:
         print(f'{chunk = }, {order = }, {compressor = }')
 
         # benchmark converted file - band access
-        results = _bench(ZarrImzMLBandBenchmark(zarr_path).task, 'zarr band', _ZARR_REPEAT, _ZARR_NUMBER)
+        results = _bench(ZarrImzMLBandBenchmark(zarr_path).task,
+                         'zarr band', _ZARR_REPEAT, _ZARR_NUMBER)
         store.save_val_at(results, *base_key, 'band')
 
         # benchmark converted file - tile access
@@ -220,13 +228,15 @@ def _run(imzml_file: str) -> None:
             benchmark = ZarrImzMLSumBenchmark(zarr_path, tile)
             if hasattr(benchmark, 'broken'):
                 continue
-            results = _bench(benchmark.task, f'zarr tic {tile}', _ZARR_REPEAT, _ZARR_NUMBER)
+            results = _bench(
+                benchmark.task, f'zarr tic {tile}', _ZARR_REPEAT, _ZARR_NUMBER)
             store.save_val_at(results, *base_key, 'tic', tile)
 
             benchmark = ZarrImzMLSearchBenchmark(zarr_path, tile, imzml_info)
             if hasattr(benchmark, 'broken'):
                 continue
-            results = _bench(benchmark.task, f'zarr search {tile}', _ZARR_REPEAT, _ZARR_NUMBER)
+            results = _bench(
+                benchmark.task, f'zarr search {tile}', _ZARR_REPEAT, _ZARR_NUMBER)
             store.save_val_at(results, *base_key, 'search', tile)
 
             # benchmark converted file - tile access with overlap
@@ -235,7 +245,8 @@ def _run(imzml_file: str) -> None:
                     zarr_path, tile, overlap)
                 if hasattr(benchmark, 'broken'):
                     continue
-                results = _bench(benchmark.task, f'zarr tic {tile} {overlap}', _ZARR_REPEAT, _ZARR_NUMBER)
+                results = _bench(
+                    benchmark.task, f'zarr tic {tile} {overlap}', _ZARR_REPEAT, _ZARR_NUMBER)
                 store.save_val_at(results, *base_key,
                                   'tic-overlap', tile, overlap)
 

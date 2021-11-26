@@ -25,10 +25,11 @@ def converter(hdf5_path: str, zarr_path: str, **kwargs) -> typing.Callable[[], N
             'version': '0.3',
             'name': zarr_path,
             'datasets': [{'path': '0'}],
-            'axes': ['t', 'c', 'z', 'y', 'x'],
+            'axes': ['x', 'y', 'z'],
             'type': 'conversion from HDF5 profile',
             'metadata': {'original': hdf5_path},
         }
+        # OMERO metadata? -> find more info
 
     return converter_fun
 
