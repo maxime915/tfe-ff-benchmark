@@ -21,6 +21,21 @@ def temp_stores(*args, count: int = 1, **kw):
         yield stores
 
 
+@contextlib.contextmanager
+def temp_store(*args, **kw):
+    """temp store: context manager to generate a single zarr.TempStore and close
+    it as soon as it is not needed anymore
+
+    Args:
+        *args and **kw are passed to zarr.TempStore(...)
+
+    Yields:
+        Zarr.TempStore: a collection of stores
+    """
+    with curried_temp_stores(*args, **kw)(1) as stores:
+        yield stores[0]
+
+
 def curried_temp_stores(*args, **kw):
     """curried_temp_stores: returns a context manager that generates multiple
     zarr.TempStore and closes them as soon as they are not needed anymore
