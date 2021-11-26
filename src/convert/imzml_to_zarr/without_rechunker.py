@@ -33,6 +33,7 @@ import zarr
 from pyimzml import ImzMLParser
 from zarr.util import guess_chunks
 
+from ...utils import temp_stores
 
 _DISK_COPY_THRESHOLD = 4 * 10 ** 9
 
@@ -52,87 +53,85 @@ def _convert_processed(
     shape = (parser.imzmldict['max count of pixels x'],
              parser.imzmldict['max count of pixels y'])
 
-   # create a temporary store for the first stage of the conversion
-    fast_store = zarr.TempStore()
-    fast_group = zarr.group(fast_store, overwrite=False)
-    fast_intensities = fast_group.empty(
-        'intensities',
-        shape=shape,
-        dtype=object,
-        object_codec=numcodecs.VLenArray(parser.intensityPrecision),
-        chunks=(1, 1),
-        compressor=None
-    )
-    fast_mzs = fast_group.empty(
-        'mzs',
-        shape=shape,
-        dtype=object,
-        object_codec=numcodecs.VLenArray(parser.mzPrecision),
-        chunks=(1, 1),
-        compressor=None
-    )
+    with temp_stores.temp_store() as fast_store:
+        # usr a temporary store for the first stage of the conversion
+        fast_group = zarr.group(fast_store, overwrite=False)
+        fast_intensities = fast_group.empty(
+            'intensities',
+            shape=shape,
+            dtype=object,
+            object_codec=numcodecs.VLenArray(parser.intensityPrecision),
+            chunks=(1, 1),
+            compressor=None
+        )
+        fast_mzs = fast_group.empty(
+            'mzs',
+            shape=shape,
+            dtype=object,
+            object_codec=numcodecs.VLenArray(parser.mzPrecision),
+            chunks=(1, 1),
+            compressor=None
+        )
 
-    read_start = timeit.default_timer()
+        read_start = timeit.default_timer()
 
-    # fill m/Z & intensities into the fast group
-    sumlen = 0
-    for idx, (x, y, _) in enumerate(parser.coordinates):
-        intensities, mzs = parser.getspectrum(idx)
-        sumlen += len(mzs)
+        # fill m/Z & intensities into the fast group
+        sumlen = 0
+        for idx, (x, y, _) in enumerate(parser.coordinates):
+            intensities, mzs = parser.getspectrum(idx)
+            sumlen += len(mzs)
 
-        fast_mzs[x-1, y-1] = mzs
-        fast_intensities[x-1, y-1] = intensities
+            fast_mzs[x-1, y-1] = mzs
+            fast_intensities[x-1, y-1] = intensities
 
-    read_end = timeit.default_timer()
+        read_end = timeit.default_timer()
 
-    # chunks for intensity
-    chunks = kwargs.pop('chunks', True)
-    meansize = sumlen * \
-        np.dtype(parser.intensityPrecision).itemsize // len(parser.coordinates)
-    if chunks == True:
-        chunks = guess_chunks(shape, meansize)
+        # chunks for intensity
+        chunks = kwargs.pop('chunks', True)
+        meansize = sumlen * \
+            np.dtype(parser.intensityPrecision).itemsize // len(parser.coordinates)
+        if chunks == True:
+            chunks = guess_chunks(shape, meansize)
 
-    # re-chunk
-    dest_intensities = zarr_group.empty(
-        'intensities',
-        shape=shape,
-        chunks=chunks,
-        dtype=object,
-        object_codec=numcodecs.VLenArray(parser.intensityPrecision),
-        **kwargs
-    )
-    dest_mzs = zarr_group.empty(
-        'mzs',
-        shape=shape,
-        dtype=object,
-        chunks=chunks,
-        object_codec=numcodecs.VLenArray(parser.mzPrecision),
-        **kwargs
-    )
+        # re-chunk
+        dest_intensities = zarr_group.empty(
+            'intensities',
+            shape=shape,
+            chunks=chunks,
+            dtype=object,
+            object_codec=numcodecs.VLenArray(parser.intensityPrecision),
+            **kwargs
+        )
+        dest_mzs = zarr_group.empty(
+            'mzs',
+            shape=shape,
+            dtype=object,
+            chunks=chunks,
+            object_codec=numcodecs.VLenArray(parser.mzPrecision),
+            **kwargs
+        )
 
-    # zarr cannot be trusted for object array: need to recompute the max size
-    array_size = max(
-        np.dtype(parser.intensityPrecision).itemsize,
-        np.dtype(parser.mzPrecision).itemsize
-    ) * sumlen
-    if array_size <= max_mem:
-        # load all in memory then write at once
-        dest_intensities[:] = fast_intensities[:]
-        dest_mzs[:] = fast_mzs[:]
-        branch = "in memory"
-    else:
-        # let Zarr do the loading based on chunks
-        dest_intensities[:] = fast_intensities
-        dest_mzs[:] = fast_mzs
-        branch = "used zarr"
+        # zarr cannot be trusted for object array: need to recompute the max size
+        array_size = max(
+            np.dtype(parser.intensityPrecision).itemsize,
+            np.dtype(parser.mzPrecision).itemsize
+        ) * sumlen
+        if array_size <= max_mem:
+            # load all in memory then write at once
+            dest_intensities[:] = fast_intensities[:]
+            dest_mzs[:] = fast_mzs[:]
+            branch = "in memory"
+        else:
+            # let Zarr do the loading based on chunks
+            dest_intensities[:] = fast_intensities
+            dest_mzs[:] = fast_mzs
+            branch = "used zarr"
 
-    end_rechunk = timeit.default_timer()
+        end_rechunk = timeit.default_timer()
 
-    print(f'done {branch=}')
-    print(f'reading     : {read_end-read_start: 5.2f}s\trechunking  : {end_rechunk-read_end: 5.2f}s')
-
-    # remove temporary stores
-    fast_store.rmdir()
+        print(f'done {branch=}')
+        print(f'reading     : {read_end-read_start: 5.2f}s\t'
+              f'rechunking  : {end_rechunk-read_end: 5.2f}s')
 
 
 def _convert_continuous(
@@ -166,48 +165,46 @@ def _convert_continuous(
         chunks = guess_chunks(shape, np.dtype(
             parser.intensityPrecision).itemsize)
 
-    # create a temporary store for the first stage of the conversion
-    fast_store = zarr.TempStore()
-    fast_group = zarr.group(fast_store, overwrite=False)
-    fast_intensities = fast_group.empty('intensities', shape=shape, dtype=parser.intensityPrecision,
-                                        chunks=(1, 1, chunks[-1]), compressor=None)
+    with temp_stores.temp_store() as fast_store:
+        # use a temporary store for the first stage of the conversion
+        fast_group = zarr.group(fast_store, overwrite=False)
+        fast_intensities = fast_group.empty('intensities', shape=shape, dtype=parser.intensityPrecision,
+                                            chunks=(1, 1, chunks[-1]), compressor=None)
 
-    read_start = timeit.default_timer()
+        read_start = timeit.default_timer()
 
-    # fill m/Z into the destination group
-    parser.m.seek(parser.mzOffsets[0])
-    dest_mzs[:] = np.fromfile(parser.m, count=parser.mzLengths[0],
-                              dtype=parser.mzPrecision)
+        # fill m/Z into the destination group
+        parser.m.seek(parser.mzOffsets[0])
+        dest_mzs[:] = np.fromfile(parser.m, count=parser.mzLengths[0],
+                                  dtype=parser.mzPrecision)
 
-    # fill intensities into the fast group
-    for idx, (x, y, _) in enumerate(parser.coordinates):
-        parser.m.seek(parser.intensityOffsets[idx])
-        fast_intensities[x-1, y-1, :] = np.fromfile(parser.m, count=parser.intensityLengths[idx],
-                                                    dtype=parser.intensityPrecision)
+        # fill intensities into the fast group
+        for idx, (x, y, _) in enumerate(parser.coordinates):
+            parser.m.seek(parser.intensityOffsets[idx])
+            fast_intensities[x-1, y-1, :] = np.fromfile(parser.m, count=parser.intensityLengths[idx],
+                                                        dtype=parser.intensityPrecision)
 
-    read_end = timeit.default_timer()
+        read_end = timeit.default_timer()
 
-    # re-chunk
-    dest_intensities = zarr_group.empty(
-        'intensities',
-        shape=shape,
-        dtype=parser.intensityPrecision,
-        chunks=chunks,
-        **kwargs
-    )
+        # re-chunk
+        dest_intensities = zarr_group.empty(
+            'intensities',
+            shape=shape,
+            dtype=parser.intensityPrecision,
+            chunks=chunks,
+            **kwargs
+        )
 
-    array_size = fast_intensities.nbytes  # Zarr can be trusted here
-    if array_size <= max_mem:
-        # load all in memory then write at once
-        dest_intensities[:] = fast_intensities[:]
-    else:
-        # let Zarr do the loading based on chunks
-        dest_intensities[:] = fast_intensities
+        array_size = fast_intensities.nbytes  # Zarr can be trusted here
+        if array_size <= max_mem:
+            # load all in memory then write at once
+            dest_intensities[:] = fast_intensities[:]
+        else:
+            # let Zarr do the loading based on chunks
+            dest_intensities[:] = fast_intensities
 
-    end_rechunk = timeit.default_timer()
+        end_rechunk = timeit.default_timer()
 
-    print('done')
-    print(f'reading     : {read_end-read_start: 5.2f}s\trechunking  : {end_rechunk-read_end: 5.2f}s')
-
-   # remove temporary store
-    fast_store.rmdir()
+        print('done')
+        print(f'reading     : {read_end-read_start: 5.2f}s\t'
+              f'rechunking  : {end_rechunk-read_end: 5.2f}s')
