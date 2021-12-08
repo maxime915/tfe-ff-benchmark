@@ -37,6 +37,7 @@ Using simple copy (see without_rechunker.py):
         - write it to the destination directly
 """
 
+import timeit
 import warnings
 from typing import Callable
 
@@ -52,13 +53,15 @@ from .without_rechunker import _convert_processed as convert_processed_nr
 def converter(imzml_path: str, zarr_path: str, max_mem: int = -1, use_rechunker=False, **kwargs) -> Callable[[], None]:
     "returns a function that does the convertion from imzML to Zarr"
 
-    include_spectra_metadata = kwargs.pop('include-spectra-metadata', None)
     overwrite = kwargs.pop('overwrite', True)
 
     for key in ['shape', 'dtype', 'max-shape', 'max_shape', 'object_codec']:
         if key in kwargs:
             warnings.warn(f'ignoring kwargs["{key}"] = {kwargs[key]}')
             kwargs.pop(key)
+    
+    if use_rechunker:
+        raise NotImplementedError("rechunker is not updated for the new structure")
 
     _convert_continuous = convert_continuous_rc if use_rechunker else convert_continuous_nr
     _convert_processed = convert_processed_rc if use_rechunker else convert_processed_nr
@@ -66,9 +69,11 @@ def converter(imzml_path: str, zarr_path: str, max_mem: int = -1, use_rechunker=
     def converter_fun() -> None:
 
         # the ImzMLParser object automatically parses the whole .imzML file at once
-        with warnings.catch_warnings(record=True) as _:
-            parser = ImzMLParser.ImzMLParser(imzml_path, 'lxml',
-                                             include_spectra_metadata=include_spectra_metadata)
+        start = timeit.default_timer()
+        parser = ImzMLParser.ImzMLParser(imzml_path, 'lxml')
+        end = timeit.default_timer()
+        
+        print(f'\tparsing done in {end-start: 5.2f}')
 
         # imzML seems to support full 3D image... is it the case ?
         # obtained "3D" dataset just have long m/z bands,
@@ -87,17 +92,6 @@ def converter(imzml_path: str, zarr_path: str, max_mem: int = -1, use_rechunker=
 
         store = zarr.DirectoryStore(zarr_path)
         zarr_file = zarr.group(store=store, overwrite=overwrite)
-
-        # (partial) OME-Zarr attributes
-        zarr_file.attrs['multiscales'] = {
-            'version': '0.3',
-            'name': zarr_path,
-            'datasets': [{'path': 'intensities'}, {'path': 'mzs'}],
-            'axes': ['x', 'y', 'c'],
-            'type': 'conversion from imzML file',
-            'metadata': {'original': imzml_path},  # include UUID ?
-        }
-        # Omero metadata?
 
         if max_mem > 0:
             kwargs['max_mem'] = max_mem
