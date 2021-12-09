@@ -76,6 +76,7 @@ if __name__ == "__main__":
     _args = _parser.parse_args()
 
     warnings.filterwarnings('ignore', message=r'.*Accession IMS.*')
+    warnings.filterwarnings('ignore', message=r'.*Accession MS.*')
 
     for _file in _args.files:
         show_3d_planes(_file, save_to=_args.save_to, show=_args.show)

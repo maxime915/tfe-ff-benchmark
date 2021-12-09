@@ -4,6 +4,7 @@ import argparse
 import sys
 import timeit
 import uuid
+import warnings
 
 import numpy as np
 
@@ -85,6 +86,9 @@ elif args.compressor != 'default':
         args.compressor = eval(args.compressor)
     except Exception as e:
         print(f'unable to evaluate compressor\n\n{e}')
+
+warnings.filterwarnings('ignore', message=r'.*Accession IMS.*')
+warnings.filterwarnings('ignore', message=r'.*Accession MS.*')
 
 if args.benchmark:
     results = timeit.Timer(converter(args.imzml, args.zarr, chunks=chunks, compressor=args.compressor,

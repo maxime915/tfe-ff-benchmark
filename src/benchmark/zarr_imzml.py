@@ -15,28 +15,31 @@ from .imzml import ImzMLInfo
 
 
 def zarr_imzml_path_to_info(path: str) -> ImzMLInfo:
-    intensities = zarr.open_array(path + '/intensities', mode='r')
-    mzs = zarr.open_array(path + '/mzs', mode='r')
+    intensities = zarr.open_array(path + '/0', mode='r')
+    mzs = zarr.open_array(path + '/labels/mzs/0', mode='r')
 
-    if len(mzs.shape) == 1:
+    if mzs.shape[-2:] == (1, 1):
         return ImzMLInfo(
-            shape=intensities.shape[:-1],
+            shape=intensities.shape[-2:],
             continuous_mode=True,
             path=path,
             band_size_min=mzs.shape[0],
             band_size_max=mzs.shape[0],
             mzs_min=np.min(mzs),
             mzs_max=np.max(mzs),
+            mzs_precision=mzs.dtype,
+            intensity_precision=intensities.dtype,
         )
     else:
+        lengths = zarr.open_array(path + '/labels/lengths/0', mode='r')
         return ImzMLInfo(
             shape=intensities.shape,
             continuous_mode=False,
             path=path,
-            band_size_min=np.vectorize(len)(mzs).min(),
-            band_size_max=np.vectorize(len)(mzs).max(),
-            mzs_min=np.vectorize(np.min)(mzs).min(),
-            mzs_max=np.vectorize(np.max)(mzs).max(),
+            band_size_min=np.min(lengths),
+            band_size_max=np.max(lengths),
+            mzs_min=np.min(mzs),
+            mzs_max=np.max(mzs),
             mzs_precision=mzs.dtype,
             intensity_precision=intensities.dtype,
         )
@@ -47,16 +50,16 @@ def _zarr_info(file: str, verbosity: Verbosity, key: str) -> str:
     info = f'zarr from imzML file: {file} / {key}'
 
     if verbosity == Verbosity.VERBOSE:
-        intensities = zarr.open_array(file + '/intensities', mode='r')
-        mzs = zarr.open_array(file + '/mzs', mode='r')
+        intensities = zarr.open_array(file + '/0', mode='r')
+        mzs = zarr.open_array(file + '/labels/mzs/0', mode='r')
 
-        is_continuous = len(mzs.shape) == 1
+        is_continuous = mzs.shape[-2:] == (1, 1)
 
         info += f'\n\tbinary mode continuous: {is_continuous}'
         info += f"\n\tshape: {intensities.shape}"
         if not is_continuous:
-            lengths = np.vectorize(len)(intensities)
-            info += f' : band statistics: min={lengths.min()}, max={lengths.max()}'
+            lengths = zarr.open_array(file + '/labels/lengths/0', mode='r')
+            info += f' : band statistics: min={np.min(lengths)}, max={np.max(lengths)}'
 
         # storage info
         info += f'\n\t[intensities] No. bytes: {intensities.nbytes} ({human_readable_size(intensities.nbytes)})'
@@ -75,20 +78,26 @@ class ZarrImzMLBandBenchmark(BenchmarkABC):
         self.file = path
 
     def task(self) -> None:
-        intensities = da.from_zarr(self.file, '/intensities')
-        mzs = da.from_zarr(self.file, '/mzs')
+        intensities = da.from_zarr(self.file, '/0')
+        mzs = da.from_zarr(self.file, '/labels/mzs/0')
 
-        x = random.randrange(intensities.shape[0])
-        y = random.randrange(intensities.shape[1])
+        x = random.randrange(intensities.shape[3])
+        y = random.randrange(intensities.shape[2])
 
-        intensity_band = intensities[x, y].compute()
-
-        if len(mzs.shape) == 1:
-            mzs_band = mzs.compute()
+        if mzs.shape[-2:] == (1, 1):
+            # suppose continuous
+            np.dot(
+                mzs[:, 0, 0, 0],
+                intensities[:, 0, y, x]
+            ).compute().tobytes()
         else:
-            mzs_band = mzs[x, y].compute()
+            lengths = da.from_zarr(self.file, '/labels/lengths/0')
+            length = lengths[0, 0, y, x].compute()[()]
 
-        np.dot(mzs_band, intensity_band)
+            np.dot(
+                mzs[:length, 0, y, x],
+                intensities[:length, 0, y, x]
+            ).compute().tobytes()
 
     def info(self, verbosity: Verbosity) -> str:
         return _zarr_info(self.file, verbosity, 'band access')
@@ -121,27 +130,29 @@ class ZarrImzMLOverlapSumBenchmark(BenchmarkABC):
         self.overlap = overlap
 
         # make sure the file is big enough for the tiles
-        intensities = zarr.open_array(self.file + '/intensities', mode='r')
+        intensities = zarr.open_array(self.file + '/0', mode='r')
+        shape = intensities.shape[-2:]
+        chunks = intensities.chunks[-2:]
 
         # should not specify a tile larger than the image's chunks
-        if any(t > s for t, s in zip(tiles, intensities.chunks[:2])):
+        if any(t > s for t, s in zip(tiles, chunks)):
             self.broken = True
-            warnings.warn(f'tiles {tiles} too large for chunks {intensities.chunks[:2]}')
+            warnings.warn(f'{tiles=} too large for {chunks=}')
             return
 
         # there should be at least two full chunk
-        if any(s // c < 2 for s, c in zip(intensities.shape[:2], intensities.chunks[:2])):
+        if any(s // c < 2 for s, c in zip(shape, chunks)):
             self.broken = True
-            warnings.warn(f'chunks {intensities.chunks[:2]} too large for shape {intensities.shape[:2]}')
+            warnings.warn(f'{chunks=} too large for {shape=}')
             return
 
     def task(self) -> None:
-        intensities = da.from_zarr(self.file, '/intensities')
-        mzs = da.from_zarr(self.file, '/mzs')
+        intensities = da.from_zarr(self.file, '/0')
+        mzs = da.from_zarr(self.file, '/labels/mzs/0')
 
         # continuous & processed mode have different shape -> take (x,y) only
-        shape = intensities.shape[:2]
-        chunk_shape = intensities.chunksize[:2]
+        shape = intensities.shape[-2:]
+        chunk_shape = intensities.chunksize[-2:]
 
         # how many (full) chunk per axis
         chunk_count = [s // c for s, c in zip(shape, chunk_shape)]
@@ -161,13 +172,22 @@ class ZarrImzMLOverlapSumBenchmark(BenchmarkABC):
         slice_tpl = tuple(slice(p, p+t) for p, t in zip(point, self.tiles))
 
         # pre-load tile
-        intensities = intensities[slice_tpl]
+        intensities = intensities[:, 0, slice_tpl[0], slice_tpl[1]]
 
-        if len(mzs.shape) == 1:
-            intensities.sum(axis=-1).compute().flatten()
+        if mzs.shape[-2:] == (1, 1):
+            intensities.sum(axis=0).compute().tobytes()
         else:
-            # no need to compute()
-            np.vectorize(np.sum)(intensities).flatten()
+            lengths = da.from_zarr(self.file, '/labels/lengths/0')
+            lengths = lengths[0, 0, slice_tpl[0], slice_tpl[1]]
+
+            def load_window(int_val, len_val) -> float:
+                return int_val[:len_val[()]].sum()
+
+            da.apply_gufunc(load_window, '(i),()->()',
+                            intensities, lengths,
+                            axes=[(-3,), (), ()],
+                            allow_rechunk=True,
+                            vectorize=True).compute().tobytes()
 
     def info(self, verbosity: Verbosity) -> str:
         return _zarr_info(self.file, verbosity, f'sum access with tiles={self.tiles}')
@@ -181,27 +201,37 @@ class ZarrImzMLSumBenchmark(BenchmarkABC):
         self.tiles = tiles
 
         # make sure the file is big enough for the tiles
-        intensities = zarr.open_array(self.file + '/intensities', mode='r')
+        intensities = zarr.open_array(self.file + '/0', mode='r')
 
-        if any(t > s for t, s in zip(tiles, intensities.shape[:2])):
+        if any(t > s for t, s in zip(tiles, intensities.shape[-2:])):
             self.broken = True
-            warnings.warn(f'tiles {tiles} too large for shape {intensities.shape}')
+            warnings.warn(f'{tiles=} too large for shape {intensities.shape}')
 
     def task(self) -> None:
-        intensities = da.from_zarr(self.file, '/intensities')
-        mzs = da.from_zarr(self.file, '/mzs')
+        intensities = da.from_zarr(self.file, '/0')
+        mzs = da.from_zarr(self.file, '/labels/mzs/0')
 
-        point = [random.randrange(
-            intensities.shape[i] - self.tiles[i]) for i in range(2)]
+        point = [random.randrange(s-t)
+                 for s, t in zip(intensities.shape[-2:], self.tiles)]
         slice_tpl = tuple(slice(p, p+t) for p, t in zip(point, self.tiles))
 
-        intensities = intensities[slice_tpl]
+        intensities = intensities[:, 0, slice_tpl[0], slice_tpl[1]]
 
-        if len(mzs.shape) == 1:
-            intensities.sum(axis=-1).compute().flatten()
+        if mzs.shape[-2:] == (1, 1):
+            # suppose continuous
+            intensities.sum(axis=0).compute().tobytes()
         else:
-            # no need to compute()
-            np.vectorize(np.sum)(intensities).flatten()
+            lengths = da.from_zarr(self.file, '/labels/lengths/0')
+            lengths = lengths[0, 0, slice_tpl[0], slice_tpl[1]]
+
+            def load_window(int_val, len_val) -> float:
+                return int_val[:len_val[()]].sum()
+
+            da.apply_gufunc(load_window, '(i),()->()',
+                            intensities, lengths,
+                            axes=[(-3,), (), ()],
+                            allow_rechunk=True,
+                            vectorize=True).compute().tobytes()
 
     def info(self, verbosity: Verbosity) -> str:
         return _zarr_info(self.file, verbosity, f'sum access with tiles={self.tiles}')
@@ -217,48 +247,57 @@ class ZarrImzMLSearchBenchmark(BenchmarkABC):
         self.tiles = tiles
         self.infos = infos
 
-        if any(t > s for t, s in zip(tiles, infos.shape[:2])):
+        if any(t > s for t, s in zip(tiles, infos.shape[-2:])):
             self.broken = True
             warnings.warn(f'tiles {tiles} too large for shape {infos.shape}')
 
     def task(self) -> None:
-        intensities = da.from_zarr(self.file, '/intensities')
-        mzs = da.from_zarr(self.file, '/mzs')
+        intensities = da.from_zarr(self.file, '/0')
+        mzs = da.from_zarr(self.file, '/labels/mzs/0')
 
         mz_val = self.infos.mzs_min + random.random() * (self.infos.mzs_max -
                                                          self.infos.mzs_min)
         mz_tol = 0.1
 
-        point = [random.randrange(
-            intensities.shape[i] - self.tiles[i]) for i in range(2)]
+        point = [random.randrange(s-t)
+                 for s, t in zip(intensities.shape[-2:], self.tiles)]
         slice_tpl = tuple(slice(p, p+t) for p, t in zip(point, self.tiles))
 
-        @da.as_gufunc(signature='(),()->()', output_dtypes=float, vectorize=True)
-        def search_processed_band(mz_band: np.ndarray, int_band: np.ndarray) -> float:
-
+        def search_processed(mz_band, int_band, len_val) -> float:
+            # search low & high
+            mz_band = mz_band[:len_val]
             low = np.searchsorted(mz_band, mz_val - mz_tol, side='left')
             high = 1 + np.searchsorted(mz_band, mz_val + mz_tol, side='right')
-
-            # reduction of the intensity band (wbt empty bands?)
             return int_band[low:high].sum()
 
-        def do_continuous_image() -> da.Array:
+        if mzs.shape[-2:] == (1, 1):
+            mz_band = mzs[:, 0, 0, 0]
+
             # search the unique mzs band
-            low = da.searchsorted(mzs, da.array([mz_val-mz_tol]),
-                                  side='left')[0]
-            high = 1 + da.searchsorted(mzs, da.array([mz_val+mz_tol]),
-                                       side='right')[0]
+            low_i = da.searchsorted(mz_band, da.array([mz_val-mz_tol]),
+                                    side='left')[0]
+            high_i = 1 + da.searchsorted(mz_band, da.array([mz_val+mz_tol]),
+                                         side='right')[0]
 
-            return intensities[..., low:high].sum(axis=-1)
-
-        # grab sub window
-        intensities = intensities[slice_tpl]
-        if len(mzs.shape) > 1:
-            mzs = mzs[slice_tpl]  # sliceable only in processed mode
-            img = search_processed_band(mzs, intensities).compute()
+            img = intensities[
+                low_i:high_i,  # m/Z
+                0, slice_tpl[0], slice_tpl[1]  # z,y,x
+            ].sum(axis=0)
         else:
-            img = do_continuous_image()
-        img.flatten()
+            lengths = da.from_zarr(self.file, '/labels/lengths/0')
+
+            mzs_window = mzs[:, 0, slice_tpl[0], slice_tpl[1]]
+            int_window = intensities[:, 0, slice_tpl[0], slice_tpl[1]]
+            lengths_window = lengths[0, 0, slice_tpl[0], slice_tpl[1]]
+
+            img = da.apply_gufunc(search_processed, '(i),(i),()->()',
+                                  mzs_window, int_window, lengths_window,
+                                  axes=[(-3,), (-3,), (), ()],
+                                  allow_rechunk=True,
+                                  vectorize=True,
+                                  )
+
+        img.compute().tobytes()
 
     def info(self, verbosity: Verbosity) -> str:
         return _zarr_info(self.file, verbosity, f'sum access with tiles={self.tiles}')
@@ -274,9 +313,13 @@ def _main():
         ZarrImzMLSumBenchmark(file, tiles=(10, 10)).bench(
             Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
         infos = zarr_imzml_path_to_info(file)
-        tiles = (32, 32)
+        tiles = (20, 20)
         ZarrImzMLSearchBenchmark(file, tiles, infos).bench(
             Verbosity.VERBOSE, enable_gc=args.gc, number=args.number, repeat=args.repeat)
+        for overlap in [(0, 0), (0, 1), (1, 0), (1, 1)]:
+            ZarrImzMLOverlapSumBenchmark(file, tiles, overlap).bench(
+                Verbosity.VERBOSE, enable_gc=args.gc, number=args.number,
+                repeat=args.repeat)
 
 
 if __name__ == "__main__":
