@@ -62,6 +62,9 @@ class BenchmarkABC(abc.ABC):
     def bench(self, verbosity: Verbosity = Verbosity.DEFAULT, number: int = 1_000,
               repeat: int = 3, enable_gc: bool = False) -> None:
         "perform the benchmark with given parameters"
+        
+        if hasattr(self, 'broken'):
+            raise ValueError(f'unable to bench for broken {type(self)}')
 
         setup = 'pass'
         if enable_gc:
