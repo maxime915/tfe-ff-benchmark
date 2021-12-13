@@ -1,0 +1,31 @@
+nohup: ignoring input
+/home/maximw/tfe_env/lib/python3.8/site-packages/numpy/core/_methods.py:47: RuntimeWarning: invalid value encountered in reduce
+  return umr_sum(a, axis, dtype, out, keepdims, initial, where)
+/home/maximw/tfe_env/lib/python3.8/site-packages/numpy/core/_methods.py:47: RuntimeWarning: invalid value encountered in reduce
+  return umr_sum(a, axis, dtype, out, keepdims, initial, where)
+/home/maximw/tfe_env/lib/python3.8/site-packages/numpy/core/_methods.py:47: RuntimeWarning: overflow encountered in reduce
+  return umr_sum(a, axis, dtype, out, keepdims, initial, where)
+/home/maximw/tfe_env/lib/python3.8/site-packages/numpy/core/_methods.py:47: RuntimeWarning: invalid value encountered in reduce
+  return umr_sum(a, axis, dtype, out, keepdims, initial, where)
+/home/maximw/tfe_env/lib/python3.8/site-packages/numpy/core/_methods.py:47: RuntimeWarning: overflow encountered in reduce
+  return umr_sum(a, axis, dtype, out, keepdims, initial, where)
+/home/maximw/Github/tfe-ff-benchmark/src/benchmark/imzml.py:132: UserWarning: tiles (256, 256) too large for shape (203, 409)
+  warnings.warn(f'tiles {tiles} too large for shape {shape}')
+/home/maximw/Github/tfe-ff-benchmark/src/benchmark/imzml.py:132: UserWarning: tiles (512, 512) too large for shape (203, 409)
+  warnings.warn(f'tiles {tiles} too large for shape {shape}')
+/home/maximw/Github/tfe-ff-benchmark/src/benchmark/imzml.py:132: UserWarning: tiles (1024, 1024) too large for shape (203, 409)
+  warnings.warn(f'tiles {tiles} too large for shape {shape}')
+/home/maximw/Github/tfe-ff-benchmark/src/benchmark/imzml.py:132: UserWarning: tiles (2048, 2048) too large for shape (203, 409)
+  warnings.warn(f'tiles {tiles} too large for shape {shape}')
+/home/maximw/Github/tfe-ff-benchmark/src/benchmark/zarr_imzml.py:140: UserWarning: tiles=(32, 32) too large for chunks=(26, 52)
+  warnings.warn(f'{tiles=} too large for {chunks=}')
+/home/maximw/Github/tfe-ff-benchmark/src/benchmark/zarr_imzml.py:140: UserWarning: tiles=(64, 64) too large for chunks=(26, 52)
+  warnings.warn(f'{tiles=} too large for {chunks=}')
+/home/maximw/Github/tfe-ff-benchmark/src/benchmark/zarr_imzml.py:208: UserWarning: tiles=(256, 256) too large for shape (12100, 1, 203, 409)
+  warnings.warn(f'{tiles=} too large for shape {intensities.shape}')
+/home/maximw/Github/tfe-ff-benchmark/src/benchmark/zarr_imzml.py:208: UserWarning: tiles=(512, 512) too large for shape (12100, 1, 203, 409)
+  warnings.warn(f'{tiles=} too large for shape {intensities.shape}')
+/home/maximw/Github/tfe-ff-benchmark/src/benchmark/zarr_imzml.py:208: UserWarning: tiles=(1024, 1024) too large for shape (12100, 1, 203, 409)
+  warnings.warn(f'{tiles=} too large for shape {intensities.shape}')
+/home/maximw/Github/tfe-ff-benchmark/src/benchmark/zarr_imzml.py:208: UserWarning: tiles=(2048, 2048) too large for shape (12100, 1, 203, 409)
+  warnings.warn(f'{tiles=} too large for shape {intensities.shape}')
