@@ -30,6 +30,7 @@ import abc
 import timeit
 from pathlib import Path
 from typing import List, Tuple
+import warnings
 
 import numpy as np
 import zarr
@@ -67,13 +68,19 @@ class _BaseImzMLConvertor(abc.ABC):
     "base class hiding the continuous VS processed difference behind polymorphism"
 
     def __init__(self, root: zarr.Group, name: str, parser: PyImzMLParser,
-                 memory_limit: int = _DISK_COPY_THRESHOLD) -> None:
+                 memory_limit: int = _DISK_COPY_THRESHOLD, **kwargs) -> None:
         super().__init__()
 
         self.root = root
         self.name = name
         self.parser = parser
         self.memory_limit = memory_limit
+        self.kwargs = kwargs
+        
+        tmp = object()
+        for kw in ['shape', 'dtype']:
+            if self.kwargs.pop(kw, tmp) is not tmp:
+                warnings.warn(f'ignoring "{kw}" parameter')
 
     @abc.abstractmethod
     def get_labels(self) -> List[str]:
@@ -160,7 +167,7 @@ class _ContinuousImzMLConvertor(_BaseImzMLConvertor):
             '0',
             shape=self.get_intensity_shape(),
             dtype=self.parser.intensityPrecision,
-            # default chunks & compressor
+            **self.kwargs,
         )
 
         # xarray zarr encoding
@@ -212,8 +219,8 @@ class _ContinuousImzMLConvertor(_BaseImzMLConvertor):
                     dtype=self.parser.intensityPrecision)
 
             end = timeit.default_timer()
-            print(
-                f'\treading done in {end-start: 5.2f} (processed, len={len(self.parser.coordinates)})')
+            print(f'\treading done in {end-start: 5.2f} '
+                  f'(continuous, len={len(self.parser.coordinates)})')
 
             # re-chunk
             copy_array(fast_intensities, intensities, limit=self.memory_limit)
@@ -254,7 +261,7 @@ class _ProcessedImzMLConvertor(_BaseImzMLConvertor):
             '0',
             shape=self.get_intensity_shape(),
             dtype=self.parser.intensityPrecision,
-            # default chunks & compressor
+            **self.kwargs,
         )
 
         # xarray zarr encoding
@@ -265,7 +272,7 @@ class _ProcessedImzMLConvertor(_BaseImzMLConvertor):
             'labels/mzs/0',
             shape=self.get_mz_shape(),
             dtype=self.parser.mzPrecision,
-            # default chunks & compressor
+            **self.kwargs,
         )
 
         # # NOTE: for now, z axis is supposed to be a Zero for all values
@@ -286,6 +293,7 @@ class _ProcessedImzMLConvertor(_BaseImzMLConvertor):
             compressor=None,
         )
 
+    # FIXME the rechunking introduce fill-in, which hurt file size and performance
     def read_binary_data(self) -> None:
         intensities = self.root[0]
         mzs = self.root.labels.mzs[0]
@@ -347,7 +355,7 @@ def _convert_processed(
     """
 
     _ProcessedImzMLConvertor(zarr_group, Path(
-        parser.filename).stem, parser, memory_limit=max_mem).run()
+        parser.filename).stem, parser, memory_limit=max_mem, **kwargs).run()
 
 
 def _convert_continuous(
@@ -363,4 +371,4 @@ def _convert_continuous(
     """
 
     _ContinuousImzMLConvertor(zarr_group, Path(
-        parser.filename).stem, parser, memory_limit=max_mem).run()
+        parser.filename).stem, parser, memory_limit=max_mem, **kwargs).run()
