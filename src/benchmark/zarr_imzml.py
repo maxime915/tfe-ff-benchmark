@@ -247,7 +247,7 @@ class ZarrImzMLSearchBenchmark(BenchmarkABC):
         self.tiles = tiles
         self.infos = infos
 
-        if any(t > s for t, s in zip(tiles, infos.shape[-2:])):
+        if any(t > s for t, s in zip(tiles, infos.shape)):
             self.broken = True
             warnings.warn(f'tiles {tiles} too large for shape {infos.shape}')
 
