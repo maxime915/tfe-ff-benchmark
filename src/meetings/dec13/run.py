@@ -44,7 +44,7 @@ _CONVERSION_REPEAT = 2
 _IMZML_NUMBER = 20
 _IMZML_REPEAT = 3
 
-_ZARR_NUMBER = 100
+_ZARR_NUMBER = 200
 _ZARR_REPEAT = 5
 
 _IMZML_KEY = 'imzml_raw'
@@ -134,8 +134,9 @@ def _run(imzml_file: str) -> None:
         'zarr number': _ZARR_NUMBER,
         'zarr repeat': _ZARR_REPEAT,
     }, 'benchmark infos')
-    
+
     print(f'results stored into {store.path}')
+    print(f'results stored into {store.path}', file=sys.stderr)
 
     # store more file infos
     imzml_info = imzml_path_to_info(imzml_file)
@@ -197,7 +198,7 @@ def _run(imzml_file: str) -> None:
                                    max_mem=MAX_MEM)
 
             stack.callback(shutil.rmtree, zarr_path, ignore_errors=True)
-            
+
             results = _bench(
                 conversion, f'conversion {chunk} {order}, {compressor}', _CONVERSION_REPEAT, _CONVERSION_NUMBER)
             store.save_val_at(results, *base_key, 'conversion time')
