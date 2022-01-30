@@ -44,6 +44,8 @@ def _convert_processed(
     - shape, dtype, etc should not be in kwargs
     """
 
+    raise NotImplementedError('conversion using rechunker is not supported')
+
     shape = (parser.imzmldict['max count of pixels x'],
              parser.imzmldict['max count of pixels y'])
 
@@ -138,6 +140,7 @@ def _convert_continuous(
     location
     - shape, dtype, etc should not be in kwargs
     """
+    raise NotImplementedError('conversion using rechunker is not supported')
 
     shape = (parser.imzmldict['max count of pixels x'],
              parser.imzmldict['max count of pixels y'],
