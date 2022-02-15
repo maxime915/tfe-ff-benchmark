@@ -9,32 +9,33 @@ import warnings
 from functools import cached_property
 from math import ceil
 from pathlib import Path
-from typing import BinaryIO, Callable, Dict, List, NamedTuple, Optional, Tuple
+from typing import BinaryIO, Dict, List, NamedTuple, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 import zarr
 from pyimzml.ImzMLParser import ImzMLParser as PyImzMLParser
-from zarr.util import normalize_chunks
+
+from zarr.util import normalize_chunks as zarr_auto_chunk
+from dask.array.core import auto_chunks as dask_auto_chunk
 
 from ...utils import profiler
 from .cli import get_args, get_parser
 
 SHAPE = Tuple[int, int, int, int]
 
-VERSION = 'development-one-phase-conversion'
+VERSION = "development-one-phase-conversion"
 
 
 class ImzMLData(NamedTuple):
-    """ImzMLData: holds a summary data for an ImzML pair
-    """
+    """ImzMLData: holds a summary data for an ImzML pair"""
 
     spectra: pd.DataFrame
 
     mz_dtype: np.dtype
     int_dtype: np.dtype
 
-    pixel_count: Tuple[int, int, int]
+    pixel_count: Tuple[int, int, int]  # z, y, x
 
     is_continuous: bool
 
@@ -43,8 +44,15 @@ class ImzMLData(NamedTuple):
 
     uuid: str
 
+    scan_settings: Dict
+    softwares: Dict
 
-def get_data_from_parser(imzml: Path, ibd: Path, ignore_warnings: bool = True) -> ImzMLData:
+    dimensions: Tuple[float, float, float]  # z, y, x
+
+
+def get_data_from_parser(
+    imzml: Path, ibd: Path, ignore_warnings: bool = True
+) -> ImzMLData:
     """parse an imzml / ibd file pair to an ImzMLData object
 
     Parameters
@@ -68,41 +76,55 @@ def get_data_from_parser(imzml: Path, ibd: Path, ignore_warnings: bool = True) -
     """
 
     if ignore_warnings:
-        warnings.filterwarnings('ignore', r'Accession I?MS')
+        warnings.filterwarnings("ignore", r"Accession I?MS")
 
-    parser = PyImzMLParser(str(imzml), parse_lib='lxml', ibd_file=None)
+    parser = PyImzMLParser(str(imzml), parse_lib="lxml", ibd_file=None)
 
     # check for binary mode
-    is_continuous = 'continuous' in parser.metadata.file_description.param_by_name
-    is_processed = 'processed' in parser.metadata.file_description.param_by_name
+    is_continuous = "continuous" in parser.metadata.file_description.param_by_name
+    is_processed = "processed" in parser.metadata.file_description.param_by_name
 
     if is_continuous == is_processed:
-        raise ValueError("invalid file mode, expected exactly one of "
-                         "'continuous' or 'processed'")
+        raise ValueError(
+            "invalid file mode, expected exactly one of " "'continuous' or 'processed'"
+        )
 
-    spectra = pd.DataFrame(parser.coordinates, columns=['x', 'y', 'z'])
+    spectra = pd.DataFrame(parser.coordinates, columns=["x", "y", "z"])
     spectra = spectra.assign(mz_offset=parser.mzOffsets)
     spectra = spectra.assign(int_offset=parser.intensityOffsets)
     spectra = spectra.assign(length=parser.mzLengths)
 
     # offset coordinates for 0-based indexing
-    spectra['x'] -= 1
-    spectra['y'] -= 1
-    spectra['z'] -= 1
+    spectra["x"] -= 1
+    spectra["y"] -= 1
+    spectra["z"] -= 1
+
+    # most useful infos
+    scan_settings = {
+        k: v.param_by_name for k, v in parser.metadata.scan_settings.items()
+    }
+    softwares = {k: v.param_by_name for k, v in parser.metadata.softwares.items()}
 
     return ImzMLData(
         spectra=spectra,
         mz_dtype=np.dtype(parser.mzPrecision),
         int_dtype=np.dtype(parser.intensityPrecision),
-        pixel_count=(1,
-                     parser.imzmldict['max count of pixels y'],
-                     parser.imzmldict['max count of pixels x'],
-                     ),
+        pixel_count=(
+            1,
+            parser.imzmldict["max count of pixels y"],
+            parser.imzmldict["max count of pixels x"],
+        ),
         is_continuous=is_continuous,
-
         source_imzml=imzml,
         source_ibd=ibd,
         uuid=parser.metadata.file_description.cv_params[0][2],
+        scan_settings=scan_settings,
+        softwares=softwares,
+        dimensions=(
+            1.0,
+            parser.imzmldict["max dimension y"],
+            parser.imzmldict["max dimension x"],
+        ),
     )
 
 
@@ -131,8 +153,7 @@ def add_chunk_idx(
     # coordinates of spectra are assumed 0 based
 
     # use ceil() for incomplete chunks
-    chunk_counts = [ceil(s / c)
-                    for (s, c) in zip(spatial_shape, spatial_chunks)]
+    chunk_counts = [ceil(s / c) for (s, c) in zip(spatial_shape, spatial_chunks)]
 
     # per_chunk_idx is a multi-dimensional index, bounded by chunk_counts.
     # To have a scalar value, the index must be flattened, this uses column-major
@@ -142,10 +163,9 @@ def add_chunk_idx(
         strides.append(strides[-1] * chunk_width)
 
     # get all coordinates in ZYX order
-    coords = [spectra['z'], spectra['y'], spectra['x']]
+    coords = [spectra["z"], spectra["y"], spectra["x"]]
     # x = chunk_idx * chunk_shape + reminder -> find chunk_idx
-    per_chunk_idx = [
-        coord // chunk for (coord, chunk) in zip(coords, spatial_chunks)]
+    per_chunk_idx = [coord // chunk for (coord, chunk) in zip(coords, spatial_chunks)]
     # flatten using stride
     flat_idx = sum(idx * stride for idx, stride in zip(per_chunk_idx, strides))
 
@@ -153,8 +173,8 @@ def add_chunk_idx(
     for flat, *per_chunk in zip(flat_idx, *per_chunk_idx):
         flat_to_idx[flat] = per_chunk
 
-    if 'chunk_idx' not in spectra:
-        spectra['chunk_idx'] = flat_idx
+    if "chunk_idx" not in spectra:
+        spectra["chunk_idx"] = flat_idx
 
     return flat_to_idx
 
@@ -163,9 +183,7 @@ def read_chunk_into(
     array: zarr.Array,
     file: BinaryIO,
     spectra: pd.DataFrame,
-
     chunk_idx: Tuple[int, int, int],
-
     offset_idx: int,
 ):
     """read a chunk into the zarr array efficiently
@@ -204,14 +222,16 @@ def read_chunk_into(
         slice(low_idx[2], high_idx[2]),
     )
 
-    buffer = np.zeros(order=array.order,
-                      shape=(
-                          array.shape[0],
-                          high_idx[0] - low_idx[0],
-                          high_idx[1] - low_idx[1],
-                          high_idx[2] - low_idx[2],
-                      ),
-                      dtype=array.dtype)
+    buffer = np.zeros(
+        order=array.order,
+        shape=(
+            array.shape[0],
+            high_idx[0] - low_idx[0],
+            high_idx[1] - low_idx[1],
+            high_idx[2] - low_idx[2],
+        ),
+        dtype=array.dtype,
+    )
 
     # read the chunk into a buffer
     for row in spectra.itertuples():
@@ -232,8 +252,16 @@ def read_chunk_into(
 class BaseImzMLConvertor(abc.ABC):
     "base class hiding the continuous VS processed difference behind polymorphism"
 
-    def __init__(self, root: zarr.Group, name: str, data: ImzMLData,
-                 chunks=True, compressor='default', order='C', max_size: int = 4 * 2**30) -> None:
+    def __init__(
+        self,
+        root: zarr.Group,
+        name: str,
+        data: ImzMLData,
+        chunks=True,
+        compressor="default",
+        order="C",
+        max_size: int = 4 * 2**30,
+    ) -> None:
         super().__init__()
 
         self.root = root
@@ -247,7 +275,7 @@ class BaseImzMLConvertor(abc.ABC):
         self.max_size = max_size
 
         if self.max_size <= 0:
-            raise ValueError(f'{max_size=} should be positive')
+            raise ValueError(f"{max_size=} should be positive")
 
     @abc.abstractmethod
     def get_labels(self) -> List[str]:
@@ -261,28 +289,48 @@ class BaseImzMLConvertor(abc.ABC):
         as well as custom PIMS - MSI metadata in 'pims-msi'
         """
 
-        # multiscales metadata
-        self.root.attrs['multiscales'] = [{
-            'version': '0.3',
-            'name': self.name,
-            # store intensities in dataset 0
-            'datasets': [{'path': '0'}, ],
-            # NOTE axes attribute may change significantly in 0.4.0
-            'axes': ['c', 'z', 'y', 'x'],
-            'type': 'none',  # no downscaling (at the moment)
-        }]
+        axes = [dict(name="c", type="channel")]
+        for axis in ["z", "y", "x"]:
+            axes.append(dict(name=axis, type="spatial"))
 
-        self.root.attrs['pims-msi'] = {
-            'version': VERSION,
-            'source': str(self.data.source_imzml),
+        # 1.0 for C, 1.0/size for z, y, x
+        scale = [1.0]
+        for count, dimension in zip(self.data.pixel_count, self.data.dimensions):
+            scale.append(dimension / count)
+
+        # multiscales metadata
+        self.root.attrs["multiscales"] = [
+            {
+                "version": "0.4",
+                "name": self.name,
+                # store intensities in dataset 0
+                "datasets": [
+                    {
+                        "path": "0",
+                        "coordinateTransformations": [
+                            {"type": "scale", "scale": scale}
+                        ],
+                    }
+                ],
+                "axes": axes,
+                "type": "none",  # no downscaling (at the moment)
+                "metadata": {},
+            }
+        ]
+
+        self.root.attrs["pims-msi"] = {
+            "version": VERSION,
+            "source": str(self.data.source_imzml),
             # image resolution ?
-            'uuid': self.data.uuid,
+            "uuid": self.data.uuid,
             # find out if imzML come from a conversion, include it if so ?
-            'binary_mode': ['processed', 'continuous'][self.data.is_continuous]
+            "binary_mode": ["processed", "continuous"][self.data.is_continuous],
+            "scan_settings": self.data.scan_settings,
+            "softwares": self.data.softwares,
         }
 
         # label group
-        self.root.create_group('labels').attrs['labels'] = self.get_labels()
+        self.root.create_group("labels").attrs["labels"] = self.get_labels()
 
     @property
     @abc.abstractmethod
@@ -299,8 +347,8 @@ class BaseImzMLConvertor(abc.ABC):
             item_size = max(item_size, self.data.mz_dtype.itemsize)
 
         shape = self.intensity_shape
-
-        chunks = list(normalize_chunks(self.chunks, shape, item_size))
+        
+        chunks = list(normalize_chunks(self.chunks, shape, item_size))@        
 
         last_idx = 1
         while True:
@@ -322,7 +370,8 @@ class BaseImzMLConvertor(abc.ABC):
 
             if idx == len(chunks):
                 raise ValueError(
-                    'masses are too deep to find an appropriate chunks size')
+                    "masses are too deep to find an appropriate chunks size"
+                )
 
         assert temp_chunk_size < self.max_size
 
@@ -334,8 +383,7 @@ class BaseImzMLConvertor(abc.ABC):
 
     @abc.abstractmethod
     def create_zarr_arrays(self):
-        """generate empty arrays inside the root group
-        """
+        """generate empty arrays inside the root group"""
 
     @abc.abstractmethod
     def read_binary_data(self) -> None:
@@ -356,22 +404,22 @@ class ContinuousImzMLConvertor(BaseImzMLConvertor):
     "convertor class for a continuous type file"
 
     def get_labels(self) -> List[str]:
-        return ['mzs/0']
+        return ["mzs/0"]
 
     @cached_property
     def intensity_shape(self) -> SHAPE:
         "return an int tuple describing the shape of the intensity array"
         # c=m/Z, z=1, y, x
-        return (self.data.spectra.loc[0, 'length'],) + self.data.pixel_count
+        return (self.data.spectra.loc[0, "length"],) + self.data.pixel_count
 
     @cached_property
     def mz_shape(self) -> SHAPE:
         "return an int tuple describing the shape of the mzs array"
         return (
-            self.data.spectra.loc[0, 'length'],  # c = m/Z
-            1,                         # z
-            1,                         # y
-            1,                         # x
+            self.data.spectra.loc[0, "length"],  # c = m/Z
+            1,  # z
+            1,  # y
+            1,  # x
         )
 
     def mz_chunks(self) -> SHAPE:
@@ -379,25 +427,24 @@ class ContinuousImzMLConvertor(BaseImzMLConvertor):
         return int_chunks[:1] + (1, 1, 1)
 
     def create_zarr_arrays(self):
-        """generate empty arrays inside the root group
-        """
+        """generate empty arrays inside the root group"""
 
         # array for the intensity values (main image)
         intensities = self.root.zeros(
-            '0',
+            "0",
             shape=self.intensity_shape,
             dtype=self.data.int_dtype,
             chunks=self.intensity_chunks,
             compressor=self.compressor,
-            order=self.order
+            order=self.order,
         )
 
         # xarray zarr encoding
-        intensities.attrs['_ARRAY_DIMENSIONS'] = _get_xarray_axes(self.root)
+        intensities.attrs["_ARRAY_DIMENSIONS"] = _get_xarray_axes(self.root)
 
         # array for the m/Z (as a label)
         self.root.zeros(
-            'labels/mzs/0',
+            "labels/mzs/0",
             shape=self.mz_shape,
             dtype=self.data.mz_dtype,
             chunks=self.mz_chunks(),
@@ -419,35 +466,37 @@ class ContinuousImzMLConvertor(BaseImzMLConvertor):
         intensities = self.root[0]
         mzs = self.root.labels.mzs[0]
 
-        flat_to_idx = add_chunk_idx(intensities.shape[1:],
-                                    intensities.chunks[1:], self.data.spectra)
+        flat_to_idx = add_chunk_idx(
+            intensities.shape[1:], intensities.chunks[1:], self.data.spectra
+        )
         chunk_lst = self.data.spectra.chunk_idx.unique()
 
-        with open(self.data.source_ibd, mode='rb') as ibd_file:
+        with open(self.data.source_ibd, mode="rb") as ibd_file:
             # read m/Z
             ibd_file.seek(self.data.spectra.mz_offset[0])
-            mzs[:, 0, 0, 0] = np.fromfile(ibd_file, count=self.data.spectra.length[0],
-                                          dtype=self.data.mz_dtype)
+            mzs[:, 0, 0, 0] = np.fromfile(
+                ibd_file, count=self.data.spectra.length[0], dtype=self.data.mz_dtype
+            )
 
             # read intensities chunk by chunks
             for chunk_idx in chunk_lst:
                 per_chunk_idx = flat_to_idx[chunk_idx]
                 spectra = self.data.spectra
                 spectra = spectra[spectra.chunk_idx == chunk_idx]
-                read_chunk_into(array=intensities,
-                                file=ibd_file,
-                                spectra=spectra,
-                                chunk_idx=per_chunk_idx,
-                                offset_idx=spectra.columns.get_loc(
-                                    'int_offset')+1,
-                                )
+                read_chunk_into(
+                    array=intensities,
+                    file=ibd_file,
+                    spectra=spectra,
+                    chunk_idx=per_chunk_idx,
+                    offset_idx=spectra.columns.get_loc("int_offset") + 1,
+                )
 
 
 class ProcessedImzMLConvertor(BaseImzMLConvertor):
     "convertor class for a processed type file"
 
     def get_labels(self) -> List[str]:
-        return ['mzs/0', 'lengths/0']
+        return ["mzs/0", "lengths/0"]
 
     @cached_property
     def intensity_shape(self) -> SHAPE:
@@ -476,12 +525,11 @@ class ProcessedImzMLConvertor(BaseImzMLConvertor):
         return (1,) + self.intensity_chunks[1:]
 
     def create_zarr_arrays(self):
-        """generate empty arrays inside the root group
-        """
+        """generate empty arrays inside the root group"""
 
         # array for the intensity values (main image)
         intensities = self.root.zeros(
-            '0',
+            "0",
             shape=self.intensity_shape,
             dtype=self.data.int_dtype,
             chunks=self.intensity_chunks,
@@ -490,11 +538,11 @@ class ProcessedImzMLConvertor(BaseImzMLConvertor):
         )
 
         # xarray zarr encoding
-        intensities.attrs['_ARRAY_DIMENSIONS'] = _get_xarray_axes(self.root)
+        intensities.attrs["_ARRAY_DIMENSIONS"] = _get_xarray_axes(self.root)
 
         # array for the m/Z (as a label)
         self.root.zeros(
-            'labels/mzs/0',
+            "labels/mzs/0",
             shape=self.mz_shape,
             dtype=self.data.mz_dtype,
             chunks=self.mz_chunks(),
@@ -513,7 +561,7 @@ class ProcessedImzMLConvertor(BaseImzMLConvertor):
 
         # array for the lengths (as a label)
         self.root.zeros(
-            'labels/lengths/0',
+            "labels/lengths/0",
             shape=self.lengths_shape,
             dtype=np.uint32,
             chunks=self.lengths_chunks,
@@ -528,12 +576,12 @@ class ProcessedImzMLConvertor(BaseImzMLConvertor):
         zarr_lengths = self.root.labels.lengths[0]
         lengths = np.zeros(zarr_lengths.shape, dtype=zarr_lengths.dtype)
 
-        flat_to_idx = add_chunk_idx(intensities.shape[1:],
-                                    intensities.chunks[1:],
-                                    self.data.spectra)
+        flat_to_idx = add_chunk_idx(
+            intensities.shape[1:], intensities.chunks[1:], self.data.spectra
+        )
         chunk_lst = self.data.spectra.chunk_idx.unique()
 
-        with open(self.data.source_ibd, mode='rb') as ibd_file:
+        with open(self.data.source_ibd, mode="rb") as ibd_file:
 
             # read lengths into a numpy array as buffer
             for row in self.data.spectra.itertuples():
@@ -547,45 +595,27 @@ class ProcessedImzMLConvertor(BaseImzMLConvertor):
                 spectra = spectra[spectra.chunk_idx == chunk_idx]
 
                 # read mzs
-                read_chunk_into(array=mzs,
-                                file=ibd_file,
-                                spectra=spectra,
-                                chunk_idx=per_chunk_idx,
-                                offset_idx=spectra.columns.get_loc(
-                                    'mz_offset')+1,
-                                )
+                read_chunk_into(
+                    array=mzs,
+                    file=ibd_file,
+                    spectra=spectra,
+                    chunk_idx=per_chunk_idx,
+                    offset_idx=spectra.columns.get_loc("mz_offset") + 1,
+                )
 
                 # read intensities
-                read_chunk_into(array=intensities,
-                                file=ibd_file,
-                                spectra=spectra,
-                                chunk_idx=per_chunk_idx,
-                                offset_idx=spectra.columns.get_loc(
-                                    'int_offset')+1,
-                                )
+                read_chunk_into(
+                    array=intensities,
+                    file=ibd_file,
+                    spectra=spectra,
+                    chunk_idx=per_chunk_idx,
+                    offset_idx=spectra.columns.get_loc("int_offset") + 1,
+                )
 
 
 def _get_xarray_axes(root: zarr.Group) -> List[str]:
     "return a copy of the 'axes' multiscales metadata, used for XArray"
-    return root.attrs['multiscales'][0]['axes']
-
-
-def _get_converter_fun(
-    imzml: Path,
-    ibd: Path,
-    zarr_store: zarr.DirectoryStore,
-    name: str,
-    **kwargs,
-) -> Callable[[]]:
-
-    data = get_data_from_parser(imzml, ibd)
-    root = zarr.group(store=zarr_store)
-
-    cls = ContinuousImzMLConvertor
-    if not data.is_continuous:
-        cls = ProcessedImzMLConvertor
-
-    return cls(root, name, data, **kwargs).run
+    return root.attrs["multiscales"][0]["axes"]
 
 
 def convert(
@@ -616,15 +646,16 @@ def convert(
     """
 
     if zarr_path.exists():
-        logging.error('attempting to convert to an existing file, aborting.')
+        logging.error("attempting to convert to an existing file, aborting.")
         return False
 
     with contextlib.ExitStack() as stack:
         if not name:
-            name = zarr_path.stem  # TODO PIMS defines true_stem
+            name = zarr_path.stem
 
         # create the directory for the destination
         dest_store = zarr.DirectoryStore(zarr_path)
+        root = zarr.group(store=dest_store)
 
         # register a callback for automatic removal:
         #   unless stack.pop_all() is called the file will be removed
@@ -632,12 +663,17 @@ def convert(
         stack.callback(dest_store.rmdir)
 
         try:
-            # do conversion in dedicated function
-            _get_converter_fun(imzml, ibd, dest_store, name, **kwargs)()
+            mz_data = get_data_from_parser(imzml, ibd)
+
+            if mz_data.is_continuous:
+                ContinuousImzMLConvertor(root, name, mz_data, **kwargs).run()
+            else:
+                ProcessedImzMLConvertor(root, name, mz_data, **kwargs).run()
+
         except (ValueError, KeyError) as error:
-            logging.error('conversion error', exc_info=error)
+            logging.error("conversion error", exc_info=error)
             return False  # store is automatically removed by callback
-        except Exception as error:
+        except Exception as error:  # pylint: disable=broad-except
             # this should ideally never happen
             logging.exception(error)
             return False  # store is automatically removed by callback
@@ -657,25 +693,26 @@ def main() -> None:
 
     profile = args.pop("profile")
 
-    imzml = pathlib.Path(args.pop('imzml'))
+    imzml = pathlib.Path(args.pop("imzml"))
     if not imzml.exists():
-        raise ValueError(f'imzml file does not exist: {imzml}')
+        raise ValueError(f"imzml file does not exist: {imzml}")
 
-    ibd = imzml.with_suffix('.ibd')
+    ibd = imzml.with_suffix(".ibd")
     if not ibd.exists():
         raise ValueError(f"could not infer IBD file for {imzml}")
 
-    dest = pathlib.Path(args.pop('zarr'))
+    dest = pathlib.Path(args.pop("zarr"))
 
     if not profile:
         convert(imzml, ibd, dest, **args)
         return
 
     import datetime
+
     now = datetime.datetime.now()
     base = now.strftime(rf"profiling_{dest.stem}_%Y_%m_%d__%H_%M_%S")
 
-    @profiler.profile(print_to=f'{base}.txt', dump_to_path=f'{base}.prof')
+    @profiler.profile(print_to=f"{base}.txt", dump_to_path=f"{base}.prof")
     def do_conversion():
         convert(imzml, ibd, dest, **args)
 
