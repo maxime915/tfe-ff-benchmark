@@ -19,7 +19,7 @@ def show_tic_planes(
 
     print(f'opening file {imzml_path}')
 
-    parser = ImzMLParser(imzml_path)
+    parser = ImzMLParser(imzml_path, ibd_file=None)
 
     shape = (parser.imzmldict['max count of pixels y'],
             parser.imzmldict['max count of pixels x'])
@@ -31,11 +31,10 @@ def show_tic_planes(
     print(f'image {path_stem} of shape {shape}, type {mode}')
 
     # draw the planes one by one
-    img = np.zeros(shape)
+    img = np.zeros(shape, dtype=int)
 
     for idx, (x, y, _) in enumerate(parser.coordinates):
-        _, intensities = parser.getspectrum(idx)
-        img[y-1][x-1] = intensities.sum()
+        img[y-1][x-1] = parser.mzLengths[idx]
 
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
