@@ -347,8 +347,58 @@ class BaseImzMLConvertor(abc.ABC):
             item_size = max(item_size, self.data.mz_dtype.itemsize)
 
         shape = self.intensity_shape
-        
-        chunks = list(normalize_chunks(self.chunks, shape, item_size))@        
+
+        if isinstance(self.chunks, str):
+            if self.chunks == "dask-auto":
+                chunks = list(
+                    dask_auto_chunk(
+                        4 * ("auto",),
+                        shape,
+                        limit="128MiB",  # default, quite large
+                        dtype=self.data.int_dtype,
+                    )
+                )
+            elif self.chunks == "dask-auto-small":
+                chunks = list(
+                    dask_auto_chunk(
+                        4 * ("auto",),
+                        shape,
+                        limit="16MiB",  # smaller than the default
+                        dtype=self.data.int_dtype,
+                    )
+                )
+            elif self.chunks == "zarr-auto":
+                chunks = list(zarr_auto_chunk(True, shape, item_size))
+            elif self.chunks == "dask-spectral":
+                chunks = list(
+                    dask_auto_chunk(
+                        (shape[0], "auto", "auto", "auto"),
+                        shape,
+                        limit="128MiB",  # default, quite large
+                        dtype=self.data.int_dtype,
+                    )
+                )
+            elif self.chunks == "dask-spatial":
+                chunks = list(
+                    dask_auto_chunk(
+                        ("auto", shape[1], shape[2], shape[3]),
+                        shape,
+                        limit="128MiB",  # default, quite large
+                        dtype=self.data.int_dtype,
+                    )
+                )
+            else:
+                raise ValueError("TODO")
+        elif not isinstance(self.chunks, (tuple, list)):
+            raise ValueError("TODO")
+
+        else:
+            chunks = list(self.chunks)
+
+        for i, c in enumerate(chunks):
+            if isinstance(c, tuple):
+                chunks[i] = c[0]
+            chunks[i] = int(chunks[i])
 
         last_idx = 1
         while True:
