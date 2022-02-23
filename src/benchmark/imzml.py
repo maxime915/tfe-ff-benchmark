@@ -127,7 +127,7 @@ class ImzMLSumBenchmark(BenchmarkABC):
         shape = (parser.imzmldict['max count of pixels y'],
                  parser.imzmldict['max count of pixels x'])
 
-        if any(t > s for t, s in zip(tiles, shape)):
+        if any(t >= s for t, s in zip(tiles, shape)):
             self.broken = True
             warnings.warn(f'tiles {tiles} too large for shape {shape}')
 
@@ -173,7 +173,7 @@ class ImzMLSearchBenchmark(BenchmarkABC):
         self.infos = infos
 
         shape = infos.shape[:2]
-        if any(t > s for t, s in zip(tiles, shape)):
+        if any(t >= s for t, s in zip(tiles, shape)):
             self.broken = True
             warnings.warn(f'tiles {tiles} too large for shape {shape}')
 
