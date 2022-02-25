@@ -14,10 +14,9 @@ from typing import BinaryIO, Dict, List, NamedTuple, Optional, Tuple
 import numpy as np
 import pandas as pd
 import zarr
-from pyimzml.ImzMLParser import ImzMLParser as PyImzMLParser
-
-from zarr.util import normalize_chunks as zarr_auto_chunk
 from dask.array.core import auto_chunks as dask_auto_chunk
+from pyimzml.ImzMLParser import ImzMLParser as PyImzMLParser
+from zarr.util import normalize_chunks as zarr_auto_chunk
 
 from ...utils import profiler
 from .cli import get_args, get_parser
@@ -348,6 +347,9 @@ class BaseImzMLConvertor(abc.ABC):
 
         shape = self.intensity_shape
 
+        if self.chunks is True:
+            self.chunks = "zarr-auto"
+
         if isinstance(self.chunks, str):
             if self.chunks == "dask-auto":
                 chunks = list(
@@ -389,6 +391,7 @@ class BaseImzMLConvertor(abc.ABC):
                 )
             else:
                 raise ValueError("TODO")
+
         elif not isinstance(self.chunks, (tuple, list)):
             raise ValueError("TODO")
 
