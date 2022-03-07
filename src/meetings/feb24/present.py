@@ -12,6 +12,9 @@ import numpy as np
 from .inspect_db import DB
 
 
+_DEFAULT_FIGSIZE = (6, 3.5)
+
+
 class Command(enum.Enum):
     BAND = enum.auto()
     TIC = enum.auto()
@@ -74,7 +77,7 @@ def present_band():
 
     mode = "continuous" if data[("imzml info",)].continuous_mode else "processed"
 
-    fig = plt.figure(figsize=[10.4, 4.8])
+    fig = plt.figure(figsize=_DEFAULT_FIGSIZE)
     axis = fig.add_subplot(111)
 
     axis.set_yscale("log")
@@ -122,7 +125,7 @@ def present_tic():
 
     mode = "continuous" if data[("imzml info",)].continuous_mode else "processed"
 
-    fig = plt.figure(figsize=[10.4, 4.8])
+    fig = plt.figure(figsize=_DEFAULT_FIGSIZE)
     axis = fig.add_subplot(111)
 
     axis.set_yscale("log")
@@ -176,7 +179,7 @@ def present_search():
 
     mode = "continuous" if data[("imzml info",)].continuous_mode else "processed"
 
-    fig = plt.figure(figsize=[10.4, 4.8])
+    fig = plt.figure(figsize=_DEFAULT_FIGSIZE)
     axis = fig.add_subplot(111)
 
     axis.set_yscale("log")
@@ -225,13 +228,23 @@ def present_search():
 def present_overlap():
 
     time_dict = {k: v for k, v in data.items() if "tic-overlap" in k}
+    
+    chunk_choices = data[("benchmark parameters",)]["chunk_choice"]
+    chunk_as_tpl = {}
+
+    for chunk in chunk_choices:
+        infos = dict(data[("imzml_zarr", chunk, "infos", "intensities")])
+        chunk_as_tpl[chunk] = infos["Chunk shape"]
 
     windows = data[("benchmark parameters",)]["tile_choice"]
 
     mode = "continuous" if data[("imzml info",)].continuous_mode else "processed"
 
-    fig = plt.figure(figsize=[10.4, 4.8])
+    fig = plt.figure(figsize=_DEFAULT_FIGSIZE)
     axis = fig.add_subplot(111)
+
+    # axis.set_ylim((1.6, 2.1))
+    axis.set_ylim((2.8, 4.2))
 
     for window_tpl, color in zip(windows, COLORS):
 
@@ -257,9 +270,16 @@ def present_overlap():
             o11 = overlap_11_dict[chunk]
 
             ratios[chunk] = np.mean(o11) / np.mean(o00)
+        
+        sorted_ratios = OrderedDict()
+        for key in sorted(chunk_as_tpl.keys()):
+            sorted_ratios[key] = ratios.get(key, np.nan)
 
-        axis.plot(
-            ratios.keys(), ratios.values(), "o", color=color, label=str(window_tpl)
+        axis.scatter(
+            sorted_ratios.keys(),
+            sorted_ratios.values(),
+            c=color,
+            label=str(window_tpl)
         )
         
     axis.grid(axis='y', alpha=0.7)
