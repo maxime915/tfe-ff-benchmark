@@ -18,7 +18,7 @@ from dask.array.core import auto_chunks as dask_auto_chunk
 from pyimzml.ImzMLParser import ImzMLParser as PyImzMLParser
 from zarr.util import normalize_chunks as zarr_auto_chunk
 
-from ...utils import profiler
+from ...utils.profiler import profile as profile_decorator
 from .cli import get_args, get_parser
 
 SHAPE = Tuple[int, int, int, int]
@@ -390,10 +390,11 @@ class BaseImzMLConvertor(abc.ABC):
                     )
                 )
             else:
-                raise ValueError("TODO")
+                raise ValueError(("unrecognized str argument for chunks"
+                                  "only 'zarr-auto' is supported"))
 
         elif not isinstance(self.chunks, (tuple, list)):
-            raise ValueError("TODO")
+            raise ValueError(f"invalid value received as chunk: {self.chunks}")
 
         else:
             chunks = list(self.chunks)
@@ -765,7 +766,7 @@ def main() -> None:
     now = datetime.datetime.now()
     base = now.strftime(rf"profiling_{dest.stem}_%Y_%m_%d__%H_%M_%S")
 
-    @profiler.profile(print_to=f"{base}.txt", dump_to_path=f"{base}.prof")
+    @profile_decorator(print_to=f"{base}.txt", dump_to_path=f"{base}.prof")
     def do_conversion():
         convert(imzml, ibd, dest, **args)
 

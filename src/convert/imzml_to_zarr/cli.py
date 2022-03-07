@@ -57,7 +57,7 @@ def get_parser(
     if add_profile:
         parser.add_argument('--profile', action='store_true',
                             help="start profiler for conversion")
-        parser.set_defaults(profile=True)
+        parser.set_defaults(profile=False)
 
     return parser
 
