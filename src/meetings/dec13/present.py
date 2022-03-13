@@ -21,6 +21,7 @@ class Command(enum.Enum):
     SEARCH = enum.auto()
     OVERLAP = enum.auto()
     CONVERSION = enum.auto()
+    COMPRESSOR = enum.auto()
 
     @staticmethod
     def str_choices() -> List[str]:
@@ -268,6 +269,24 @@ if Command.OVERLAP in commands:
 
         fig.tight_layout()
         fig.savefig(f'ticoverlap_{mode}_{window_width}.png')
+
+if Command.COMPRESSOR in commands:
+    zarr_number = data[('benchmark infos',)]['zarr number']
+    time_dict = {k: v for k, v in data.items() if 'imzml_zarr' in k and 'infos' not in k and 'conversion time' not in k}
+    no_compression = {k[:2] + k[3:]: v for k, v in time_dict.items() if k[2] == None}
+    default_compression = {k[:2] + k[3:]: v for k, v in time_dict.items() if k[2] == 'default'}
+
+    keys = sorted(no_compression.keys(), key=str)
+    assert sorted(default_compression.keys(), key=str) == keys
+
+    deltas = {
+        k: (np.mean(np.array(default_compression[k]) / zarr_number) - 
+            np.mean(np.array(no_compression[k]) / zarr_number))
+        for k in keys
+    }
+
+    print('\n'.join(f"{k}: {v}" for k, v in deltas.items()))
+
 
 if Command.CONVERSION in commands:
     time_dict = {k: v for k, v in data.items() if 'conversion time' in k}
