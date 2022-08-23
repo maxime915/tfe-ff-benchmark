@@ -420,3 +420,47 @@ if True and False:
     axis.set_xlabel('Tile width (pixel)')
     axis.legend()
     plt.show()
+
+
+if True:
+
+    fig, axes = plt.subplots(1, 2, sharey=True, figsize=(9, 4))
+    
+    for axis, depth in zip(axes, [1, -1]):
+        tile_x = 1024 if depth == 1 else 512
+        axis.set_title("Window depth: " + {1: "flat", -1: "full"}[depth])
+        axis.set_xlabel("Tile width (pixels)")
+        axis.set_xlabel('Tile width (pixel)')
+        axis.set_xticks([128, 256, 512] + ([1024] if depth == 1 else []))
+
+        h5_fdepth = hdf5[hdf5.tile_z == depth]
+        z_fdepth = zarr[zarr.tile_z == depth]
+        
+        best_vals = z_fdepth[z_fdepth.tile_x == tile_x]
+        best_z_idx = np.argsort(best_vals["mean"])
+        best_z_idx = best_z_idx[:3]
+    
+
+        axis.plot(h5_fdepth.tile_x, h5_fdepth["mean"], label="HDF5")
+        for z_idx in best_z_idx:
+            assert z_idx < len(z_fdepth), f"{z_idx}, {len(z_fdepth)}"
+            row = best_vals.iloc[z_idx]
+            label = (
+                f"Zarr: (c={row.compressor}, o={row.order} c=({row.chunk_x}, {row.chunk_z})"
+            )
+            selection = z_fdepth[
+                z_fdepth.compressor.eq(row.compressor)
+                & z_fdepth.order.eq(row.order)
+                & z_fdepth.chunk_x.eq(row.chunk_x)
+                & z_fdepth.chunk_z.eq(row.chunk_z)
+            ]
+
+            assert len(selection) == len(h5_fdepth), "inconsistent sizes"
+            axis.plot(selection.tile_x, selection["mean"], label=label)
+        
+        axis.legend()
+
+    fig.suptitle("HDF5 - Zarr comparison")
+    fig.tight_layout()
+    
+    fig.savefig("hdf5_zarr_comparison.png")
