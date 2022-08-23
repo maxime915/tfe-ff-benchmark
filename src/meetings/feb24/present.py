@@ -62,7 +62,7 @@ def run_on(command: Command):
 
     def _runner(function: "function"):
         if command in PARSED_COMMANDS:
-            print(f"running {function.__name__=} for {command.name=}")
+            # print(f"running {function.__name__=} for {command.name=}")
             function()
         return function
     return _runner
@@ -298,10 +298,29 @@ def present_get_chunks():
     chunk_choices = data[("benchmark parameters",)]["chunk_choice"]
     chunk_as_tpl = {}
 
+    print("Shape: " + dict(data[("imzml_zarr", "zarr-auto", "infos", "intensities")]).get("Shape"))
+
     for chunk in chunk_choices:
         infos = dict(data[("imzml_zarr", chunk, "infos", "intensities")])
         chunk_as_tpl[chunk] = infos["Chunk shape"]
 
+    # print as a latex table
+    print("""\\begin{table}[ht]
+\\centering
+\\begin{tabular}{lcc}
+\\toprule
+{}  Name &  Shape & Size \\\\
+\\midrule""")
+
     for chunk, tpl in chunk_as_tpl.items():
 
-        print(f"{chunk} : {tpl} -> {np.prod(eval(tpl)):.2E} elements per chunks")
+        # print(f"{chunk} : {tpl} -> {np.prod(eval(tpl)):.2E} elements per chunks")
+        
+        print(f"{chunk} & {tpl} & {np.prod(eval(tpl)):.2E} \\\\")
+
+    print("""\\bottomrule
+\\end{tabular}
+    \\caption{}
+    \\label{}
+\\end{table}
+""")
