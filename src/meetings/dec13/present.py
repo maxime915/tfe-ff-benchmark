@@ -113,6 +113,109 @@ if Command.BAND in commands:
     
 
 if Command.TIC in commands:
+
+    time_dict = {k: v for k, v in data.items() if 'tic' in k}
+    imzml_number = data[('benchmark infos',)]['imzml number']
+    zarr_number = data[('benchmark infos',)]['zarr number']
+    
+    continuous_mode = data[('imzml info',)].continuous_mode
+    mode = "continuous" if continuous_mode else "processed"
+    
+    window_lst = [16, 32, 64]
+    
+    # get chunk values
+    zarr_dict = {k: v for k, v in time_dict.items() if 'imzml_zarr' in k }
+    print(next(iter(zarr_dict.keys())))
+    chunk_values = {}
+    for _, chunk, *_ in zarr_dict.keys():
+        chunk_values[chunk] = chunk_to_str(chunk)
+    
+    # maybe break axes : https://matplotlib.org/stable/gallery/subplots_axes_and_figures/broken_axis.html
+
+    # study compressor effect
+    fig, axis = plt.subplots(1, 1, figsize=(6, 4))
+    
+    imzml_mean = np.array([
+        np.mean(np.array([data[('imzml_raw', 'tic', (w, w))]]) / imzml_number) for w in window_lst
+    ])
+    imzml_std = np.array([
+        np.std(np.array([data[('imzml_raw', 'tic', (w, w))]]) / imzml_number, ddof=1) for w in window_lst
+    ])
+
+    axis.plot(window_lst, imzml_mean, 'C0-x', label="ImzML")
+    axis.fill_between(window_lst, imzml_mean-imzml_std, imzml_mean+imzml_std, color='C0', alpha=0.4)
+
+    for idx, (chunk, chunk_label) in enumerate(chunk_values.items(), start=1):
+        color = f"C{idx}"
+
+        for compressor, compressor_label, line in zip(['default', None], ["C", "/"], ['-x', '--x']):
+
+            zarr_mean = np.array([
+                np.mean(np.array([zarr_dict[('imzml_zarr', chunk, compressor, 'C', 'tic', (w, w))]]) / zarr_number) for w in window_lst
+            ])
+            zarr_std = np.array([
+                np.std(np.array([zarr_dict[('imzml_zarr', chunk, compressor, 'C', 'tic', (w, w))]]) / zarr_number, ddof=1) for w in window_lst
+            ])
+            
+            axis.plot(window_lst, zarr_mean, color+line, label="Zarr ("+compressor_label+", "+chunk_label+")")
+            axis.fill_between(window_lst, zarr_mean-zarr_std, zarr_mean+zarr_std, color=color, alpha=0.4)
+    
+    axis.legend()
+    axis.set_title(f"Deep Window, varying compressor and chunks ({mode})")
+    axis.set_yscale("log")
+    axis.set_ylim([0.01, 8])
+    axis.set_xticks(window_lst)
+    axis.set_xlabel("Window width")
+    axis.set_ylabel("Average time")
+    
+    fig.tight_layout()
+    fig.savefig(f"tic_{mode}_compressor_effect.png")
+    plt.close(fig)
+
+    # study memory order effect
+
+    # study compressor effect
+    fig, axis = plt.subplots(1, 1, figsize=(6, 4))
+    
+    imzml_mean = np.array([
+        np.mean(np.array([data[('imzml_raw', 'tic', (w, w))]]) / imzml_number) for w in window_lst
+    ])
+    imzml_std = np.array([
+        np.std(np.array([data[('imzml_raw', 'tic', (w, w))]]) / imzml_number, ddof=1) for w in window_lst
+    ])
+
+    axis.plot(window_lst, imzml_mean, 'C0-x', label="ImzML")
+    axis.fill_between(window_lst, imzml_mean-imzml_std, imzml_mean+imzml_std, color='C0', alpha=0.4)
+
+    for idx, (chunk, chunk_label) in enumerate(chunk_values.items(), start=1):
+        color = f"C{idx}"
+        
+        for order, line in zip(['C', 'F'], ['-x', '--x']):
+
+            zarr_mean = np.array([
+                np.mean(np.array([zarr_dict[('imzml_zarr', chunk, "default", order, 'tic', (w, w))]]) / zarr_number) for w in window_lst
+            ])
+            zarr_std = np.array([
+                np.std(np.array([zarr_dict[('imzml_zarr', chunk, "default", order, 'tic', (w, w))]]) / zarr_number, ddof=1) for w in window_lst
+            ])
+            
+            axis.plot(window_lst, zarr_mean, color+line, label="Zarr ("+order+", "+chunk_label+")")
+            axis.fill_between(window_lst, zarr_mean-zarr_std, zarr_mean+zarr_std, color=color, alpha=0.4)
+    
+    axis.legend()
+    axis.set_title(f"Deep Window, varying memory order and chunks ({mode})")
+    axis.set_yscale("log")
+    axis.set_ylim([0.01, 8])
+    axis.set_xticks(window_lst)
+    axis.set_xlabel("Window width")
+    axis.set_ylabel("Average time")
+    
+    fig.tight_layout()
+    fig.savefig(f"tic_{mode}_order_effect.png")
+    plt.close(fig)
+
+
+if Command.TIC in commands and False:
     time_dict = {k: v for k, v in data.items() if 'tic' in k}
     imzml_number = data[('benchmark infos',)]['imzml number']
     zarr_number = data[('benchmark infos',)]['zarr number']
@@ -166,6 +269,109 @@ if Command.TIC in commands:
         fig.savefig(f'tic_{mode}_{window_width}.png')
 
 if Command.SEARCH in commands:
+
+    time_dict = {k: v for k, v in data.items() if 'search' in k}
+    imzml_number = data[('benchmark infos',)]['imzml number']
+    zarr_number = data[('benchmark infos',)]['zarr number']
+    
+    continuous_mode = data[('imzml info',)].continuous_mode
+    mode = "continuous" if continuous_mode else "processed"
+    
+    window_lst = [16, 32, 64]
+    
+    # get chunk values
+    zarr_dict = {k: v for k, v in time_dict.items() if 'imzml_zarr' in k }
+    print(next(iter(zarr_dict.keys())))
+    chunk_values = {}
+    for _, chunk, *_ in zarr_dict.keys():
+        chunk_values[chunk] = chunk_to_str(chunk)
+    
+    # maybe break axes : https://matplotlib.org/stable/gallery/subplots_axes_and_figures/broken_axis.html
+
+    # study compressor effect
+    fig, axis = plt.subplots(1, 1, figsize=(6, 4))
+    
+    imzml_mean = np.array([
+        np.mean(np.array([data[('imzml_raw', 'search', (w, w))]]) / imzml_number) for w in window_lst
+    ])
+    imzml_std = np.array([
+        np.std(np.array([data[('imzml_raw', 'search', (w, w))]]) / imzml_number, ddof=1) for w in window_lst
+    ])
+
+    axis.plot(window_lst, imzml_mean, 'C0-x', label="ImzML")
+    axis.fill_between(window_lst, imzml_mean-imzml_std, imzml_mean+imzml_std, color='C0', alpha=0.4)
+
+    for idx, (chunk, chunk_label) in enumerate(chunk_values.items(), start=1):
+        color = f"C{idx}"
+
+        for compressor, compressor_label, line in zip(['default', None], ["C", "/"], ['-x', '--x']):
+
+            zarr_mean = np.array([
+                np.mean(np.array([zarr_dict[('imzml_zarr', chunk, compressor, 'C', 'search', (w, w))]]) / zarr_number) for w in window_lst
+            ])
+            zarr_std = np.array([
+                np.std(np.array([zarr_dict[('imzml_zarr', chunk, compressor, 'C', 'search', (w, w))]]) / zarr_number, ddof=1) for w in window_lst
+            ])
+            
+            axis.plot(window_lst, zarr_mean, color+line, label="Zarr ("+compressor_label+", "+chunk_label+")")
+            axis.fill_between(window_lst, zarr_mean-zarr_std, zarr_mean+zarr_std, color=color, alpha=0.4)
+    
+    axis.legend()
+    axis.set_title(f"Shallow Window, varying compressor and chunks ({mode})")
+    axis.set_yscale("log")
+    axis.set_ylim([0.01, 8])
+    axis.set_xticks(window_lst)
+    axis.set_xlabel("Window width")
+    axis.set_ylabel("Average time")
+    
+    fig.tight_layout()
+    fig.savefig(f"search_{mode}_compressor_effect.png")
+    plt.close(fig)
+
+    # study memory order effect
+
+    # study compressor effect
+    fig, axis = plt.subplots(1, 1, figsize=(6, 4))
+    
+    imzml_mean = np.array([
+        np.mean(np.array([data[('imzml_raw', 'search', (w, w))]]) / imzml_number) for w in window_lst
+    ])
+    imzml_std = np.array([
+        np.std(np.array([data[('imzml_raw', 'search', (w, w))]]) / imzml_number, ddof=1) for w in window_lst
+    ])
+
+    axis.plot(window_lst, imzml_mean, 'C0-x', label="ImzML")
+    axis.fill_between(window_lst, imzml_mean-imzml_std, imzml_mean+imzml_std, color='C0', alpha=0.4)
+
+    for idx, (chunk, chunk_label) in enumerate(chunk_values.items(), start=1):
+        color = f"C{idx}"
+        
+        for order, line in zip(['C', 'F'], ['-x', '--x']):
+
+            zarr_mean = np.array([
+                np.mean(np.array([zarr_dict[('imzml_zarr', chunk, "default", order, 'search', (w, w))]]) / zarr_number) for w in window_lst
+            ])
+            zarr_std = np.array([
+                np.std(np.array([zarr_dict[('imzml_zarr', chunk, "default", order, 'search', (w, w))]]) / zarr_number, ddof=1) for w in window_lst
+            ])
+            
+            axis.plot(window_lst, zarr_mean, color+line, label="Zarr ("+order+", "+chunk_label+")")
+            axis.fill_between(window_lst, zarr_mean-zarr_std, zarr_mean+zarr_std, color=color, alpha=0.4)
+    
+    axis.legend()
+    axis.set_title(f"Shallow Window, varying memory order and chunks ({mode})")
+    axis.set_yscale("log")
+    axis.set_ylim([0.01, 8])
+    axis.set_xticks(window_lst)
+    axis.set_xlabel("Window width")
+    axis.set_ylabel("Average time")
+    
+    fig.tight_layout()
+    fig.savefig(f"search_{mode}_order_effect.png")
+    plt.close(fig)
+
+
+if Command.SEARCH in commands and False:
     time_dict = {k: v for k, v in data.items() if 'search' in k}
     imzml_number = data[('benchmark infos',)]['imzml number']
     zarr_number = data[('benchmark infos',)]['zarr number']
